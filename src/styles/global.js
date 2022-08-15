@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
  body{
@@ -12,7 +12,6 @@ const GlobalStyle = createGlobalStyle`
    
     -webkit-tap-highlight-color: rgba(0,0,0,.1);
   }
-
 `;
 
 export default GlobalStyle;
