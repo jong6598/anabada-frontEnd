@@ -2,6 +2,8 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { userAuth } from "../shared/api";
 import { Cookies } from "react-cookie";
+import { userThunk } from "../redux/auth-slice";
+import { useEffect } from "react";
 
 const Login = () => {
   const {
@@ -20,8 +22,14 @@ const Login = () => {
     console.log(loginData);
     try {
       const getResponse = await userAuth.login(loginData);
-      console.log(getResponse);
-      cookies.set();
+      // 토큰 저장
+      cookies.set("refreshToken", getResponse.data.refreshToken);
+      sessionStorage.setItem("accessToken", getResponse.data.accessToken);
+
+      // 유저 정보 받아오기
+      const getAccessToken = sessionStorage.getItem("getAccessToken");
+      userThunk(getAccessToken);
+
       navigate("/");
       return alert("로그인에 성공했습니다!");
     } catch (err) {
@@ -32,6 +40,15 @@ const Login = () => {
   const onError = (err) => {
     return console.log(err);
   };
+
+  // 로그인한 상태에서 접근 시 차단
+  useEffect(() => {
+    if (cookies.get("refreshToken")) {
+      alert("비정상적인 접근입니다.");
+      return navigate("/");
+    }
+  }, []);
+
   return (
     <>
       <form onSubmit={handleSubmit(onSumbit, onError)}>

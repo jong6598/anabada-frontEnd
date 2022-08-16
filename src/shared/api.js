@@ -16,7 +16,7 @@ api.interceptors.request.use(function (config) {
 
 // 로그인/회원가입용 axios(토큰 필요 X)
 const userAxios = axios.create({
-  baseURL: `${process.env.REACT_APP_API_SERVER}/users`,
+  baseURL: `http://${process.env.REACT_APP_API_SERVER}/api/users`,
   headers: {
     "content-type": "application/json;charset=UTF-8",
     accept: "application/json,",
@@ -30,11 +30,28 @@ export const userAuth = {
   },
   signup(signupData) {
     console.log(signupData);
-    return userAxios.post("signup", signupData);
+    return userAxios.post("/signup", signupData);
   },
   emailValidation(email) {
     return userAxios.get(`/${email}`);
   },
+  useAccess(token) {
+    // 유저정보 받아오기
+    return userAxios.get(`/info`, {
+      headers: {
+        Authorization: token,
+      },
+    });
+  },
 };
+
+userAxios.interceptors.response.use(
+  () => {
+    console.log("인터셉터 성공");
+  },
+  () => {
+    console.log("인터셉터 실패!");
+  }
+);
 
 export const postsApi = {};

@@ -23,4 +23,5 @@ const MainHeader = styled.div`
 
 const Layout = styled.div`
   padding: 3rem;
+  height: 200vw;
 `;

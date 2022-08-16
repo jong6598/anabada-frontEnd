@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { userAuth } from "../shared/api";
+import { Cookies } from "react-cookie";
 
 const SignUp = () => {
   const {
@@ -18,8 +19,6 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   const onSumbit = (signupData) => {
-    console.log("onSubmit");
-    console.log(signupData);
     try {
       const getResponse = (async () => await userAuth.signup(signupData))();
       return navigate("/login");
@@ -45,30 +44,38 @@ const SignUp = () => {
 
   // 중복체크
   // test
-  const handleEmailValidation = async () => {
+  /*   const handleEmailValidation = async () => {
     dirtyFields.email = false;
     setEmailState(true);
     console.log("dirtyFields ::: ", dirtyFields);
     console.log("emailState ::: ", emailState);
-  };
-  /*   const handleEmailValidation = async () => {
+  }; */
+  const handleEmailValidation = async () => {
     try {
       const email = getValues("email");
       const response = await userAuth.emailValidation(email);
-      console.log(response);
       if (response.status === 200) {
         dirtyFields.email = false;
         setEmailState(true);
         return alert("계속 진행해주세요!");
-      } else {
-        setEmailState(false);
-        return alert("존재하는 이메일 입니다!");
       }
     } catch (err) {
       console.log(err);
+      if (err.response.status === 409) {
+        return alert("존재하는 이메일 입니다!");
+      }
       return alert("서버와 통신에 실패했습니다. 다시 시도해주세요.");
     }
-  }; */
+  };
+
+  // 로그인한 상태에서 접근 시 차단
+  const cookies = new Cookies();
+  useEffect(() => {
+    if (cookies.get("refreshToken")) {
+      alert("비정상적인 접근입니다.");
+      return navigate("/");
+    }
+  }, []);
 
   return (
     <>
