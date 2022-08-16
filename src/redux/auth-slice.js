@@ -4,9 +4,9 @@ import { userAuth } from "../shared/api";
 export const userThunk = createAsyncThunk(
   "users/info",
   async (data, thunkAPI) => {
-    console.log(data);
     const response = await userAuth.useAccess(data);
     console.log(response);
+    return response.data;
   }
 );
 

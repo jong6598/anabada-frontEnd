@@ -43,7 +43,7 @@ const Login = () => {
 
   // 로그인한 상태에서 접근 시 차단
   useEffect(() => {
-    if (cookies.get("refreshToken")) {
+    if (localStorage.getItem("accessToken")) {
       alert("비정상적인 접근입니다.");
       return navigate("/");
     }

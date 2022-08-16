@@ -47,7 +47,7 @@ export const userAuth = {
 };
 
 // 모든 요청에서 엑세스 토큰이 만료되었을 경우 예외처리
-axios.interceptors.response.use(
+userAxios.interceptors.response.use(
   (config) => {
     return config;
   },
@@ -58,7 +58,7 @@ axios.interceptors.response.use(
       response: { status },
     } = err;
     // 토큰 만료됐을 때 status
-    if (status === 401) {
+    if (status === 500) {
       // 이전 작업에 대한 config저장
       const originalReq = config;
 
@@ -68,13 +68,21 @@ axios.interceptors.response.use(
       const getAccess = localStorage.getItem("accessToken").split(" ")[1];
 
       // refresh요청
-      const response = userAxios.post("/refresh", {
-        headers: {
-          accessToken: getAccess,
-          refreshToken: getRefresh,
-        },
-      });
-      console.log(response);
+      const response = await userAxios.post(
+        "/reissue",
+        {},
+        {
+          headers: {
+            AccessToken: getAccess,
+            RefreshToken: getRefresh,
+          },
+        }
+      );
+      const newAccess = response.headers.authorization;
+      localStorage.setItem("accessToken", newAccess);
+      // 새로 발급 받은 토큰으로 config 변경
+      originalReq.headers.Authorization = newAccess;
+      return axios(originalReq);
     }
   }
 );
