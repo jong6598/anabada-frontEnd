@@ -15,3 +15,11 @@ api.interceptors.request.use(function (config) {
 });
 
 export const postsApi = {};
+
+export const meetsApi = {
+  getMeetsPosts: (pageParam) => api.get(`/meets?&page=${pageParam}&limit=5`),
+  postMeetPost: (post) => api.post('/meets', post),
+  editMeetPost: (post, meetId) => api.put(`/meets/${meetId}`, post),
+  deleteMeetPost: (meetId) => api.delete(`/meets/${meetId}`),
+  getMeetDetail: (meetId) => api.get(`/meets/${meetId}`)
+};
