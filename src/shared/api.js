@@ -52,18 +52,21 @@ userAxios.interceptors.response.use(
     return config;
   },
   async (err) => {
-    console.log("토큰이 없는 경우 발생한 에러");
     const {
       config,
       response: { status },
     } = err;
     // 토큰 만료됐을 때 status
     if (status === 500) {
+      // userAxios를 쓰는 경우인데 리프레시 토큰 조차 없는 경우
+      const cookies = new Cookies();
+      if (cookies.get("refreshToken")) {
+        return err;
+      }
+
       // 이전 작업에 대한 config저장
       const originalReq = config;
-
       // Bearer제거 작업
-      const cookies = new Cookies();
       const getRefresh = cookies.get("refreshToken").split(" ")[1];
       const getAccess = localStorage.getItem("accessToken").split(" ")[1];
 
@@ -84,6 +87,7 @@ userAxios.interceptors.response.use(
       originalReq.headers.Authorization = newAccess;
       return axios(originalReq);
     }
+    return err;
   }
 );
 

@@ -22,7 +22,6 @@ const Login = () => {
   const onSumbit = async (loginData) => {
     try {
       const getResponse = await userAuth.login(loginData);
-      console.log(getResponse);
       // 토큰 저장
       cookies.set("refreshToken", getResponse.headers.refreshtoken);
       localStorage.setItem("accessToken", getResponse.headers.authorization);
@@ -34,7 +33,7 @@ const Login = () => {
       return alert("로그인에 성공했습니다!");
     } catch (err) {
       console.log(err);
-      return alert("서버와 통신에 실패했습니다.");
+      return alert("이메일과 비밀번호를 확인해주세요!");
     }
   };
   const onError = (err) => {

@@ -29,6 +29,9 @@ const SignUp = () => {
   };
   const onError = (err) => {
     console.log(err);
+    if (!emailState) {
+      return alert("중복확인을 해주세요.");
+    }
     return alert("유효하지 않은 형식입니다. 다시 확인해주세요.");
   };
 
@@ -103,8 +106,8 @@ const SignUp = () => {
         {errors.email?.type === "pattern" && (
           <span>형식에 맞게 메일 주소를 입력하세요.</span>
         )}
-        {errors.email?.type === "validate" && (
-          <span>이메일 중복확인을 해주세요.</span>
+        {errors.email?.type === "validate" && !emailState && (
+          <span>{errors.email.message}</span>
         )}
         <input
           type="text"
