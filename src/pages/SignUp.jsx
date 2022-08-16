@@ -1,5 +1,5 @@
-import axios from "axios";
-import { useState } from "react";
+import styled from "styled-components";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { userAuth } from "../shared/api";
@@ -9,7 +9,7 @@ const SignUp = () => {
     register,
     handleSubmit,
     getValues,
-    formState: { errors },
+    formState: { errors, dirtyFields },
   } = useForm({
     mode: "onBlur",
   });
@@ -33,13 +33,31 @@ const SignUp = () => {
     return alert("유효하지 않은 형식입니다. 다시 확인해주세요.");
   };
 
-  // 중복체크는 다음 기회에
+  // 최초mount 시에는 작동이 안되도록!
+  const mountRef = useRef(null);
+  useEffect(() => {
+    if (mountRef.current === null) {
+      mountRef.current = true;
+      return;
+    }
+    setEmailState(!dirtyFields.email);
+  }, [dirtyFields.email]);
+
+  // 중복체크
+  // test
   const handleEmailValidation = async () => {
+    dirtyFields.email = false;
+    setEmailState(true);
+    console.log("dirtyFields ::: ", dirtyFields);
+    console.log("emailState ::: ", emailState);
+  };
+  /*   const handleEmailValidation = async () => {
     try {
       const email = getValues("email");
       const response = await userAuth.emailValidation(email);
-      console.log(response, " ::: 노 화타 희정 사마 ::: ");
+      console.log(response);
       if (response.status === 200) {
+        dirtyFields.email = false;
         setEmailState(true);
         return alert("계속 진행해주세요!");
       } else {
@@ -48,9 +66,9 @@ const SignUp = () => {
       }
     } catch (err) {
       console.log(err);
-      return alert("서버와 통신에 실패했습니다.");
+      return alert("서버와 통신에 실패했습니다. 다시 시도해주세요.");
     }
-  };
+  }; */
 
   return (
     <>
@@ -64,12 +82,20 @@ const SignUp = () => {
             validate: () => emailState || "중복확인을 해주세요!",
           })}
         ></input>
-        <div onClick={handleEmailValidation}>중복체크</div>
+        <EmailValidationBtn
+          emailState={emailState}
+          onClick={handleEmailValidation}
+        >
+          중복체크
+        </EmailValidationBtn>
         {errors.email?.type === "required" && (
           <span>{errors.email.message}</span>
         )}
         {errors.email?.type === "pattern" && (
           <span>형식에 맞게 메일 주소를 입력하세요.</span>
+        )}
+        {errors.email?.type === "validate" && (
+          <span>이메일 중복확인을 해주세요.</span>
         )}
         <input
           type="text"
@@ -134,3 +160,9 @@ const SignUp = () => {
 };
 
 export default SignUp;
+
+const EmailValidationBtn = styled.div`
+  cursor: pointer;
+  pointer-events: ${(props) => (props.emailState ? "none" : "auto")};
+  background-color: ${(props) => (props.emailState ? "gray" : "blue")};
+`;

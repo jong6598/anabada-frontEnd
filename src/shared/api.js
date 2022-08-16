@@ -16,7 +16,7 @@ api.interceptors.request.use(function (config) {
 
 // 로그인/회원가입용 axios(토큰 필요 X)
 const userAxios = axios.create({
-  baseURL: `http://43.200.6.110/api/users`,
+  baseURL: `${process.env.REACT_APP_API_SERVER}/users`,
   headers: {
     "content-type": "application/json;charset=UTF-8",
     accept: "application/json,",

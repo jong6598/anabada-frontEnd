@@ -1,7 +1,7 @@
-import axios from "axios";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { userAuth } from "../shared/api";
+import { Cookies } from "react-cookie";
 
 const Login = () => {
   const {
@@ -13,6 +13,7 @@ const Login = () => {
   });
 
   const navigate = useNavigate();
+  const cookies = new Cookies();
 
   const onSumbit = async (loginData) => {
     console.log("onSubmit");
@@ -20,6 +21,7 @@ const Login = () => {
     try {
       const getResponse = await userAuth.login(loginData);
       console.log(getResponse);
+      cookies.set();
       navigate("/");
       return alert("로그인에 성공했습니다!");
     } catch (err) {
