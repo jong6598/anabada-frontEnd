@@ -10,7 +10,7 @@ const SignUp = () => {
     register,
     handleSubmit,
     getValues,
-    formState: { errors, dirtyFields },
+    formState: { errors, dirtyFields, isDirty },
   } = useForm({
     mode: "onBlur",
   });
@@ -32,13 +32,7 @@ const SignUp = () => {
     return alert("유효하지 않은 형식입니다. 다시 확인해주세요.");
   };
 
-  // 최초mount 시에는 작동이 안되도록!
-  const mountRef = useRef(null);
   useEffect(() => {
-    if (mountRef.current === null) {
-      mountRef.current = true;
-      return;
-    }
     setEmailState(!dirtyFields.email);
   }, [dirtyFields.email]);
 
@@ -50,7 +44,11 @@ const SignUp = () => {
     console.log("dirtyFields ::: ", dirtyFields);
     console.log("emailState ::: ", emailState);
   }; */
+
   const handleEmailValidation = async () => {
+    if (errors.email.type === "pattern") {
+      return alert("올바른 이메일 형식이 아닙니다.");
+    }
     try {
       const email = getValues("email");
       const response = await userAuth.emailValidation(email);
@@ -61,8 +59,13 @@ const SignUp = () => {
       }
     } catch (err) {
       console.log(err);
+      // 중복체크 실패했을 때
       if (err.response.status === 409) {
         return alert("존재하는 이메일 입니다!");
+      }
+      // 이메일 형식이 아닐 때
+      if (err.response.data === "올바른 형식의 이메일 주소여야 합니다") {
+        return alert(err.response.data);
       }
       return alert("서버와 통신에 실패했습니다. 다시 시도해주세요.");
     }

@@ -4,7 +4,9 @@ import { userAuth } from "../shared/api";
 export const userThunk = createAsyncThunk(
   "users/info",
   async (data, thunkAPI) => {
+    console.log(data);
     const response = await userAuth.useAccess(data);
+    console.log(response);
   }
 );
 
@@ -16,12 +18,6 @@ const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(userThunk.fulfilled, (state, action) => {
-      console.log("state ::: ", state);
-      console.log("payload ::: ", action.payload);
-      return (state = action.payload);
-    });
-    // 이거 어떻게 쓰는거지?
-    builder.addCase(userThunk.rejected, (state, action) => {
       console.log("state ::: ", state);
       console.log("payload ::: ", action.payload);
       return (state = action.payload);

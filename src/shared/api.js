@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Cookies } from "react-cookie";
 
 const api = axios.create({
   baseURL: `${process.env.REACT_APP_API_SERVER}/api`,
@@ -25,15 +26,15 @@ const userAxios = axios.create({
 // 로그인/회원가입 요청 객체
 export const userAuth = {
   login(loginData) {
-    console.log(loginData);
     return userAxios.post("/login", loginData);
   },
   signup(signupData) {
-    console.log(signupData);
     return userAxios.post("/signup", signupData);
   },
   emailValidation(email) {
-    return userAxios.get(`/${email}`);
+    return userAxios.post(`/validation`, {
+      email,
+    });
   },
   useAccess(token) {
     // 유저정보 받아오기
@@ -45,12 +46,36 @@ export const userAuth = {
   },
 };
 
-userAxios.interceptors.response.use(
-  () => {
-    console.log("인터셉터 성공");
+// 모든 요청에서 엑세스 토큰이 만료되었을 경우 예외처리
+axios.interceptors.response.use(
+  (config) => {
+    return config;
   },
-  () => {
-    console.log("인터셉터 실패!");
+  async (err) => {
+    console.log("토큰이 없는 경우 발생한 에러");
+    const {
+      config,
+      response: { status },
+    } = err;
+    // 토큰 만료됐을 때 status
+    if (status === 401) {
+      // 이전 작업에 대한 config저장
+      const originalReq = config;
+
+      // Bearer제거 작업
+      const cookies = new Cookies();
+      const getRefresh = cookies.get("refreshToken").split(" ")[1];
+      const getAccess = localStorage.getItem("accessToken").split(" ")[1];
+
+      // refresh요청
+      const response = userAxios.post("/refresh", {
+        headers: {
+          accessToken: getAccess,
+          refreshToken: getRefresh,
+        },
+      });
+      console.log(response);
+    }
   }
 );
 

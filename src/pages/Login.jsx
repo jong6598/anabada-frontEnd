@@ -4,6 +4,7 @@ import { userAuth } from "../shared/api";
 import { Cookies } from "react-cookie";
 import { userThunk } from "../redux/auth-slice";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 const Login = () => {
   const {
@@ -15,21 +16,20 @@ const Login = () => {
   });
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const cookies = new Cookies();
 
   const onSumbit = async (loginData) => {
-    console.log("onSubmit");
-    console.log(loginData);
     try {
       const getResponse = await userAuth.login(loginData);
+      console.log(getResponse);
       // 토큰 저장
-      cookies.set("refreshToken", getResponse.data.refreshToken);
-      sessionStorage.setItem("accessToken", getResponse.data.accessToken);
+      cookies.set("refreshToken", getResponse.headers.refreshtoken);
+      localStorage.setItem("accessToken", getResponse.headers.authorization);
 
       // 유저 정보 받아오기
-      const getAccessToken = sessionStorage.getItem("getAccessToken");
-      userThunk(getAccessToken);
-
+      const getAccessToken = localStorage.getItem("accessToken");
+      dispatch(userThunk(getAccessToken));
       navigate("/");
       return alert("로그인에 성공했습니다!");
     } catch (err) {
