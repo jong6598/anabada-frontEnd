@@ -14,4 +14,28 @@ api.interceptors.request.use(function (config) {
   return config;
 });
 
-export const postsApi = {};
+
+export const postApi = {
+  deleteImages(images) {
+    return api.delete('/images', images)
+  },
+  getPosts(pageParam, areaSelected){
+    return api.get (`/posts?area=${areaSelected}&page=${pageParam}&size=6`)
+  },
+  getPost(postId){
+    return api.get(`/posts/${postId}`)
+  },
+  postLike(postId){
+    return api.post(`/likes/${postId}`)
+  },
+  deleteLike(postId){
+    return api.delete(`/likes/${postId}`)
+  },
+  deletecomments(commentId){
+    return api.delete(`/comments/${commentId}`)
+  },
+
+
+};
+
+
