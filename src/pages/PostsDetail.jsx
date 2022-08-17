@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import postApi from "../shared/api";
+import { postApi } from "../shared/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-
 
 const PostsDetail = () => {
   const navigate = useNavigate();
@@ -78,7 +77,7 @@ const PostsDetail = () => {
 
   //댓글 수정 
   //editing 상태에 따라 댓글 수정 input button 랜더링
-  const startEditing = () => {
+  const startEditing = (comments) => {
     setEditing((prev) => !prev)
     //commentsId 이거를 체크해서 그 댓글만 인풋박스가 나오게 해야되넹....
     //수정하기를 누르면 인풋박스로 바뀌고 내용 박아주기.
@@ -98,7 +97,7 @@ const PostsDetail = () => {
       if (accesstoken !== null) {
         try {
           await postApi.deletecomments(`${params.commentId}`);
-          // return navigate("/") 아니면 리프레시하는 동작
+          //FIXME:return navigate("/") 아니면 리프레시하는 동작
         } catch (err) {
           console.log(err);
           alert(err);
@@ -155,7 +154,7 @@ const PostsDetail = () => {
         <span>{postInfo.comments.nickname}</span>
         <span>{postInfo.comments.content}</span>
         <span>{postInfo.comments.createdAt}</span>
-        {postInfo.comments.nickname === nickname ? (<><button onClick={startEditing}>연필아이콘</button><button onClick={() => deletecomments}>쓰레기통아이콘</button></>)
+        {postInfo.comments.nickname === nickname ? (<><button onClick={startEditing}>수정</button><button onClick={() => deletecomments}>삭제</button></>)
           : null}
       </CommentBox>
     </>

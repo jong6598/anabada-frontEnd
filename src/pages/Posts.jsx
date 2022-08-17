@@ -24,9 +24,7 @@ const Posts = () => {
   }
 
 
-  const { data } = useQuery("posts", getPosts)
-
-
+  const { data, isError, isLoading } = useQuery("posts", getPosts);
 
 
   const handleArea = () => {
@@ -54,7 +52,7 @@ const Posts = () => {
         </select>
       </Areabar>
 
-      <PostBox />
+      <Post />
       {/* <Post data={post}/> */}
     </>
   )

@@ -4,19 +4,21 @@ import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { postApi } from "../shared/api";
-
-// import { storage } from "../firebase";
-// import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import ToastEditor from "../components/ToastEditor";
 
 
+import { storage } from "../firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-const Post = () => {
+
+
+const PostCU = () => {
   const navigate = useNavigate();
   const params = useParams();
   const postId = useParams().postId;
   const nickname = localStorage.getItem("nickname");
   const [imgSrc, setImgSrc] = useState("");
-  const [check, setCheck] = useState({ airgun: "", shower: "", shop: "" });
+  const [check, setCheck] = useState({ airgun: "", shower: "", shop: "", park: "" });
 
   const {
     register,
@@ -27,25 +29,27 @@ const Post = () => {
     mode: "all",
   });
 
+  //FIXME: try catch
+
   useEffect(() => {
     if (postId) {
       const setPost = async () => {
-        try {
-          const postInfo = await postApi.getPost(`${postId}`);
-          if (postInfo.data.nickname !== nickname) {
-            alert("수정 권한이 없습니다.");
-            navigate(-1);
-            return;
-          }
-        } catch (err){
-          console.log(err)
+        const postInfo = await postApi.getPost(`${postId}`);
+        if (postInfo.data.nickname !== nickname) {
+          alert("수정 권한이 없습니다.");
+          navigate(-1);
+          return;
         }
-        
 
+
+        //FIXME: 구조분해 할당 
+        // const {title,area,createAt,content} = data;
+        // const dataSet = {"title":title}
         const data = postInfo;
         console.log(data)
         setValue("title", data.data.title);
         setValue("area", data.data.area);
+        setValue("address", data.data.address);
         setValue("creatAt", data.data.createAt);
         setValue("content", data.data.content);
         setValue("amenity", data.data.amenity);
@@ -67,7 +71,7 @@ const Post = () => {
   const amenityCheck = (e) => {
     if (e.target.checked) {
       setCheck({
-        ...state,
+        ...check,
         [e.target.value]: e.target.value
       });
     }
@@ -95,6 +99,7 @@ const Post = () => {
       title: formData.title,
       area: formData.area,
       content: formData.content,
+      address: formData.address,
       amenity,
       thumbnailUrl,
     };
@@ -127,8 +132,16 @@ const Post = () => {
 
   return (
     <>
+      <BackDiv>
+        <button onClick={()=>(navigate('-1'))}>
+          <svg width="9" height="14" viewBox="0 0 9 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M8.03033 13.5303C7.73744 13.8232 7.26256 13.8232 6.96967 13.5303L0.96967 7.53033C0.676777 7.23744 0.676777 6.76256 0.96967 6.46967L6.96967 0.46967C7.26256 0.176777 7.73744 0.176777 8.03033 0.46967C8.32322 0.762563 8.32322 1.23744 8.03033 1.53033L2.56066 7L8.03033 12.4697C8.32322 12.7626 8.32322 13.2374 8.03033 13.5303Z" fill="#1C1B1F" />
+          </svg>
+        </button>
+        <p>포스트</p>
+      </BackDiv>
       <PostForm onSubmit={handleSubmit(onSubmitPost)}>
-        <h2>게시글 {postId ? "수정" : "작성"}</h2>
+        {/* <h2>게시글 {postId ? "수정" : "작성"}</h2> */}
 
         <Element>
           <label>제목</label>
@@ -157,7 +170,7 @@ const Post = () => {
             </ImageLabel>  */}
 
         <Element>
-          <label>지역</label>
+          <label>위치정보</label>
           <select
             name="area"
             id="area"
@@ -178,20 +191,32 @@ const Post = () => {
         </Element>
 
         <Element>
-          <label>어메니티</label>
-          <SelectAmenity>
-            {/* 체크시 value 값이 반영되도록 */}
-            <input type="checkbox" name="amenity" value="airgun" onChange={amenityCheck} /> 에어건
-            <input type="checkbox" name="amenity" value="shower" onChange={amenityCheck} /> 샤워부스
-            <input type="checkbox" name="amenity" value="shop" onChange={amenityCheck} /> 서핑샵
-          </SelectAmenity>
+          <input
+            type="text"
+            placeholder="상세주소를 입력해 주세요"
+            autoComplete="off"
+            {...register("address", {
+              required: true,
+            })}
+          />
         </Element>
 
         <Element>
-          <label>내용</label>
-          <input></input>
-          //TODO: toast ui를 사용하기
+          <label>어메니티</label>
+          <SelectAmenity>
+            <input type="checkbox" id="checkboxOne" name="amenity" value="airgun" onChange={amenityCheck} /> <label htmlFor="checkboxOne">에어건</label>
+            <input type="checkbox" id="checkboxTwo" name="amenity" value="shower" onChange={amenityCheck} /> <label htmlFor="checkboxTwo">샤워부스</label>
+            <input type="checkbox" id="checkboxThree" name="amenity" value="shop" onChange={amenityCheck} /> <label htmlFor="checkboxThree">서핑샵</label>
+            <input type="checkbox" id="checkboxFour" name="amenity" value="park" onChange={amenityCheck} /> <label htmlFor="checkboxFour">주차장</label>
+          </SelectAmenity>
         </Element>
+        <Toastdiv>
+          <ToastEditor
+            {...register("content", {
+              required: true,
+            })} />
+        </Toastdiv>
+
         <button type="submit" disabled={!isValid}>
           게시글 {postId ? "수정" : "등록"} 완료
         </button>
@@ -203,14 +228,37 @@ const Post = () => {
 
 export default PostCU;
 
+const BackDiv = styled.div`
+  display: flex;
+  height: 3.25rem;
+  width: 100vw;
+  padding: 1rem, 1rem, 0.75rem, 0.375rem;
+  border: 0.0625rem solid #E5E5EA;
+  font-size: 1.25rem;
+  line-height: 1.491875rem;
+  button{
+    background-color: transparent;
+    display: flex;
+    border: 0;
+    font-size: 1.25rem;
+    svg{
+      padding: 1.5rem 0rem;
+    }
+  }
+`
 
 const PostForm = styled.div`
-
+  display: flex;
+  flex-direction: column;
 `
 
 const Element = styled.div`
   display: block;
-  justify-content: center;
+  text-align: left;
+  flex-direction: column;
+  display: flex;
+  justify-content: left;
+  margin-left: 1rem;
 `
 
 const ImageLabel = styled.label`
@@ -219,4 +267,9 @@ const ImageLabel = styled.label`
 
 const SelectAmenity = styled.div`
 
+`
+
+const Toastdiv = styled.div`
+    background-color: aliceblue;
+    width: 100vw;
 `
