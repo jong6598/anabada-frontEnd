@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { useEffect } from "react";
+import styled from "styled-components";
 
 // kakao api를 호출하면 kakao가 window전역객체에 바인딩된다.
 const { kakao } = window;
@@ -11,14 +12,18 @@ const Map = () => {
 
   // 비동기 데이터 호출 작업(완료되면 두 번째 useEffect로)
   useEffect(() => {
-    const response = (async () =>
-      await axios.get("http://43.200.6.110/api/beach ", {
-        headers: {
-          "Content-Type": "application/json",
-          accept: "application/json",
-        },
-      }))();
-    response.then((res) => setMapData(res.data));
+    try {
+      const response = (async () =>
+        await axios.get("http://43.200.6.110/api/beach ", {
+          headers: {
+            "Content-Type": "application/json",
+            accept: "application/json",
+          },
+        }))();
+      response.then((res) => setMapData(res.data));
+    } catch (err) {
+      return console.log(err);
+    }
   }, []);
 
   // 첫 번째 useEffect를 하고 나서 mapData에 데이터 들어오면 실행되는 부분
@@ -27,14 +32,21 @@ const Map = () => {
     const container = document.getElementById("myMap");
     // map의 options를 설정
     const options = {
-      center: new kakao.maps.LatLng(33.450701, 126.570667),
-      level: 14,
+      center: new kakao.maps.LatLng(36.450701, 127.570667),
+      level: 13,
     };
     const temp = "24도";
     const pos = "카카오!";
     // map생성
     const map = new kakao.maps.Map(container, options);
-    const content = `<div class="marker__wraper"><span>기온: ${temp}</span><br/><span>지역명: ${pos}</span><span></span></div>`;
+    const content = `
+    <div class="marker__wraper">
+    <span>기온: ${temp}</span>
+    <br/>
+    <span>지역명: ${pos}</span>
+    <span></span>
+    </div>
+    `;
     // 마커 클러스터러를 생성
     const clusterer = new kakao.maps.MarkerClusterer({
       map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
@@ -47,7 +59,7 @@ const Map = () => {
           // calculator 각 사이 값 마다 적용될 스타일을 지정한다
           width: "30px",
           height: "30px",
-          background: "rgba(51, 204, 255, .8)",
+          background: "rgba(51, 204, 255, 0.1)",
           borderRadius: "15px",
           color: "#000",
           textAlign: "center",
@@ -57,7 +69,7 @@ const Map = () => {
         {
           width: "40px",
           height: "40px",
-          background: "rgba(255, 153, 0, .8)",
+          background: "rgba(255, 153, 0, 0.9)",
           borderRadius: "20px",
           color: "#000",
           textAlign: "center",
@@ -69,6 +81,7 @@ const Map = () => {
           height: "50px",
           // background: "rgba(255, 51, 204, .8)",
           background: 'url("/android-chrome-192x192.png")',
+          opacity: 0.4,
           borderRadius: "25px",
           color: "#000",
           textAlign: "center",
@@ -116,15 +129,17 @@ const Map = () => {
 
   return (
     <>
-      <div
-        id="myMap"
-        style={{
-          width: "500px",
-          height: "500px",
-        }}
-      ></div>
+      <MapWrapper id="myMap"></MapWrapper>
     </>
   );
 };
 
 export default Map;
+
+const MapWrapper = styled.div`
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 5.5rem;
+  left: 0;
+`;

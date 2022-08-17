@@ -7,11 +7,13 @@ import Login from "./pages/Login";
 import Signup from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
 import Header from "./components/Header";
+import GlobalStyle from "./styles/global";
 
 function App() {
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
+        <GlobalStyle />
         <Routes>
           <Route path="/" element={<Header />}>
             <Route index element={<Home />} />
