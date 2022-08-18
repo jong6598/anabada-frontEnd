@@ -11,12 +11,14 @@ import GlobalStyle from "./styles/global";
 import PostCU from './pages/PostCU';
 import PostsDetail from './pages/PostsDetail';
 import Posts from './pages/Posts';
-import GlobalStyle from './styles/global';
+
+import Pdview from "./pages/PdView";
 
 function App() {
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
+        <GlobalStyle/>
         <Routes>
           <Route path="/" element={<Header />}>
             <Route index element={<Home />} />
@@ -27,6 +29,7 @@ function App() {
             {/* <Route path="/posts/:postId" element={<PostsDetail/>} /> */}
             <Route path="/posts/upload" element={<PostCU />} />
             <Route path="/posts/:postId/edit" element={<PostCU />} />
+            <Route path="/view" element={<Pdview/>} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
