@@ -1,9 +1,11 @@
 import React,{ useRef } from 'react';
 import { Editor } from '@toast-ui/react-editor';
-import styled from 'styled-components';
 import '@toast-ui/editor/dist/toastui-editor.css';
 
- function ToastEditor() {
+
+
+
+function ToastEditor() {
     
     const editorRef = useRef();
 
@@ -34,5 +36,5 @@ import '@toast-ui/editor/dist/toastui-editor.css';
   );
 }
 
-export default ToastEditor;
 
+export default ToastEditor;
