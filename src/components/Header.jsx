@@ -2,18 +2,19 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { userThunk } from "../redux/auth-slice";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Cookies } from "react-cookie";
 
 const Header = () => {
   const location = useLocation();
   const { pathname } = location;
-
-  // 새로고침 시 유저정보 리덕스에 재설정
+  const [valueY, setValueY] = useState(null);
+  const timer = useRef(null);
   const dispatch = useDispatch();
   const cookies = new Cookies();
   const getCookies = cookies.get("refreshToken");
 
+  // 새로고침 시 유저정보 리덕스에 재설정
   useEffect(() => {
     // 로그인 한 유저가 아니면 유저정보를 요청하지 않음
     if (getCookies === undefined) {
@@ -24,9 +25,36 @@ const Header = () => {
       dispatch(userThunk(getAccess));
     }
   }, []);
-
   // 헤더에 넣을 유저정보 받아오기
   const userInfo = useSelector((state) => state.auth);
+
+  // scroll 이벤트 핸들러
+  const handleScroll = useCallback(() => {
+    const { scrollY } = window;
+    setValueY((prev) => {
+      if (prev < scrollY) {
+        console.log("내려감");
+      } else if (prev > scrollY) {
+        console.log("올라감");
+      }
+      timer.current = null;
+      return scrollY;
+    });
+  }, [timer.current]);
+
+  // throttling 핸들러
+  const handleThrottle = useCallback(() => {
+    if (!timer.current) {
+      console.log("호출됨!");
+      return (timer.current = setTimeout(handleScroll, 400));
+    }
+  }, []);
+
+  // 스크롤 이벤트 바인딩
+  useEffect(() => {
+    window.addEventListener("scroll", handleThrottle);
+    return () => window.removeEventListener("scroll", handleThrottle);
+  }, []);
 
   return (
     <>
