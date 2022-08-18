@@ -156,7 +156,7 @@ const PostCU = () => {
         </Element>
 
         <Element>
-          <label>썸네일</label>
+          <label>대표 이미지 등록</label>
           <input
             type="file"
             accept="image/*"
@@ -170,7 +170,8 @@ const PostCU = () => {
             </ImageLabel>  */}
 
         <Element>
-          <label>위치정보</label>
+          <label>위치 정보</label>
+          <p>위치를 정확하게 입력해주세요.</p>
           <select
             name="area"
             id="area"
@@ -202,7 +203,7 @@ const PostCU = () => {
         </Element>
 
         <Element>
-          <label>어메니티</label>
+          <label>주변 정보</label>
           <SelectAmenity>
             <input type="checkbox" id="checkboxOne" name="amenity" value="airgun" onChange={amenityCheck} /> <label htmlFor="checkboxOne">에어건</label>
             <input type="checkbox" id="checkboxTwo" name="amenity" value="shower" onChange={amenityCheck} /> <label htmlFor="checkboxTwo">샤워부스</label>
@@ -218,7 +219,7 @@ const PostCU = () => {
         </Toastdiv>
 
         <button type="submit" disabled={!isValid}>
-          게시글 {postId ? "수정" : "등록"} 완료
+          게시글 {postId ? "수정" : "등록"} 하기
         </button>
       </PostForm>
     </>
@@ -232,18 +233,13 @@ const BackDiv = styled.div`
   display: flex;
   height: 3.25rem;
   width: 100vw;
-  padding: 1rem, 1rem, 0.75rem, 0.375rem;
-  border: 0.0625rem solid #E5E5EA;
   font-size: 1.25rem;
   line-height: 1.491875rem;
   button{
     background-color: transparent;
-    display: flex;
+    padding-top: 1rem;
     border: 0;
-    font-size: 1.25rem;
-    svg{
-      padding: 1.5rem 0rem;
-    }
+    padding-left: 0rem;
   }
 `
 
@@ -258,7 +254,17 @@ const Element = styled.div`
   flex-direction: column;
   display: flex;
   justify-content: left;
-  margin-left: 1rem;
+  font-size: 0.875rem;
+  margin-bottom: 1.125rem;
+  font-weight: 500;
+  input {
+    padding: 0.75rem 0.625rem;
+    padding-left: 0rem;
+  }
+  p {
+    color: #FF3B30;
+    font-weight: 300;
+  }
 `
 
 const ImageLabel = styled.label`
@@ -266,10 +272,13 @@ const ImageLabel = styled.label`
 `
 
 const SelectAmenity = styled.div`
-
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `
 
 const Toastdiv = styled.div`
     background-color: aliceblue;
-    width: 100vw;
+    width: 100%;
 `
