@@ -149,7 +149,7 @@ const Header = memo(() => {
             ) : (
               <>
                 <div className="header__user__info">
-                  `{userInfo?.nickname} 님 :)`
+                  {userInfo?.nickname} 님 :)
                 </div>
               </>
             )}
