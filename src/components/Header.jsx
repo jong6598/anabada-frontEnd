@@ -2,10 +2,10 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { userThunk } from "../redux/auth-slice";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { Cookies } from "react-cookie";
 
-const Header = () => {
+const Header = memo(() => {
   const location = useLocation();
   const { pathname } = location;
   const timer = useRef(null);
@@ -29,26 +29,11 @@ const Header = () => {
   // 헤더에 넣을 유저정보 받아오기
   const userInfo = useSelector((state) => state.auth);
 
-  /**
-   * gapY.current에 누적 값을 저장?... 만약 누적을 시킨다면 -50~0까지 수치를 메기고 이 이상은 그냥 handleScroll을 거절하자.
-   * 이게 훨씬 리플로우를 줄일 수 있을 거 같음!
-   *
-   * 스크롤 방향이 전환될 때{
-   *   ::: 내림에서 올림으로 ::: -50px에서 수치가 다시 0px으로 돼야 됨.
-   *   ::: 올림에서 내림으로 ::: 0px에서 수치가 다시 -50px으로 돼야 됨.
-   * } :::
-   *
-   * 스크롤 방향이 전환될 때(누적돼야 된다) :::
-   *
-   * 누적 스크롤이 50이상 일 때 ::: 0px || -50px
-   */
-
   // scroll 이벤트 핸들러
   const handleScroll = () => {
     const { scrollY } = window;
     setValueY((prev) => {
       // 스크롤이 올라갈 때
-      console.log(prev - scrollY);
       if (prev - scrollY > 0) {
         // gapY.current가 0이면 더 더하지 말기
         if (gapY.current >= 0) {
@@ -84,22 +69,34 @@ const Header = () => {
   };
 
   // throttling 핸들러
-  const handleThrottle = useCallback(() => {
+  /*   const handleThrottle = useCallback(() => {
     if (!timer.current) {
-      console.log("호출됨!");
-      return (timer.current = setTimeout(handleScroll, 200));
+      console.log("::: 타이머 :::");
+      return (timer.current = setTimeout(handleScroll, 50)); => 콜스택... 3200calls
     }
-  }, []);
+  }, []); */
+
+  // lodash버전
+  /* useEffect(() => {
+    window.addEventListener("scroll", _.debounce(handleScroll, 50));
+    return () =>
+      window.removeEventListener("scroll", _.debounce(handleScroll, 50));
+  }, []); */
+  /* useEffect(() => {
+    window.addEventListener("scroll", _.throttle(handleScroll, 50));
+    return () =>
+      window.removeEventListener("scroll", _.throttle(handleScroll, 50));
+  }, []); */
 
   // 스크롤 이벤트 바인딩
   useEffect(() => {
-    window.addEventListener("scroll", handleThrottle);
-    return () => window.removeEventListener("scroll", handleThrottle);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <>
-      <HeaderWrapper gapY={gapY.current}>
+      <HeaderWrapper style={{ marginTop: `${gapY.current}px` }}>
         <MainHeader pathname={pathname}>
           <Link to="/">
             <div>
@@ -177,7 +174,7 @@ const Header = () => {
       </Layout>
     </>
   );
-};
+});
 
 export default Header;
 
@@ -186,10 +183,9 @@ const HeaderWrapper = styled.div`
   /* margin-top: -50px; */
   position: fixed;
   z-index: 999;
-  margin-top: ${(props) => {
-    console.log(props.gapY);
+  /* margin-top: ${(props) => {
     return `${props.gapY}px`;
-  }};
+  }}; */
 `;
 
 const MainHeader = styled.div`
