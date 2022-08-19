@@ -243,6 +243,7 @@ const MainNav = styled.div`
   height: 2.375rem;
   padding: 0rem 1.375rem;
   font-size: 0.9375rem;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.6px;
   .header__nav {
     display: flex;
     justify-content: space-between;
@@ -261,5 +262,4 @@ const MainNav = styled.div`
 
 const Layout = styled.div`
   padding: 5.5rem 1rem;
-  height: 200vh;
 `;
