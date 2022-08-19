@@ -3,17 +3,20 @@ import { Link, useNavigate } from "react-router-dom";
 import { userAuth } from "../shared/api";
 import { Cookies } from "react-cookie";
 import { userThunk } from "../redux/auth-slice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 
 const Login = () => {
+  const [watchErr, setWatchErr] = useState(null);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
     mode: "onBlur",
+    shouldFocusError: false,
   });
 
   const navigate = useNavigate();
@@ -21,6 +24,7 @@ const Login = () => {
   const cookies = new Cookies();
 
   const onSumbit = async (loginData) => {
+    setWatchErr(null);
     try {
       const getResponse = await userAuth.login(loginData);
       // 토큰 저장
@@ -33,11 +37,16 @@ const Login = () => {
       navigate("/");
       return alert("로그인에 성공했습니다!");
     } catch (err) {
+      setWatchErr(null);
       console.log(err);
       return alert("이메일과 비밀번호를 확인해주세요!");
     }
   };
   const onError = (err) => {
+    const temp = { ...err };
+    setWatchErr((prev) => {
+      return { ...temp };
+    });
     return console.log(err);
   };
 
@@ -57,7 +66,7 @@ const Login = () => {
           <br />
           <h1>로그인을 해주세요.</h1>
         </section>
-        <FormDiv>
+        <FormDiv watchErr={watchErr}>
           <form
             className="login__wrapper-form"
             onSubmit={handleSubmit(onSumbit, onError)}
@@ -77,9 +86,7 @@ const Login = () => {
               </span>
             )}
             {errors.email?.type === "pattern" && (
-              <span className="login__wrapper-error">
-                형식에 맞게 메일 주소를 입력하세요.
-              </span>
+              <span className="login__wrapper-error">입력해</span>
             )} */}
             <input
               className="login__wrapper-input login__wrapper-input__password"
@@ -134,15 +141,17 @@ const FormWrapper = styled.div`
   }
 `;
 
-const FormDiv = styled.div`
+export const FormDiv = styled.div`
   margin-top: 2.1875rem;
+  transition: all 0.3s ease;
+  padding: 0 2.625rem;
   .login__wrapper-form {
     display: flex;
     flex-direction: column;
     .login__wrapper-input,
     .login__wrapper-btn,
     .login__wrapper-error {
-      width: 18.1875rem;
+      width: 100%;
       height: 2.5625rem;
       margin: 0 auto;
       border-radius: 0.3125rem;
@@ -154,6 +163,20 @@ const FormDiv = styled.div`
       align-items: flex-start;
       padding: 12px 10px;
     }
+    .login__wrapper-input:hover {
+      background-color: #f2f2f4;
+    }
+    .login__wrapper-input:focus-visible {
+      outline: 0.01rem solid #007aff;
+    }
+    .login__wrapper-input__login {
+      outline: ${(props) =>
+        props.watchErr?.email ? "0.01rem solid #FF3B30" : "inherit"};
+    }
+    .login__wrapper-input__password {
+      outline: ${(props) =>
+        props.watchErr?.password ? "0.01rem solid #FF3B30" : "inherit"};
+    }
     .login__wrapper-btn {
       margin-top: 1.6875rem;
       margin-bottom: 1rem;
@@ -164,9 +187,12 @@ const FormDiv = styled.div`
       font-weight: 600;
       cursor: pointer;
     }
+    .login__wrapper-btn:focus {
+      background-color: #026add;
+    }
   }
   .login__wrapper-extra {
-    width: 18.1875rem;
+    width: 100%;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
