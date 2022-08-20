@@ -85,26 +85,6 @@ const Header = memo(() => {
     });
   };
 
-  // throttling 핸들러
-  /*   const handleThrottle = useCallback(() => {
-    if (!timer.current) {
-      console.log("::: 타이머 :::");
-      return (timer.current = setTimeout(handleScroll, 50)); => 콜스택... 3200calls
-    }
-  }, []); */
-
-  // lodash버전
-  /* useEffect(() => {
-    window.addEventListener("scroll", _.debounce(handleScroll, 50));
-    return () =>
-      window.removeEventListener("scroll", _.debounce(handleScroll, 50));
-  }, []); */
-  /* useEffect(() => {
-    window.addEventListener("scroll", _.throttle(handleScroll, 50));
-    return () =>
-      window.removeEventListener("scroll", _.throttle(handleScroll, 50));
-  }, []); */
-
   // 스크롤 이벤트 바인딩
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
@@ -198,12 +178,8 @@ export default Header;
 
 const HeaderWrapper = styled.div`
   background-color: white;
-  /* margin-top: -50px; */
   position: fixed;
   z-index: 999;
-  /* margin-top: ${(props) => {
-    return `${props.gapY}px`;
-  }}; */
 `;
 
 const MainHeader = styled.div`
