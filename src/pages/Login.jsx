@@ -1,14 +1,16 @@
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { userAuth } from "../shared/api";
 import { Cookies } from "react-cookie";
 import { userThunk } from "../redux/auth-slice";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
+import AlertToast from "../components/AlertToast";
 
 const Login = () => {
   const [watchErr, setWatchErr] = useState(null);
+  const { alertHandler } = useOutletContext();
 
   const {
     register,
@@ -39,24 +41,39 @@ const Login = () => {
     } catch (err) {
       setWatchErr(null);
       console.log(err);
-      return alert("이메일과 비밀번호를 확인해주세요!");
+      return alertHandler("이메일과 비밀번호를 확인해주세요!");
     }
   };
   const onError = (err) => {
     const temp = { ...err };
-    setWatchErr((prev) => {
-      return { ...temp };
-    });
+    setWatchErr(temp);
     return console.log(err);
   };
 
   // 로그인한 상태에서 접근 시 차단
   useEffect(() => {
     if (localStorage.getItem("accessToken")) {
-      alert("비정상적인 접근입니다.");
+      alertHandler("비정상적인 접근입니다.");
       return navigate("/");
     }
   }, []);
+
+  // 헬퍼 alert
+  useEffect(() => {
+    switch (errors.email?.type) {
+      case "required":
+        return alertHandler("이메일을 입력해주세요.");
+      case "pattern":
+        return alertHandler("형식에 맞게 메일 주소를 입력하세요.");
+      default:
+    }
+    switch (errors.password?.type) {
+      case "required":
+        return alertHandler("비밀번호를 입력해주세요.");
+      default:
+        return;
+    }
+  }, [alertHandler, errors]);
 
   return (
     <>
@@ -73,34 +90,21 @@ const Login = () => {
           >
             <input
               className="login__wrapper-input login__wrapper-input__login"
-              type="email"
+              type="text"
               placeholder="이메일"
               {...register("email", {
-                required: "이메일을 입력해주세요!",
+                required: true,
                 pattern: /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/,
               })}
             ></input>
-            {/* {errors.email?.type === "required" && (
-              <span className="login__wrapper-error">
-                {errors.email.message}
-              </span>
-            )}
-            {errors.email?.type === "pattern" && (
-              <span className="login__wrapper-error">입력해</span>
-            )} */}
             <input
               className="login__wrapper-input login__wrapper-input__password"
               type="password"
               placeholder="비밀번호"
               {...register("password", {
-                required: "비밀번호를 입력해주세요!",
+                required: true,
               })}
             ></input>
-            {/* {errors.password?.type === "required" && (
-              <span className="login__wrapper-error">
-                {errors.password.message}
-              </span>
-            )} */}
             <button className="login__wrapper-btn">로그인</button>
           </form>
           <section className="login__wrapper-extra">
@@ -143,14 +147,12 @@ const FormWrapper = styled.div`
 
 export const FormDiv = styled.div`
   margin-top: 2.1875rem;
-  transition: all 0.3s ease;
   padding: 0 2.625rem;
   .login__wrapper-form {
     display: flex;
     flex-direction: column;
     .login__wrapper-input,
-    .login__wrapper-btn,
-    .login__wrapper-error {
+    .login__wrapper-btn {
       width: 100%;
       height: 2.5625rem;
       margin: 0 auto;

@@ -2,8 +2,9 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { userThunk } from "../redux/auth-slice";
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { Cookies } from "react-cookie";
+import AlertToast from "./AlertToast";
 
 const Header = memo(() => {
   const location = useLocation();
@@ -14,6 +15,22 @@ const Header = memo(() => {
   const getCookies = cookies.get("refreshToken");
   const [valueY, setValueY] = useState(null);
   const gapY = useRef(0);
+
+  const refErrorTimer = useRef(null);
+  const refErrorMessage = useRef("");
+  const [stateErrTimer, setStateErrTiemr] = useState(false);
+
+  const alertHandler = useCallback((errorMessage = "") => {
+    console.log("작동됐습니다.");
+    if (!refErrorTimer.current) {
+      setStateErrTiemr(true);
+      refErrorMessage.current = errorMessage;
+      refErrorTimer.current = setTimeout(() => {
+        setStateErrTiemr(false);
+        return (refErrorTimer.current = null);
+      }, 5000);
+    }
+  }, []);
 
   // 새로고침 시 유저정보 리덕스에 재설정
   useEffect(() => {
@@ -170,7 +187,8 @@ const Header = memo(() => {
         </MainNav>
       </HeaderWrapper>
       <Layout>
-        <Outlet />
+        {stateErrTimer && <AlertToast errorMsg={refErrorMessage.current} />}
+        <Outlet context={{ alertHandler }} />
       </Layout>
     </>
   );

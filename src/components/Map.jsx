@@ -140,6 +140,6 @@ const MapWrapper = styled.div`
   width: 100vw;
   height: 100vh;
   position: absolute;
-  top: 5.5rem;
+  top: 0;
   left: 0;
 `;
