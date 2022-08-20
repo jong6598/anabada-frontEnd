@@ -3,10 +3,9 @@ import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { userAuth } from "../shared/api";
 import { Cookies } from "react-cookie";
 import { userThunk } from "../redux/auth-slice";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import AlertToast from "../components/AlertToast";
 
 const Login = () => {
   const [watchErr, setWatchErr] = useState(null);
@@ -45,8 +44,18 @@ const Login = () => {
     }
   };
   const onError = (err) => {
-    const temp = { ...err };
-    setWatchErr(temp);
+    // 잘못된 input에 빨간 테두리 띄우기
+    const redLine = { ...err };
+    setWatchErr(redLine);
+    // errors type에 따라 alertHandler 핸들
+    if (errors.email?.type === "required") {
+      alertHandler("이메일을 입력해주세요.");
+    } else if (errors.email?.type === "pattern") {
+      alertHandler("형식에 맞게 메일 주소를 입력하세요.");
+    } else if (errors.password?.type === "required") {
+      alertHandler("비밀번호를 입력해주세요.");
+    }
+
     return console.log(err);
   };
 
@@ -57,23 +66,6 @@ const Login = () => {
       return navigate("/");
     }
   }, []);
-
-  // 헬퍼 alert
-  useEffect(() => {
-    switch (errors.email?.type) {
-      case "required":
-        return alertHandler("이메일을 입력해주세요.");
-      case "pattern":
-        return alertHandler("형식에 맞게 메일 주소를 입력하세요.");
-      default:
-    }
-    switch (errors.password?.type) {
-      case "required":
-        return alertHandler("비밀번호를 입력해주세요.");
-      default:
-        return;
-    }
-  }, [alertHandler, errors]);
 
   return (
     <>
