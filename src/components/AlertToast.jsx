@@ -16,7 +16,7 @@ const AlertMessage = styled.div`
   margin: 0 auto;
   left: 0;
   right: 0;
-  bottom: 19.625rem;
+  bottom: 17rem;
   text-align: center;
   span {
     z-index: 999;

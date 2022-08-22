@@ -34,7 +34,7 @@ const Header = memo(() => {
         }, 5000);
       }
     },
-    [refErrorTimer.current]
+    [refErrorTimer]
   );
 
   // 새로고침 시 유저정보 리덕스에 재설정
@@ -261,4 +261,5 @@ const MainNav = styled.div`
 
 const Layout = styled.div`
   padding: 5.5rem 1rem;
+  height: 200vh;
 `;

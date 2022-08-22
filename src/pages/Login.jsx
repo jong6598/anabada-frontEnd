@@ -121,7 +121,7 @@ const Login = () => {
 
 export default Login;
 
-const FormWrapper = styled.div`
+export const FormWrapper = styled.div`
   margin-top: 8.375rem;
   .login__wrapper-welcome__message {
     text-align: center;
@@ -143,19 +143,13 @@ export const FormDiv = styled.div`
   .login__wrapper-form {
     display: flex;
     flex-direction: column;
-    .login__wrapper-input,
-    .login__wrapper-btn {
-      width: 100%;
-      height: 2.5625rem;
-      margin: 0 auto;
-      border-radius: 0.3125rem;
-    }
     .login__wrapper-input {
       margin-bottom: 0.5rem;
       background: #ffffff;
       border: 1px solid #d1d1d6;
       align-items: flex-start;
       padding: 12px 10px;
+      border-radius: 0.3125rem;
     }
     .login__wrapper-input:hover {
       background-color: #f2f2f4;
@@ -172,6 +166,10 @@ export const FormDiv = styled.div`
         props.watchErr?.password ? "0.01rem solid #FF3B30" : "inherit"};
     }
     .login__wrapper-btn {
+      width: 100%;
+      height: 2.5625rem;
+      margin: 0 auto;
+      border-radius: 0.3125rem;
       margin-top: 1.6875rem;
       margin-bottom: 1rem;
       border: none;
