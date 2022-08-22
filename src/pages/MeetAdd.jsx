@@ -21,22 +21,18 @@ const MeetAdd = () => {
   const addMeetPost = async (post) => {
     try {
       const res = await meetsApi.postMeetPost(post);
-      if (res.status === 200) {
-        console.log('Okay Add Meet Post');
-        alert('모임 등록이 완료 되었습니다.');
-        navigate(-1);
-      }
+      console.log('Okay Add Meet Post');
+      alert('모임 등록이 완료 되었습니다.');
+      navigate(-1);
     } catch (error) {
-      if (error.response.status === 404) {
-        console.log('404 Error');
-        alert('모임 등록이 실패 했습니다.');
-      }
+      console.log(error.response);
+      alert('모임 등록이 실패 했습니다.');
     }
   };
 
   const { mutate: onAdd } = useMutation(addMeetPost, {
     onSuccess: () => {
-      queryClient.invalidateQueries('meet');
+      queryClient.invalidateQueries(['meet']);
     },
     onError: (error) => {
       console.log(error.response);
@@ -69,7 +65,7 @@ const MeetAdd = () => {
       </div>
       <div>
         <p>지역</p>
-        <select name="" id="" ref={regionRef}>
+        <select name="region" id="region" ref={regionRef}>
           <option value="GYEONGGI">서울, 경기, 인천</option>
           <option value="GANGWON">강원</option>
           <option value="GYEONBUK">대구, 경북</option>

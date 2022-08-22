@@ -5,6 +5,7 @@ const GlobalStyle = createGlobalStyle`
     margin: 0px;
     padding: 0px;
     box-sizing: border-box;
+    font-family: 'Pretendard';
  }
 
  a, div {
@@ -22,6 +23,9 @@ const GlobalStyle = createGlobalStyle`
   ul{
    padding-left: 0;
    list-style: none;
+  }
+  h2,p{
+   margin: 0;
   }
  
 `;

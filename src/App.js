@@ -6,6 +6,8 @@ import GlobalStyle from './styles/global';
 import Meets from './pages/Meets';
 import AddMeet from './pages/MeetAdd';
 import MeetDetail from './pages/MeetDetail';
+import Header from './layout/Header';
+import MeetsAll from './pages/MeetsAll';
 
 function App() {
   return (
@@ -13,10 +15,13 @@ function App() {
       <GlobalStyle />
       <ThemeProvider theme={theme}>
         <Routes>
-          <Route path="/" element={<Meets />} />
-          <Route path="/meets" element={<Meets />} />
+          <Route path="/" element={<Header />}>
+            <Route index element={<Meets />} />
+            <Route path="/meets" element={<Meets />} />
+            <Route path="/meetAdd" element={<AddMeet />} />
+            <Route path="/meetsAll" element={<MeetsAll />} />
+          </Route>
           <Route path="/meets/:meetId" element={<MeetDetail />} />
-          <Route path="/meetAdd" element={<AddMeet />} />
         </Routes>
       </ThemeProvider>
     </>
