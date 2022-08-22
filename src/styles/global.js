@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
    *{
@@ -13,6 +13,7 @@ const GlobalStyle = createGlobalStyle`
 
  a, div {
     text-decoration: none;
+    color:inherit;
     -webkit-tap-highlight-color: rgba(0,0,0,.1);
   }
 
