@@ -8,20 +8,36 @@ import AddMeet from './pages/MeetAdd';
 import MeetDetail from './pages/MeetDetail';
 import Header from './layout/Header';
 import MeetsAll from './pages/MeetsAll';
+import './App.css';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Signup from './pages/SignUp';
+import NotFound from './pages/NotFound';
+import PostCU from './pages/PostCU';
+import PostsDetail from './pages/PostsDetail';
+import Posts from './pages/Posts';
 
 function App() {
   return (
     <>
-      <GlobalStyle />
       <ThemeProvider theme={theme}>
+        <GlobalStyle />
         <Routes>
           <Route path="/" element={<Header />}>
-            <Route index element={<Meets />} />
+            <Route index element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/posts" element={<Posts />} />
+            <Route path="/postsdetail" element={<PostsDetail />} />
+            {/* <Route path="/posts/:postId" element={<PostsDetail/>} /> */}
+            <Route path="/posts/upload" element={<PostCU />} />
+            <Route path="/posts/:postId/edit" element={<PostCU />} />
+            <Route path="*" element={<NotFound />} />
             <Route path="/meets" element={<Meets />} />
             <Route path="/meetAdd" element={<AddMeet />} />
-            <Route path="/meetsAll" element={<MeetsAll />} />
+            <Route path="/meets/:meetId" element={<MeetDetail />} />
           </Route>
-          <Route path="/meets/:meetId" element={<MeetDetail />} />
+          <Route path="/meetsAll" element={<MeetsAll />} />
         </Routes>
       </ThemeProvider>
     </>

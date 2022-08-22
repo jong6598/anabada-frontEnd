@@ -4,6 +4,9 @@ const size = {
 };
 
 const theme = {
+  bgColor: '',
+  textColor: '',
+  accentColor: '',
   mobile: `(min-width: ${size.mobile})`,
   desktop: `(min-width: ${size.desktop})`
 };
