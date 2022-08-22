@@ -1,21 +1,21 @@
-import './App.css';
-import { ThemeProvider } from 'styled-components';
-import { Routes, Route } from 'react-router-dom';
-import theme from './styles/theme';
-import GlobalStyle from './styles/global';
-import Meets from './pages/Meets';
-import AddMeet from './pages/MeetAdd';
-import MeetDetail from './pages/MeetDetail';
-import Header from './layout/Header';
-import MeetsAll from './pages/MeetsAll';
-import './App.css';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Signup from './pages/SignUp';
-import NotFound from './pages/NotFound';
-import PostCU from './pages/PostCU';
-import PostsDetail from './pages/PostsDetail';
-import Posts from './pages/Posts';
+import "./App.css";
+import { ThemeProvider } from "styled-components";
+import { Routes, Route } from "react-router-dom";
+import theme from "./styles/theme";
+import GlobalStyle from "./styles/global";
+import Meets from "./pages/Meets";
+import AddMeet from "./pages/MeetAdd";
+import MeetDetail from "./pages/MeetDetail";
+import Header from "./components/Header";
+import MeetsAll from "./pages/MeetsAll";
+import "./App.css";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Signup from "./pages/SignUp";
+import NotFound from "./pages/NotFound";
+import PostCU from "./pages/PostCU";
+import PostsDetail from "./pages/PostsDetail";
+import Posts from "./pages/Posts";
 
 function App() {
   return (

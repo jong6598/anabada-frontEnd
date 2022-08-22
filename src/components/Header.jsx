@@ -96,6 +96,8 @@ const Header = memo(() => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  console.log(getCookies);
+
   return (
     <>
       <HeaderWrapper style={{ marginTop: `${gapY.current}px` }}>
@@ -261,5 +263,4 @@ const MainNav = styled.div`
 
 const Layout = styled.div`
   padding: 5.5rem 1rem;
-  height: 200vh;
 `;
