@@ -9,7 +9,6 @@ import { HiOutlinePhotograph } from "react-icons/hi";
 import { storage } from "../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-import ToastEditor from "../components/ToastEditor";
 import { Editor } from '@toast-ui/react-editor';
 import '@toast-ui/editor/dist/toastui-editor.css';
 

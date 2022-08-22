@@ -12,7 +12,6 @@ import PostCU from './pages/PostCU';
 import PostsDetail from './pages/PostsDetail';
 import Posts from './pages/Posts';
 
-import Pdview from "./pages/PdView";
 
 function App() {
   return (
@@ -29,7 +28,6 @@ function App() {
             {/* <Route path="/posts/:postId" element={<PostsDetail/>} /> */}
             <Route path="/posts/upload" element={<PostCU />} />
             <Route path="/posts/:postId/edit" element={<PostCU />} />
-            <Route path="/view" element={<Pdview/>} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
