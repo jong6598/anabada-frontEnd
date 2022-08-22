@@ -1,50 +1,28 @@
-import axios from "axios";
-import { Cookies } from "react-cookie";
+import axios from 'axios';
+import { Cookies } from 'react-cookie';
 
 const api = axios.create({
   baseURL: `http://43.200.6.110/api`,
   headers: {
-    "content-type": "application/json;charset=UTF-8",
-    accept: "application/json,",
-  },
-});
-
-api.interceptors.request.use(function (config) {
-  const accessToken = localStorage.getItem("accessToken"); // localStorage에 TOKEN 저장
-  config.headers.common["Authorization"] = `${accessToken}`; // Header에 토큰을 넣어서 보내준다.
-  return config;
+    'content-type': 'application/json;charset=UTF-8',
+    accept: 'application/json,'
+  }
 });
 
 // 로그인/회원가입용 axios(토큰 필요 X)
 const userAxios = axios.create({
   baseURL: `http://43.200.6.110/api/users`,
   headers: {
-    "content-type": "application/json;charset=UTF-8",
-    accept: "application/json,",
-  },
+    'content-type': 'application/json;charset=UTF-8',
+    accept: 'application/json,'
+  }
 });
-// 로그인/회원가입 요청 객체
-export const userAuth = {
-  login(loginData) {
-    return userAxios.post("/login", loginData);
-  },
-  signup(signupData) {
-    return userAxios.post("/signup", signupData);
-  },
-  emailValidation(email) {
-    return userAxios.post(`/validation`, {
-      email,
-    });
-  },
-  useAccess(token) {
-    // 유저정보 받아오기
-    return userAxios.get(`/info`, {
-      headers: {
-        Authorization: token,
-      },
-    });
-  },
-};
+
+api.interceptors.request.use(function (config) {
+  const accessToken = localStorage.getItem('accessToken'); // localStorage에 TOKEN 저장
+  config.headers.common['Authorization'] = `${accessToken}`; // Header에 토큰을 넣어서 보내준다.
+  return config;
+});
 
 // 모든 요청에서 엑세스 토큰이 만료되었을 경우 예외처리
 userAxios.interceptors.response.use(
@@ -54,35 +32,35 @@ userAxios.interceptors.response.use(
   async (err) => {
     const {
       config,
-      response: { status },
+      response: { status }
     } = err;
     // 토큰 만료됐을 때 status
     if (status === 500) {
       // userAxios를 쓰는 경우인데 리프레시 토큰 조차 없는 경우
       const cookies = new Cookies();
-      if (cookies.get("refreshToken")) {
+      if (cookies.get('refreshToken')) {
         return err;
       }
 
       // 이전 작업에 대한 config저장
       const originalReq = config;
       // Bearer제거 작업
-      const getRefresh = cookies.get("refreshToken").split(" ")[1];
-      const getAccess = localStorage.getItem("accessToken").split(" ")[1];
+      const getRefresh = cookies.get('refreshToken').split(' ')[1];
+      const getAccess = localStorage.getItem('accessToken').split(' ')[1];
 
       // refresh요청
       const response = await userAxios.post(
-        "/reissue",
+        '/reissue',
         {},
         {
           headers: {
             AccessToken: getAccess,
-            RefreshToken: getRefresh,
-          },
+            RefreshToken: getRefresh
+          }
         }
       );
       const newAccess = response.headers.authorization;
-      localStorage.setItem("accessToken", newAccess);
+      localStorage.setItem('accessToken', newAccess);
       // 새로 발급 받은 토큰으로 config 변경
       originalReq.headers.Authorization = newAccess;
       return axios(originalReq);
@@ -91,49 +69,81 @@ userAxios.interceptors.response.use(
   }
 );
 
+export const meetsApi = {
+  getMeetsPosts: (pageParam, area) =>
+    api.get(`/meets?area=${area}&page=${pageParam}&size=5`),
+  postMeetPost: (post) => api.post('/meets', post),
+  editMeetPost: (post, thunderPostId) =>
+    api.put(`/meets/${thunderPostId}`, post),
+  deleteMeetPost: (thunderPostId) => api.delete(`/meets/${thunderPostId}`),
+  getMeetDetail: (thunderPostId) => api.get(`/meets/${thunderPostId}`),
+  postRequest: (thunderPostId) => api.post(`/meetlikes/${thunderPostId}`),
+  deleteRequest: (thunderPostId) => api.delete(`/meetlikes/${thunderPostId}`),
+  postLike: (thunderPostId) =>
+    api.post(`/requests/${thunderPostId}
+  `),
+  deleteLike: (thunderPostId) => api.delete(`/requests/${thunderPostId}`)
+};
+
+// 로그인/회원가입 요청 객체
+export const userAuth = {
+  login(loginData) {
+    return userAxios.post('/login', loginData);
+  },
+  signup(signupData) {
+    return userAxios.post('/signup', signupData);
+  },
+  emailValidation(email) {
+    return userAxios.post(`/validation`, {
+      email
+    });
+  },
+  useAccess(token) {
+    // 유저정보 받아오기
+    return userAxios.get(`/info`, {
+      headers: {
+        Authorization: token
+      }
+    });
+  }
+};
 
 export const postApi = {
   deleteImages(images) {
-    return api.delete('/images', images)
+    return api.delete('/images', images);
   },
-  getPosts(pageParam, areaSelected){
-    return api.get (`/posts?area=${areaSelected}&page=${pageParam}&size=6`)
+  getPosts(pageParam, areaSelected) {
+    return api.get(`/posts?area=${areaSelected}&page=${pageParam}&size=6`);
   },
-  getPost(postId){
-    return api.get(`/posts/${postId}`)
-  },
-
-  
-  newPost(newPost){
-    return api.post(`/posts`,newPost)
-  },
-  updatePost(postId, newPost){
-    return api.put(`/posts/${postId}`,newPost)
+  getPost(postId) {
+    return api.get(`/posts/${postId}`);
   },
 
-  deletePost(postId){
-    return api.delete(`/posts/${postId}`)
+  newPost(newPost) {
+    return api.post(`/posts`, newPost);
+  },
+  updatePost(postId, newPost) {
+    return api.put(`/posts/${postId}`, newPost);
   },
 
-
-  postLike(postId){
-    return api.post(`/likes/${postId}`)
-  },
-  deleteLike(postId){
-    return api.delete(`/likes/${postId}`)
+  deletePost(postId) {
+    return api.delete(`/posts/${postId}`);
   },
 
+  postLike(postId) {
+    return api.post(`/likes/${postId}`);
+  },
+  deleteLike(postId) {
+    return api.delete(`/likes/${postId}`);
+  },
 
-  newComments(postId, content){
-    return api.post(`/comments/${postId}`,content)
+  newComments(postId, content) {
+    return api.post(`/comments/${postId}`, content);
   },
-  updateComments(commentsId, updateContent){
-    return api.put(`/comments/${commentsId}`,updateContent)
+  updateComments(commentsId, updateContent) {
+    return api.put(`/comments/${commentsId}`, updateContent);
   },
-  deleteComments(commentId){
-    return api.delete(`/comments/${commentId}`)
-  },
+  deleteComments(commentId) {
+    return api.delete(`/comments/${commentId}`);
+  }
 };
-
-
-

@@ -1,7 +1,8 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { userAuth } from "../shared/api";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-export const userThunk = createAsyncThunk("users/info", async (data) => {
+import { userAuth } from '../shared/api';
+
+export const userThunk = createAsyncThunk('users/info', async (data) => {
   const response = await userAuth.useAccess(data);
   return response.data;
 });
@@ -9,7 +10,7 @@ export const userThunk = createAsyncThunk("users/info", async (data) => {
 const initialState = {};
 
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -17,7 +18,7 @@ const authSlice = createSlice({
       state = action.payload;
       return state;
     });
-  },
+  }
 });
 
 export const authActions = authSlice.actions;
