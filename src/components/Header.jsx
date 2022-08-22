@@ -258,6 +258,24 @@ const MainNav = styled.div`
       border-bottom: ${(props) =>
         props.pathname === "/" ? "0.15rem solid #2756FF" : "inherit"};
     }
+    .header__nav__posting {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      color: ${(props) =>
+        props.pathname === "/posts" ? "#2756FF" : "inherit"};
+      border-bottom: ${(props) =>
+        props.pathname === "/posts" ? "0.15rem solid #2756FF" : "inherit"};
+    }
+    .header__nav__open {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      color: ${(props) =>
+        props.pathname === "/meets" ? "#2756FF" : "inherit"};
+      border-bottom: ${(props) =>
+        props.pathname === "/meets" ? "0.15rem solid #2756FF" : "inherit"};
+    }
   }
 `;
 

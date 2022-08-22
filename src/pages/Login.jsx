@@ -69,37 +69,37 @@ const Login = () => {
 
   return (
     <>
-      <FormWrapper className="login__wrapper">
+      <FormWrapper>
         <section className="login__wrapper-welcome__message">
           <h1>환영합니다!</h1>
           <br />
           <h1>로그인을 해주세요.</h1>
         </section>
-        <FormDiv watchErr={watchErr}>
+        <FormDiv>
           <form
             className="login__wrapper-form"
             onSubmit={handleSubmit(onSumbit, onError)}
           >
-            <input
-              className="login__wrapper-input login__wrapper-input__login"
+            <FormInput
+              errors={errors}
               type="text"
               placeholder="이메일"
               {...register("email", {
                 required: true,
                 pattern: /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/,
               })}
-            ></input>
-            <input
-              className="login__wrapper-input login__wrapper-input__password"
+            ></FormInput>
+            <FormInput
+              errors={errors}
               type="password"
               placeholder="비밀번호"
               {...register("password", {
                 required: true,
               })}
-            ></input>
-            <button className="login__wrapper-btn">로그인</button>
+            ></FormInput>
+            <FormBtn>로그인</FormBtn>
           </form>
-          <section className="login__wrapper-extra">
+          <FormSection>
             <div className="login__wrapper-extra__btn__find">
               <span className="login__wrapper-extra__btn">아이디 찾기</span>
               <div className="header__user__divider">
@@ -112,7 +112,7 @@ const Login = () => {
                 <span className="login__wrapper-extra__btn">회원가입</span>
               </Link>
             </div>
-          </section>
+          </FormSection>
         </FormDiv>
       </FormWrapper>
     </>
@@ -143,79 +143,82 @@ export const FormDiv = styled.div`
   .login__wrapper-form {
     display: flex;
     flex-direction: column;
-    .login__wrapper-input {
-      margin-bottom: 0.5rem;
-      background: #ffffff;
-      border: 1px solid #d1d1d6;
-      align-items: flex-start;
-      padding: 12px 10px;
-      border-radius: 0.3125rem;
-    }
-    .login__wrapper-input:hover {
-      background-color: #f2f2f4;
-    }
-    .login__wrapper-input:focus-visible {
-      outline: 0.01rem solid #007aff;
-    }
-    .login__wrapper-input__login {
-      outline: ${(props) =>
-        props.watchErr?.email ? "0.01rem solid #FF3B30" : "inherit"};
-    }
-    .login__wrapper-input__password {
-      outline: ${(props) =>
-        props.watchErr?.password ? "0.01rem solid #FF3B30" : "inherit"};
-    }
-    .login__wrapper-btn {
-      width: 100%;
-      height: 2.5625rem;
-      margin: 0 auto;
-      border-radius: 0.3125rem;
-      margin-top: 1.6875rem;
-      margin-bottom: 1rem;
-      border: none;
-      background: #007aff;
-      color: white;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .login__wrapper-btn:focus {
-      background-color: #026add;
-    }
   }
-  .login__wrapper-extra {
-    width: 100%;
-    margin: 0 auto;
+`;
+
+export const FormInput = styled.input`
+  margin-bottom: 0.5rem;
+  background: #ffffff;
+  border: 1px solid #d1d1d6;
+  align-items: flex-start;
+  padding: 12px 10px;
+  border-radius: 0.3125rem;
+  height: 2.5625rem;
+  &:hover {
+    background-color: #f2f2f4;
+  }
+  &:focus-visible {
+    outline: 0.01rem solid #007aff;
+  }
+  &:first-child {
+    outline: ${(props) =>
+      props.errors?.email ? "0.01rem solid #FF3B30" : "inherit"};
+  }
+  &:nth-child(2) {
+    outline: ${(props) =>
+      props.errors?.password ? "0.01rem solid #FF3B30" : "inherit"};
+  }
+`;
+
+export const FormBtn = styled.button`
+  width: 100%;
+  height: 2.5625rem;
+  margin: 0 auto;
+  border-radius: 0.3125rem;
+  margin-top: 1.6875rem;
+  margin-bottom: 1rem;
+  border: none;
+  background: #007aff;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  &:active {
+    background-color: #026add;
+  }
+`;
+
+const FormSection = styled.section`
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+
+  font-weight: 400;
+  font-size: 13px;
+  color: #8e8e93;
+  .login__wrapper-extra__btn {
+    cursor: pointer;
+  }
+  .login__wrapper-extra__btn:hover {
+    color: black;
+  }
+  .login__wrapper-extra__btn__find {
     display: flex;
-    justify-content: space-between;
+  }
 
-    font-weight: 400;
-    font-size: 13px;
-    color: #8e8e93;
-    .login__wrapper-extra__btn {
-      cursor: pointer;
-    }
-    .login__wrapper-extra__btn:hover {
-      color: black;
-    }
-
-    .login__wrapper-extra__btn__find {
-      display: flex;
-    }
-
-    // 헤더에 있는 거 가져옴
-    .header__user__divider {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 1rem;
-      height: 1rem;
-      div {
-        height: 0.5rem;
-        width: 1px;
-        border-radius: 1rem;
-        background-color: #c7c7cc;
-      }
+  // 헤더에 있는 거 가져옴
+  .header__user__divider {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 1rem;
+    height: 1rem;
+    div {
+      height: 0.5rem;
+      width: 1px;
+      border-radius: 1rem;
+      background-color: #c7c7cc;
     }
   }
 `;
