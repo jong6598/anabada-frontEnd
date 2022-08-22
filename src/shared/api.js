@@ -2,7 +2,7 @@ import axios from "axios";
 import { Cookies } from "react-cookie";
 
 const api = axios.create({
-  baseURL: `${process.env.REACT_APP_API_SERVER}/api`,
+  baseURL: `http://43.200.6.110/api`,
   headers: {
     "content-type": "application/json;charset=UTF-8",
     accept: "application/json,",
@@ -10,14 +10,14 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(function (config) {
-  const accessToken = localStorage.getItem("token"); // localStorage에 TOKEN 저장
+  const accessToken = localStorage.getItem("accessToken"); // localStorage에 TOKEN 저장
   config.headers.common["Authorization"] = `${accessToken}`; // Header에 토큰을 넣어서 보내준다.
   return config;
 });
 
 // 로그인/회원가입용 axios(토큰 필요 X)
 const userAxios = axios.create({
-  baseURL: `http://${process.env.REACT_APP_API_SERVER}/api/users`,
+  baseURL: `http://43.200.6.110/api/users`,
   headers: {
     "content-type": "application/json;charset=UTF-8",
     accept: "application/json,",
@@ -102,13 +102,35 @@ export const postApi = {
   getPost(postId){
     return api.get(`/posts/${postId}`)
   },
+
+  
+  newPost(newPost){
+    return api.post(`/posts`,newPost)
+  },
+  updatePost(postId, newPost){
+    return api.put(`/posts/${postId}`,newPost)
+  },
+
+  deletePost(postId){
+    return api.delete(`/posts/${postId}`)
+  },
+
+
   postLike(postId){
     return api.post(`/likes/${postId}`)
   },
   deleteLike(postId){
     return api.delete(`/likes/${postId}`)
   },
-  deletecomments(commentId){
+
+
+  newComments(postId, content){
+    return api.post(`/comments/${postId}`,content)
+  },
+  updateComments(commentsId, updateContent){
+    return api.put(`/comments/${commentsId}`,updateContent)
+  },
+  deleteComments(commentId){
     return api.delete(`/comments/${commentId}`)
   },
 };

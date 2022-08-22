@@ -3,9 +3,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { postApi } from "../shared/api";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { Viewer } from '@toast-ui/react-editor';
 import '@toast-ui/editor/dist/toastui-editor-viewer.css';
+import Comment from "../components/Comment";
+
+
 
 const PostsDetail = () => {
   const navigate = useNavigate();
@@ -13,13 +16,10 @@ const PostsDetail = () => {
   const nickname = localStorage.getItem("nickname");
   const [liked, setLiked] = useState();
   const queryClient = useQueryClient();
-  const accesstoken = localStorage.getItem("accesstoken")
 
-  const [comment, setComment] = useState("");
+  const [content, setContent] = useState("");
   const [isValid, setIsValid] = useState(false);
-  const [editing, setEditing] = useState(false);
-  const [input, setInput] = useState('')
-
+ 
 
 
   const getPost = async () => {
@@ -35,8 +35,36 @@ const PostsDetail = () => {
 
   const postInfo = useQuery(["post"], getPost, {
     refetchOnWindowFocus: false,
-  }).data.post;
+  }).data;
 
+
+  //게시글 삭제
+  const postDelete = async (postId) => {
+    const result = window.confirm("게시글을 삭제하시겠습니까?");
+    if (result) {
+      try {
+        await postApi.deletePost(postId);
+        return navigate("/home");
+      } catch (err) {
+        console.log(err);
+        alert(err);
+      }
+    } else {
+      alert("err");
+      return navigate("/login");
+    }
+  };
+
+
+  const postDeleteMutation = useMutation(postDelete, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["post"])
+      navigate("/post")
+    },
+    onError: (err) => {
+      console.log(err.respose);
+    }
+  })
 
 
   //북마크 기능구현
@@ -69,46 +97,18 @@ const PostsDetail = () => {
 
 
 
+
   //댓글 작성
-  const submitComments = () => {
-    console.log("댓글 등록완료")
-  }
-
-
-
-  //댓글 수정 
-  //editing 상태에 따라 댓글 수정 input button 랜더링
-  const startEditing = (comments) => {
-    setEditing((prev) => !prev)
-    //commentsId 이거를 체크해서 그 댓글만 인풋박스가 나오게 해야되넹....
-    //수정하기를 누르면 인풋박스로 바뀌고 내용 박아주기.
-    setInput(postInfo.comments.content)
-  }
-
-  //댓글 수정완료 button 클릭시 작동할 axios 함수
-  const editcomments = () => {
-    console.log("댓글 수정완료")
-  }
-
-
-  //댓글 삭제
-  const deletecomments = async () => {
-    const result = window.confirm("댓글을 삭제하시겠습니까?");
-    if (result) {
-      if (accesstoken !== null) {
-        try {
-          await postApi.deletecomments(`${params.commentId}`);
-          //FIXME:return navigate("/") 아니면 리프레시하는 동작
-        } catch (err) {
-          console.log(err);
-          alert(err);
-        }
-      } else {
-        alert("err");
-        return navigate("/login");
-      }
+  const submitComments = async () => {
+    try {
+      await postApi.newComments(`${params.postId}`, content)
+      console.log("댓글 등록완료")
+    } catch (err) {
+      console.log(err)
+      alert(err);
     }
-  };
+  }
+
 
 
 
@@ -121,6 +121,15 @@ const PostsDetail = () => {
         <PostName>작성자:{postInfo.nickname}</PostName>
         <span>{postInfo.createdAt}</span>
       </UserBox>
+
+      {postInfo.nickname === nickname ? (
+        <Btnbox>
+          <Ubtn onClick={() => navigate(`/posts/${params.postId}/edit`)}>
+            수정
+          </Ubtn>
+          <Dbtn onClick={postDeleteMutation.mutate(postInfo.postId)}>삭제</Dbtn>
+        </Btnbox>
+      ) : null}
 
       <ThumbnailDiv>
         <img src={postInfo.thumbnailUrl} alt="" />
@@ -167,7 +176,7 @@ const PostsDetail = () => {
         </CountBox>
         <WriteComment>
           <input type="text" placeholder="댓글 내용을 입력하세요."
-            onChange={e => { setComment(e.currentTarget.value) }}
+            onChange={e => { setContent(e.currentTarget.value) }}
             onKeyUp={e => {
               e.currentTarget.value.length > 0
                 ? setIsValid(true)
@@ -175,16 +184,11 @@ const PostsDetail = () => {
             }} />
           <button type="submit" disabled={isValid === false} onClick={submitComments}>게시</button>
         </WriteComment>
-        <ViewComments>
-          <span>{postInfo.comments.profileImg}</span>
-          <Comments>
-            <CommentsNick>{postInfo.comments.nickname}</CommentsNick>
-            <CommentsCreateAt>{postInfo.comments.createdAt}</CommentsCreateAt>
-            <CommentsContent>{postInfo.comments.content}</CommentsContent>
-            {postInfo.comments.nickname === nickname ? (<><button onClick={startEditing}>수정</button><button onClick={() => deletecomments}>삭제</button></>)
-              : null}
-          </Comments>
-        </ViewComments>
+        {postInfo.comments &&
+          postInfo.comments.map((data)=>(
+            <Comment data={data}/>
+          ))}
+        
       </CommentBox>
     </>
   )
@@ -192,6 +196,8 @@ const PostsDetail = () => {
 
 
 export default PostsDetail;
+
+
 
 
 const Title = styled.span`
@@ -222,6 +228,25 @@ const PostName = styled.span`
   padding-right: 0.3125rem;
   border-right: 0.0625rem solid #C7C7CC; 
 `
+
+const Btnbox = styled.div`
+  display: flex;
+`;
+
+const Ubtn = styled.button`
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    border-radius: 0.5rem;
+
+`;
+const Dbtn = styled.button`
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    border-radius: 0.5rem;
+`;
+
 
 const ThumbnailDiv = styled.div`
     display: flex;
@@ -348,48 +373,10 @@ const WriteComment = styled.div`
     }
 
 `
-const ViewComments = styled.div`
-    display: flex;
-    height: 36.75rem;
-    width:100%;
-    top: 120.4375rem;
-    border-radius: none;
-    padding: 0rem, 1rem, 0rem, 1rem;
-    span{
-        height: 2rem;
-        width: 9vw;
-        left: 0px;
-        top: 0px;
-        border-radius: 1rem;
-        margin-right: 0.5rem;
-    }
-`
 
 
-const Comments = styled.div`
-    display: flex;
-    flex-direction: column;
-    max-width: 100%;
-`
 
-const CommentsNick = styled.span`
-    font-size: 0.75rem;
-    line-height: 1.1875rem;
-    color: black;
-`
 
-const CommentsCreateAt = styled.span`
-    font-size: 0.75rem;
-    line-height: 1.1875rem;
-    font-weight: 300;
-    color: #AEAEB2;
-    `
-
-const CommentsContent = styled.span`
-    font-size: 0.875rem;
-    line-height: 1.1875rem;
-    color: black;
-`
 
 const HeartBtn = styled.button`
     display: flex;
