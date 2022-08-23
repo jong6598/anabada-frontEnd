@@ -50,7 +50,7 @@ const PostInfoBox = styled.div`
 
 const ImageBox = styled.div`
    img{
-
+    
    }
 `
 
