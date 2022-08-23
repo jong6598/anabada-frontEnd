@@ -17,10 +17,12 @@ const Header = memo(() => {
   const gapY = useRef(0);
 
   // alert 메시지 커스텀
+  /**
+   * 사용할 컴포넌트에서 const { alertHandler } = useOutletContext(); 로 호출해서 alertHandler("여기에 메시지를 넣으면 된다.")
+   */
   const refErrorTimer = useRef(null);
   const refErrorMessage = useRef("");
   const [stateErrTimer, setStateErrTiemr] = useState(false);
-
   const alertHandler = useCallback(
     (errorMessage = "") => {
       console.log("errorMessage ::: ", errorMessage);
@@ -96,8 +98,6 @@ const Header = memo(() => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  console.log(getCookies);
-
   return (
     <>
       <HeaderWrapper style={{ marginTop: `${gapY.current}px` }}>
@@ -167,7 +167,7 @@ const Header = memo(() => {
             <Link className="header__nav__posting" to="/posts">
               포스팅
             </Link>
-            <Link className="header__nav__open" to="/">
+            <Link className="header__nav__open" to="/meets">
               오픈 모임
             </Link>
           </nav>
@@ -257,6 +257,24 @@ const MainNav = styled.div`
       color: ${(props) => (props.pathname === "/" ? "#2756FF" : "inherit")};
       border-bottom: ${(props) =>
         props.pathname === "/" ? "0.15rem solid #2756FF" : "inherit"};
+    }
+    .header__nav__posting {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      color: ${(props) =>
+        props.pathname === "/posts" ? "#2756FF" : "inherit"};
+      border-bottom: ${(props) =>
+        props.pathname === "/posts" ? "0.15rem solid #2756FF" : "inherit"};
+    }
+    .header__nav__open {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      color: ${(props) =>
+        props.pathname === "/meets" ? "#2756FF" : "inherit"};
+      border-bottom: ${(props) =>
+        props.pathname === "/meets" ? "0.15rem solid #2756FF" : "inherit"};
     }
   }
 `;

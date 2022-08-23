@@ -16,6 +16,7 @@ import NotFound from "./pages/NotFound";
 import PostCU from "./pages/PostCU";
 import PostsDetail from "./pages/PostsDetail";
 import Posts from "./pages/Posts";
+import Welcome from "./pages/Welcome";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
             <Route index element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/signup/welcome" element={<Welcome />} />
             <Route path="/posts" element={<Posts />} />
             <Route path="/posts/:postId" element={<PostsDetail/>} />
             <Route path="/posts/upload" element={<PostCU />} />
