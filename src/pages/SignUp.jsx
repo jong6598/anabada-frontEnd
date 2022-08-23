@@ -22,7 +22,7 @@ const SignUp = () => {
   const onSumbit = (signupData) => {
     try {
       const getResponse = (async () => await userAuth.signup(signupData))();
-      return navigate("/login");
+      return navigate("/signup/welcome");
     } catch (err) {
       console.log(err);
       return alertHandler("서버와 통신에 실패했습니다. 다시 시도해주세요.");
