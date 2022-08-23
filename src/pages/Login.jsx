@@ -70,11 +70,11 @@ const Login = () => {
   return (
     <>
       <FormWrapper>
-        <section className="login__wrapper-welcome__message">
+        <LoginWelcome>
           <h1>환영합니다!</h1>
           <br />
           <h1>로그인을 해주세요.</h1>
-        </section>
+        </LoginWelcome>
         <FormDiv>
           <form
             className="login__wrapper-form"
@@ -123,17 +123,18 @@ export default Login;
 
 export const FormWrapper = styled.div`
   margin-top: 8.375rem;
-  .login__wrapper-welcome__message {
-    text-align: center;
-    h1 {
-      margin: 0 auto;
-      font-weight: 400;
-      font-size: 1.5625rem;
-      color: #000000;
-    }
-    h1:last-child {
-      margin-top: -0.9rem;
-    }
+`;
+
+export const LoginWelcome = styled.section`
+  text-align: center;
+  h1 {
+    margin: 0 auto;
+    font-weight: 400;
+    font-size: 1.5625rem;
+    color: #000000;
+  }
+  h1:last-child {
+    margin-top: -0.9rem;
   }
 `;
 
