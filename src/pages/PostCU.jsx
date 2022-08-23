@@ -4,6 +4,8 @@ import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { postApi } from "../shared/api";
+import { useSelector } from "react-redux";
+
 
 import { HiOutlinePhotograph } from "react-icons/hi";
 import { storage } from "../firebase";
@@ -17,8 +19,7 @@ const PostCU = () => {
   const navigate = useNavigate();
   const params = useParams();
   const postId = useParams().postId;
-  //FIXME: nickname useSelector 로 리덕스에서 꺼내쓰기
-  const nickname = localStorage.getItem("nickname");
+  const nickname = useSelector((state)=>state.auth.nickname)
   const [imgSrc, setImgSrc] = useState("");
   const [check, setCheck] = useState({ airgun: "", shower: "", shop: "", park: "" });
   
@@ -43,13 +44,14 @@ const PostCU = () => {
     if (postId) {
       const setPost = async () => {
         const postInfo = await postApi.getPost(`${postId}`);
+        console.log(postInfo)
 
         if (postInfo.data.nickname !== nickname) {
           alert("수정 권한이 없습니다.");
           navigate(-1);
           return;
         }
-
+      
 
         //FIXME: 구조분해 할당 
         // const {title,area,createAt,content} = data;
@@ -125,7 +127,7 @@ const PostCU = () => {
       address: formData.address,
       content: content,
       amenity: amenity,
-      thumbnailUrl,
+      thumbnailUrl: thumbnailUrl,
     };
     console.log("새 게시글", newPost);
 
@@ -135,7 +137,7 @@ const PostCU = () => {
         const post = postApi.newPost(newPost);
         console.log(post);
         alert("게시글이 등록되었습니다!");
-        navigate("/home");
+        navigate("/posts");
       } catch (err) {
         console.log(err);
         alert(err);
@@ -163,14 +165,6 @@ const PostCU = () => {
 
   return (
     <>
-      <BackDiv>
-        <button onClick={()=>(navigate('-1'))}>
-          <svg width="9" height="14" viewBox="0 0 9 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path fill-rule="evenodd" clip-rule="evenodd" d="M8.03033 13.5303C7.73744 13.8232 7.26256 13.8232 6.96967 13.5303L0.96967 7.53033C0.676777 7.23744 0.676777 6.76256 0.96967 6.46967L6.96967 0.46967C7.26256 0.176777 7.73744 0.176777 8.03033 0.46967C8.32322 0.762563 8.32322 1.23744 8.03033 1.53033L2.56066 7L8.03033 12.4697C8.32322 12.7626 8.32322 13.2374 8.03033 13.5303Z" fill="#1C1B1F" />
-          </svg>
-        </button>
-        <p>포스트</p>
-      </BackDiv>
       <PostForm onSubmit={handleSubmit(onSubmitPost)}>
         <Element>
           <label>제목</label>
@@ -279,28 +273,6 @@ const PostCU = () => {
 export default PostCU;
 
 
-const BackDiv = styled.div`
-  display: flex;
-  height: 3.25rem;
-  width: 100vw;
-  font-size: 1.25rem;
-  line-height: 1.491875rem;
-  button{
-    background-color: transparent;
-    padding-top: 1rem;
-    border: 0;
-    padding-left: 0rem;
-  }
-  button:disabled{
-      height: 2.5625rem;
-      width: 100%;
-      border-radius: 0.3125rem;
-      border: none;
-      padding: 0.75rem, 0.625rem, 0.75rem, 0.625rem;
-      background-color: #E5E5EA;
-      color: #FFFFFF;
-    }
-`
 
 const PostForm = styled.form`
   display: flex;
@@ -313,6 +285,16 @@ const PostForm = styled.form`
       cursor: pointer;
       padding: 0.75rem, 0.625rem, 0.75rem, 0.625rem;
       background-color: #007AFF;
+      color: #FFFFFF;
+    }
+
+    button:disabled{
+      height: 2.5625rem;
+      width: 100%;
+      border-radius: 0.3125rem;
+      border: none;
+      padding: 0.75rem, 0.625rem, 0.75rem, 0.625rem;
+      background-color: #E5E5EA;
       color: #FFFFFF;
     }
 `

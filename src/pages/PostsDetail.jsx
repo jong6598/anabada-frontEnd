@@ -13,13 +13,13 @@ import Comment from "../components/Comment";
 const PostsDetail = () => {
   const navigate = useNavigate();
   const params = useParams();
-  const nickname = localStorage.getItem("nickname");
+  const nickname = useSelector((state) => state.auth.nickname)
   const [liked, setLiked] = useState();
   const queryClient = useQueryClient();
 
   const [content, setContent] = useState("");
   const [isValid, setIsValid] = useState(false);
- 
+
 
 
   const getPost = async () => {
@@ -38,13 +38,19 @@ const PostsDetail = () => {
   }).data;
 
 
+  useEffect(() => {
+    queryClient.invalidateQueries("post");
+  }, [liked]);
+
+
+  console.log(postInfo)
+
   //게시글 삭제
   const postDelete = async (postId) => {
     const result = window.confirm("게시글을 삭제하시겠습니까?");
     if (result) {
       try {
         await postApi.deletePost(postId);
-        return navigate("/home");
       } catch (err) {
         console.log(err);
         alert(err);
@@ -59,7 +65,7 @@ const PostsDetail = () => {
   const postDeleteMutation = useMutation(postDelete, {
     onSuccess: () => {
       queryClient.invalidateQueries(["post"])
-      navigate("/post")
+      navigate("/posts")
     },
     onError: (err) => {
       console.log(err.respose);
@@ -69,18 +75,18 @@ const PostsDetail = () => {
 
   //북마크 기능구현
   const toggleLike = async () => {
-    if (postInfo.isLiked === false) {
+    if (postInfo.liked === false) {
       try {
         await postApi.postLike(`${params.postId}`);
-        console.log(postInfo.isLiked);
+        console.log(postInfo.liked);
         setLiked(true);
       } catch (err) {
         console.log(err);
       }
-    } else if (postInfo.isLiked === true) {
+    } else if (postInfo.liked === true) {
       try {
         await postApi.deleteLike(`${params.postId}`);
-        console.log(postInfo.isLiked);
+        console.log(postInfo.liked);
         setLiked(false);
       } catch (err) {
         console.log(err);
@@ -93,7 +99,7 @@ const PostsDetail = () => {
 
   useEffect(() => {
     queryClient.invalidateQueries("post");
-  }, [postInfo, liked]);
+  }, []);
 
 
 
@@ -108,6 +114,7 @@ const PostsDetail = () => {
       alert(err);
     }
   }
+
 
 
 
@@ -127,7 +134,7 @@ const PostsDetail = () => {
           <Ubtn onClick={() => navigate(`/posts/${params.postId}/edit`)}>
             수정
           </Ubtn>
-          <Dbtn onClick={postDeleteMutation.mutate(postInfo.postId)}>삭제</Dbtn>
+          <Dbtn onClick={()=>postDeleteMutation.mutate(postInfo.postId)}>삭제</Dbtn>
         </Btnbox>
       ) : null}
 
@@ -137,8 +144,9 @@ const PostsDetail = () => {
 
       <AddressBox>
         <svg width="12" height="16" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M0.5 6.3335C0.5 3.29592 2.96242 0.833496 6 0.833496C9.03758 0.833496 11.5 3.29592 11.5 6.3335C11.5 8.67736 10.1577 10.8746 8.88838 12.4401C8.24605 13.2323 7.60492 13.884 7.12456 14.3376C6.88407 14.5648 6.68307 14.743 6.54128 14.8652C6.47036 14.9264 6.41419 14.9735 6.37523 15.0058C6.35575 15.0219 6.34057 15.0344 6.32998 15.043L6.3176 15.053L6.31407 15.0559L6.31298 15.0568L6.31261 15.0571C6.31247 15.0572 6.31235 15.0573 6 14.6668C5.68765 15.0573 5.68753 15.0572 5.68739 15.0571L5.68702 15.0568L5.68593 15.0559L5.6824 15.053L5.67002 15.043C5.65943 15.0344 5.64425 15.0219 5.62477 15.0058C5.58581 14.9735 5.52964 14.9264 5.45872 14.8652C5.31693 14.743 5.11593 14.5648 4.87544 14.3376C4.39508 13.884 3.75396 13.2323 3.11162 12.4401C1.84231 10.8746 0.5 8.67736 0.5 6.3335ZM6 14.6668L5.68765 15.0573C5.87026 15.2034 6.12974 15.2034 6.31235 15.0573L6 14.6668ZM6 14.0105C6.11918 13.9056 6.26783 13.7713 6.43794 13.6106C6.89508 13.1789 7.50396 12.5597 8.11162 11.8103C9.34231 10.2924 10.5 8.32297 10.5 6.3335C10.5 3.84821 8.48529 1.8335 6 1.8335C3.51471 1.8335 1.5 3.84821 1.5 6.3335C1.5 8.32297 2.65769 10.2924 3.88838 11.8103C4.49604 12.5597 5.10492 13.1789 5.56206 13.6106C5.73217 13.7713 5.88081 13.9056 6 14.0105Z" fill="#007AFF" />
+          <path fill-rule="evenodd" clip-rule="evenodd" d="M0.5 6.3335C0.5 3.29592 2.96242 0.833496 6 0.833496C9.03758 0.833496 11.5 3.29592 11.5 6.3335C11.5 8.67736 10.1577 10.8746 8.88838 12.4401C8.24605 13.2323 7.60492 13.884 7.12456 14.3376C6.88407 14.5648 6.68307 14.743 6.54128 14.8652C6.47036 14.9263 6.41419 14.9735 6.37523 15.0058C6.35575 15.0219 6.34057 15.0344 6.32998 15.043L6.3176 15.053L6.31407 15.0559L6.31298 15.0568L6.31261 15.0571C6.31247 15.0572 6.31235 15.0573 6 14.6668C5.68765 15.0573 5.68753 15.0572 5.68739 15.0571L5.68702 15.0568L5.68593 15.0559L5.6824 15.053L5.67002 15.043C5.65943 15.0344 5.64425 15.0219 5.62477 15.0058C5.58581 14.9735 5.52964 14.9263 5.45872 14.8652C5.31693 14.743 5.11593 14.5648 4.87544 14.3376C4.39508 13.884 3.75396 13.2323 3.11162 12.4401C1.84231 10.8746 0.5 8.67736 0.5 6.3335ZM6 14.6668L5.68765 15.0573C5.87026 15.2034 6.12974 15.2034 6.31235 15.0573L6 14.6668ZM6 14.0105C6.11918 13.9056 6.26783 13.7713 6.43794 13.6106C6.89508 13.1789 7.50396 12.5597 8.11162 11.8103C9.34231 10.2924 10.5 8.32297 10.5 6.3335C10.5 3.84821 8.48529 1.8335 6 1.8335C3.51471 1.8335 1.5 3.84821 1.5 6.3335C1.5 8.32297 2.65769 10.2924 3.88838 11.8103C4.49604 12.5597 5.10492 13.1789 5.56206 13.6106C5.73217 13.7713 5.88081 13.9056 6 14.0105Z" fill="#007AFF" />
         </svg>
+
         <span>{postInfo.address}</span>
       </AddressBox>
 
@@ -152,7 +160,7 @@ const PostsDetail = () => {
       </PostBox>
 
       <HeartBtn onClick={toggleLike}>
-        {postInfo.isLiked === true ? (
+        {postInfo.liked === true ? (
           <>
             <HeartSvg width="17" height="15" viewBox="0 0 17 15" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd" clip-rule="evenodd" d="M0.4375 5.125C0.4375 2.53618 2.53617 0.4375 5.125 0.4375C6.45079 0.4375 7.64792 0.988282 8.5 1.87203C9.35208 0.988282 10.5492 0.4375 11.875 0.4375C14.4638 0.4375 16.5625 2.53618 16.5625 5.125C16.5625 7.40357 15.2251 9.50746 13.6341 11.1142C12.0376 12.7265 10.0893 13.9369 8.67739 14.4061C8.56223 14.4444 8.43777 14.4444 8.32261 14.4061C6.91068 13.9369 4.96241 12.7265 3.36593 11.1142C1.77492 9.50746 0.4375 7.40357 0.4375 5.125ZM5.125 1.5625C3.15749 1.5625 1.5625 3.1575 1.5625 5.125C1.5625 6.97144 2.66258 8.80503 4.16532 10.3226C5.59122 11.7626 7.29324 12.8295 8.5 13.2762C9.70676 12.8295 11.4088 11.7626 12.8347 10.3226C14.3374 8.80503 15.4375 6.97144 15.4375 5.125C15.4375 3.1575 13.8425 1.5625 11.875 1.5625C10.6706 1.5625 9.60558 2.15966 8.95991 3.07654C8.85455 3.22616 8.68299 3.31518 8.5 3.31518C8.31701 3.31518 8.14545 3.22616 8.04009 3.07654C7.39442 2.15966 6.32941 1.5625 5.125 1.5625Z" fill="#FF2D55" />
@@ -171,10 +179,11 @@ const PostsDetail = () => {
 
       <CommentBox>
         <CountBox>
-          <span>댓글 {postInfo.comments.length}개</span>
+          <span>댓글 {postInfo.comments.content.length}개</span>
           <span>좋아요 {postInfo.likeCount}개</span>
         </CountBox>
         <WriteComment>
+          <img src={postInfo.profileImg} alt="" />
           <input type="text" placeholder="댓글 내용을 입력하세요."
             onChange={e => { setContent(e.currentTarget.value) }}
             onKeyUp={e => {
@@ -184,11 +193,10 @@ const PostsDetail = () => {
             }} />
           <button type="submit" disabled={isValid === false} onClick={submitComments}>게시</button>
         </WriteComment>
-        {postInfo.comments &&
-          postInfo.comments.map((data)=>(
-            <Comment data={data}/>
+        {postInfo.comments.content.length > 0 &&
+          postInfo.comments.content.map((data) => (
+            <Comment data={data} />
           ))}
-        
       </CommentBox>
     </>
   )
@@ -290,7 +298,7 @@ const Amenity = styled.div`
     flex-direction: column;
     label{
         height: 2.375rem;
-        width: 29.375rem;
+        width: 100%;
         top: 44.4375rem;
         border-radius: none;
         padding: 0.625rem, 1rem, 0.625rem, 1rem;     

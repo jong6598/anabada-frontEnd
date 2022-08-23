@@ -6,17 +6,17 @@ import { AiOutlineHeart } from "react-icons/ai";
 
 
 const Post = ({ data }) => {
-    const regex = /(http(s))?:\/\/([a-z0-9-]+\.)+[a-z0-9]{2,4}.*$/; //url
-        
+    
     return (
         <>
             <PostInfoBox>
                 <ImageBox>
-                {data.thumbnailUrl && regex.test(data.thumbnailUrl) ? (
+                {/* {data.thumbnailUrl? (
                     <img src={data.thumbnailUrl} alt="thumbnailimage" />
                 ) : (
                     <img src="/logo.png" alt="thumbnailimage" />
-                )}
+                )} */}
+                    <img src={data.thumbnailUrl} alt="thumbnailimage" />
                 </ImageBox>
                 <PostInfo>
                     <h2>{data.title}</h2>
@@ -49,8 +49,9 @@ const PostInfoBox = styled.div`
 `
 
 const ImageBox = styled.div`
-    height: 100%;
+   img{
 
+   }
 `
 
 const PostInfo = styled.div`

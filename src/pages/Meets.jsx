@@ -331,7 +331,7 @@ const MeetsPostsContainer = styled.div`
 `;
 
 const AddButton = styled.button`
-  position: absolute;
+  position: fixed;
   width: 56px;
   height: 56px;
   right: 1rem;

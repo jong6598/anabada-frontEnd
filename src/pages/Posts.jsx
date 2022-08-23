@@ -19,8 +19,9 @@ const Posts = () => {
   const getPosts = async (pageParam = 0) => {
     try {
       const res = await postApi.getPosts(pageParam, areaSelected)
-      const data= res.posts.content;
-      const last = res.pageble.last;
+      console.log(res)
+      const data= res.data.content;
+      const last = res.data.last;
       return { data, nextPage: pageParam + 1, last };
     } catch (err) {
       console.log(err);
@@ -73,16 +74,17 @@ const Posts = () => {
           <option value="JEJU">제주</option>
         </select>
       </Areabar>
+      <PostDiv>
       {data &&
           data.pages.map((page, idx) => {
             return (
               <React.Fragment key={idx}>
                 {page.data.map((post) => (
                   <PostContainer
-                    key={post.id}
+                    key={post.postId}
                     style={{ cursor: "pointer" }}
                     onClick={() => {
-                      navigate(`/posts/${post.id}`);
+                      navigate(`/posts/${post.postId}`);
                     }}
                   >
                     <Post data={post} />
@@ -92,9 +94,10 @@ const Posts = () => {
             );
           })}
         {isFetchingNextPage ? <p>스피너</p> : <div ref={ref} />}
+        </PostDiv>
       </MainDiv>
       <PostBtn>
-          <Link to="/post">
+          <Link to="/posts/upload">
           <svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g filter="url(#filter0_d_225_2066)">
                             <rect x="5" y="5" width="56" height="56" rx="28" fill="#007AFF" />
@@ -128,6 +131,13 @@ export default Posts;
 
 const MainDiv = styled.div`
   width: 100%;
+`
+
+const PostDiv = styled.div`
+  display: grid;
+  grid-template-columns: 50% 50%;
+  column-gap: 1rem;
+  grid-auto-rows: auto;
 `
 
 const Areabar = styled.div`

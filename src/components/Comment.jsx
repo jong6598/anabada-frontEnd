@@ -12,10 +12,10 @@ const Comment=({data}) => {
     const navigate = useNavigate();
     const [editing, setEditing] = useState(false);
     const queryClient = useQueryClient();
-    const nickname = useSelector((state)=>state.userAuth.nickname)
+    const nickname = useSelector((state)=>state.auth.nickname)
 
 
-
+  console.log(data)
   
   //댓글 수정 
   //editing 상태에 따라 댓글 수정 input button 랜더링

@@ -28,8 +28,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/posts" element={<Posts />} />
-            <Route path="/postsdetail" element={<PostsDetail />} />
-            {/* <Route path="/posts/:postId" element={<PostsDetail/>} /> */}
+            <Route path="/posts/:postId" element={<PostsDetail/>} />
             <Route path="/posts/upload" element={<PostCU />} />
             <Route path="/posts/:postId/edit" element={<PostCU />} />
             <Route path="*" element={<NotFound />} />

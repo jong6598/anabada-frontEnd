@@ -164,7 +164,7 @@ const Header = memo(() => {
             <Link className="header__nav__home" to="/">
               메인홈
             </Link>
-            <Link className="header__nav__posting" to="/">
+            <Link className="header__nav__posting" to="/posts">
               포스팅
             </Link>
             <Link className="header__nav__open" to="/">
