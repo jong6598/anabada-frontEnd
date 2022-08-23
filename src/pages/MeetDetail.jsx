@@ -4,27 +4,16 @@ import styled from 'styled-components';
 import { meetsApi } from '../shared/api';
 import { useQuery } from '@tanstack/react-query';
 import { MdOutlineMoreVert } from 'react-icons/md';
-import { meet as data } from '../data';
-
-const getMeetPost = async () => {
-  try {
-    const res = await meetsApi.getMeetDetail();
-    if (res.status === 200) {
-      console.log('Okay success get meet detail');
-      return res.data;
-    }
-  } catch (error) {
-    if (error.response.status === 404) {
-      console.log('404 Error');
-    }
-  }
-};
+// import { meet as data } from '../shared/data';
+import { queryKeys } from '../react-query/constants';
+import { useDetailMeet } from '../react-query/hooks/useDetailMeet';
+import { useSelector } from 'react-redux';
 
 const MeetDetail = () => {
-  // FIXME: const { data } = useQuery(['meet'], getMeetPost);
+  const { meet, isLiked, setIsLiked, isJoined, setIsJoined } = useDetailMeet();
 
-  const [isLiked, setIsLiked] = useState();
-  const [isJoined, setIsJoined] = useState();
+  // TODO: 닉네임 비교
+  const nickname = useSelector((state) => state.auth.nickname);
 
   const onLike = (thunderPostId) => {
     if (isLiked) {
@@ -45,19 +34,19 @@ const MeetDetail = () => {
   };
 
   useEffect(() => {
-    if (data) {
-      setIsLiked(data.liked);
-      setIsJoined(data.joined);
+    if (meet) {
+      setIsLiked(meet.liked);
+      setIsJoined(meet.joined);
     }
   }, []);
 
   return (
     <Container>
       <div className="postTopInfo">
-        <p className="title">{data.title}</p>
+        <p className="title">{meet.title}</p>
         <div className="postUserInfo">
-          <img src={data.profileUrl} alt="profileUrl" />
-          <p className="nickname">{data.nickname}</p>
+          <img src={meet.profileUrl} alt="profileUrl" />
+          <p className="nickname">{meet.nickname}</p>
           <svg
             width="2"
             height="10"
@@ -67,7 +56,7 @@ const MeetDetail = () => {
           >
             <path d="M1 1V9" stroke="#C7C7CC" stroke-linecap="round" />
           </svg>
-          <p>{data.createdAt}</p>
+          <p>{meet.createdAt}</p>
           <svg
             width="2"
             height="10"
@@ -77,12 +66,12 @@ const MeetDetail = () => {
           >
             <path d="M1 1V9" stroke="#C7C7CC" stroke-linecap="round" />
           </svg>
-          <p>조회 {data.viewCount}</p>
+          <p>조회 {meet.viewCount}</p>
           <MdOutlineMoreVert />
         </div>
       </div>
       <ImageWrapper>
-        <img src={data.thumbnailUrl} alt="thumbnail" />
+        <img src={meet.thumbnailUrl} alt="thumbnail" />
       </ImageWrapper>
       <AddressContainer>
         <svg
@@ -99,9 +88,8 @@ const MeetDetail = () => {
             fill="#007AFF"
           />
         </svg>
-
         <p>
-          {data.area} {data.address}
+          {meet.area} {meet.address}
         </p>
       </AddressContainer>
       <PostDetailInfo>
@@ -118,7 +106,7 @@ const MeetDetail = () => {
               <rect y="0.5" width="16" height="16" rx="8" fill="#E5E5EA" />
             </svg>
             <p>
-              인원 {data.currentMember} / {data.goalMember}
+              인원 {meet.currentMember} / {meet.goalMember}
             </p>
           </div>
           <div>
@@ -132,7 +120,7 @@ const MeetDetail = () => {
               <rect y="0.5" width="16" height="16" rx="8" fill="#E5E5EA" />
             </svg>
             <p>모임 날짜</p>
-            <p>{data.meetDate}</p>
+            <p>{meet.meetDate}</p>
           </div>
           <div>
             <svg
@@ -146,12 +134,12 @@ const MeetDetail = () => {
             </svg>
             <p>모임 기간</p>
             <p>
-              {data.startDate} ~ {data.endDate}
+              {meet.startDate} ~ {meet.endDate}
             </p>
           </div>
         </div>
       </PostDetailInfo>
-      <PostDescription>{data.content}</PostDescription>
+      <PostDescription>{meet.content}</PostDescription>
       <ButtonContainer>
         <button className="likeBtn" onClick={onLike} isLiked={isLiked}>
           <svg

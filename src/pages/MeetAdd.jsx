@@ -1,43 +1,22 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { meetsApi } from '../shared/api';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { toBeChecked } from '@testing-library/jest-dom/dist/matchers';
+import { useAddMeet } from '../react-query/hooks/useAddMeet';
 
 const MeetAdd = () => {
   const navigate = useNavigate();
 
+  const [area, setArea] = useState('ALL');
+
+  const onAdd = useAddMeet();
+
   const titleRef = useRef();
-  const placeRef = useRef();
+  const areaRef = useRef();
+  const adressRef = useRef();
   const goalMemberRef = useRef();
   const imageRef = useRef();
   const startDateRef = useRef();
   const endDateRef = useRef();
-  const regionRef = useRef();
-
-  const queryClient = useQueryClient();
-
-  const addMeetPost = async (post) => {
-    try {
-      const res = await meetsApi.postMeetPost(post);
-      console.log('Okay Add Meet Post');
-      alert('모임 등록이 완료 되었습니다.');
-      navigate(-1);
-    } catch (error) {
-      console.log(error.response);
-      alert('모임 등록이 실패 했습니다.');
-    }
-  };
-
-  const { mutate: onAdd } = useMutation(addMeetPost, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(['meet']);
-    },
-    onError: (error) => {
-      console.log(error.response);
-    }
-  });
 
   return (
     <Container>
@@ -47,7 +26,7 @@ const MeetAdd = () => {
       </div>
       <div>
         <p>장소</p>
-        <input type="text" ref={placeRef} />
+        <input type="text" ref={adressRef} />
       </div>
       <div>
         <p>모집 인원</p>
@@ -65,7 +44,13 @@ const MeetAdd = () => {
       </div>
       <div>
         <p>지역</p>
-        <select name="region" id="region" ref={regionRef}>
+        <select
+          name="area"
+          id="area"
+          ref={areaRef}
+          onChange={setArea}
+          value={area}
+        >
           <option value="GYEONGGI">서울, 경기, 인천</option>
           <option value="GANGWON">강원</option>
           <option value="GYEONBUK">대구, 경북</option>
@@ -87,13 +72,12 @@ const MeetAdd = () => {
           onClick={() => {
             const post = {
               title: titleRef.current.value,
-              place: placeRef.current.value,
+              area: areaRef.current.value,
+              address: adressRef.current.value,
               goalMember: goalMemberRef.current.value,
               thumbnailUrl: imageRef.current.value,
-              thumbnailFileName: ' ',
               startDate: startDateRef.current.value,
               endDate: endDateRef.current.value
-              // FIXME: Add regionRef
             };
             const result = window.confirm('등록하시겠습니까?');
             if (result) {
@@ -111,11 +95,22 @@ const MeetAdd = () => {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  padding: 1.125rem 0;
 
   div {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    margin-bottom: 18px;
+    p {
+      font-style: normal;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 139.34%;
+      /* identical to box height, or 20px */
+      letter-spacing: -0.01em;
+      color: #000000;
+      margin-bottom: 0.5rem;
+    }
   }
   button {
     background-color: black;
