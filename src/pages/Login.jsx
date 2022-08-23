@@ -36,7 +36,7 @@ const Login = () => {
       const getAccessToken = localStorage.getItem("accessToken");
       dispatch(userThunk(getAccessToken));
       navigate("/");
-      return alert("로그인에 성공했습니다!");
+      return alertHandler("로그인에 성공했습니다!");
     } catch (err) {
       setWatchErr(null);
       console.log(err);
@@ -167,6 +167,14 @@ export const FormInput = styled.input`
   &:nth-child(2) {
     outline: ${(props) =>
       props.errors?.password ? "0.01rem solid #FF3B30" : "inherit"};
+  }
+  &:nth-child(3) {
+    outline: ${(props) =>
+      props.errors?.confirmPassword ? "0.01rem solid #FF3B30" : "inherit"};
+  }
+  &:nth-child(4) {
+    outline: ${(props) =>
+      props.errors?.nickname ? "0.01rem solid #FF3B30" : "inherit"};
   }
 `;
 
