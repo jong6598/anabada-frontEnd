@@ -1,12 +1,20 @@
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { userAuth } from "../shared/api";
-import { FormWrapper, FormDiv } from "./Login";
-import PageTitle from "../components/PageTitle";
+import { FormWrapper, FormDiv, FormInput, FormBtn } from "./Login";
 
 const SignUp = () => {
+  //password type 변경용 state
+  const [passwordType, setPasswordType] = useState({
+    type: "password",
+    visible: true,
+  });
+  const [passwordConfirmType, setPasswordConfirmType] = useState({
+    type: "password",
+    visible: true,
+  });
   const {
     register,
     handleSubmit,
@@ -16,42 +24,52 @@ const SignUp = () => {
     mode: "onBlur",
   });
   const [emailState, setEmailState] = useState(false);
+  const { alertHandler } = useOutletContext();
 
   const navigate = useNavigate();
 
   const onSumbit = (signupData) => {
     try {
       const getResponse = (async () => await userAuth.signup(signupData))();
-      return navigate("/login");
+      return navigate("/signup/welcome");
     } catch (err) {
       console.log(err);
-      return alert("서버와 통신에 실패했습니다. 다시 시도해주세요.");
+      return alertHandler("서버와 통신에 실패했습니다. 다시 시도해주세요.");
     }
   };
   const onError = (err) => {
     console.log(err);
     if (!emailState) {
-      return alert("중복확인을 해주세요.");
+      return alertHandler("중복확인을 해주세요.");
     }
-    return alert("유효하지 않은 형식입니다. 다시 확인해주세요.");
+    return alertHandler("유효하지 않은 형식입니다. 다시 확인해주세요.");
+  };
+  // password
+  const handlePasswordType = (e) => {
+    setPasswordType((prev) => {
+      if (prev.visible) {
+        return { type: "text", visible: false };
+      }
+      return { type: "password", visible: true };
+    });
+  };
+  // password confirm
+  const handlePasswordConfirmType = (e) => {
+    setPasswordConfirmType((prev) => {
+      if (prev.visible) {
+        return { type: "text", visible: false };
+      }
+      return { type: "password", visible: true };
+    });
   };
 
   useEffect(() => {
     setEmailState(!dirtyFields.email);
   }, [dirtyFields.email]);
 
-  // 중복체크
-  // test
-  /*   const handleEmailValidation = async () => {
-    dirtyFields.email = false;
-    setEmailState(true);
-    console.log("dirtyFields ::: ", dirtyFields);
-    console.log("emailState ::: ", emailState);
-  }; */
-
   const handleEmailValidation = async () => {
     if (errors.email.type === "pattern") {
-      return alert("올바른 이메일 형식이 아닙니다.");
+      return alertHandler("올바른 이메일 형식이 아닙니다.");
     }
     try {
       const email = getValues("email");
@@ -59,26 +77,26 @@ const SignUp = () => {
       if (response.status === 200) {
         dirtyFields.email = false;
         setEmailState(true);
-        return alert("계속 진행해주세요!");
+        return alertHandler("계속 진행해주세요!");
       }
     } catch (err) {
       console.log(err);
       // 중복체크 실패했을 때
       if (err.response.status === 409) {
-        return alert("존재하는 이메일 입니다!");
+        return alertHandler("존재하는 이메일 입니다!");
       }
       // 이메일 형식이 아닐 때
       if (err.response.data === "올바른 형식의 이메일 주소여야 합니다") {
-        return alert(err.response.data);
+        return alertHandler(err.response.data);
       }
-      return alert("서버와 통신에 실패했습니다. 다시 시도해주세요.");
+      return alertHandler("서버와 통신에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
   // 로그인한 상태에서 접근 시 차단
   useEffect(() => {
     if (localStorage.getItem("accessToken")) {
-      alert("비정상적인 접근입니다.");
+      alertHandler("비정상적인 접근입니다.");
       return navigate("/");
     }
   }, []);
@@ -91,26 +109,20 @@ const SignUp = () => {
             className="login__wrapper-form"
             onSubmit={handleSubmit(onSumbit, onError)}
           >
-            <div className="login__input__title">
+            <InputName>
               <span>이메일</span>
-            </div>
+            </InputName>
             {errors.email?.type === "required" && (
-              <span className="login__wrapper__error">
-                {errors.email.message}
-              </span>
+              <ErrorSpan>{errors.email.message}</ErrorSpan>
             )}
             {errors.email?.type === "pattern" && (
-              <span className="login__wrapper__error">
-                형식에 맞게 메일 주소를 입력하세요.
-              </span>
+              <ErrorSpan>형식에 맞게 메일 주소를 입력하세요.</ErrorSpan>
             )}
             {errors.email?.type === "validate" && !emailState && (
-              <span className="login__wrapper__error">
-                {errors.email.message}
-              </span>
+              <ErrorSpan>{errors.email.message}</ErrorSpan>
             )}
-            <input
-              className="login__wrapper-input login__wrapper-input__login"
+            <FormInput
+              errors={errors}
               type="email"
               placeholder="이메일"
               {...register("email", {
@@ -118,7 +130,7 @@ const SignUp = () => {
                 pattern: /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/,
                 validate: () => emailState || "중복확인을 해주세요!",
               })}
-            ></input>
+            ></FormInput>
             <div
               className="login__wrapper-verification"
               emailState={emailState}
@@ -126,96 +138,105 @@ const SignUp = () => {
             >
               중복체크
             </div>
-            <div className="login__input__title">
+            <InputName>
               <span>비밀번호</span>
-            </div>
+            </InputName>
             {errors.password ? (
               (errors.password?.type === "required" && (
-                <span className="login__wrapper__error">
-                  {errors.password.message}
-                </span>
+                <ErrorSpan>{errors.password.message}</ErrorSpan>
               )) ||
               (errors.password?.type === "pattern" && (
-                <span className="login__wrapper__error">
+                <ErrorSpan>
                   영어 대문자﹒소문자﹒숫자﹒특수문자!@#$%^&*+를 포함해주세요.
-                </span>
+                </ErrorSpan>
               )) ||
               (errors.password?.type === "minLength" && (
-                <span className="login__wrapper__error">
-                  {errors.password.message}
-                </span>
+                <ErrorSpan>{errors.password.message}</ErrorSpan>
               )) ||
               (errors.password?.type === "maxLength" && (
-                <span className="login__wrapper__error">
-                  {errors.password.message}
-                </span>
+                <ErrorSpan>{errors.password.message}</ErrorSpan>
               ))
             ) : (
-              <span className="login__wrapper__error login__wrapper__password">
+              <span className="login__wrapper__password">
                 영어 대문자﹒소문자﹒숫자﹒특수문자!@#$%^&*+를 포함해주세요.
               </span>
             )}
-            <input
-              className="login__wrapper-input login__wrapper-input__login"
-              type="password"
-              placeholder="비밀번호"
-              {...register("password", {
-                required: "비밀번호를 입력해주세요!",
-                pattern:
-                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*+])[A-Za-z0-9!@#$%^&*+]{8,20}$/,
-                minLength: {
-                  value: 8,
-                  message: "8자 이상 입력해주세요.",
-                },
-                maxLength: {
-                  value: 20,
-                  message: "최대 20자 입니다.",
-                },
-              })}
-            ></input>
+            <PasswordBox>
+              <FormInput
+                errors={errors}
+                type={passwordType.type}
+                placeholder="비밀번호"
+                {...register("password", {
+                  required: "비밀번호를 입력해주세요!",
+                  pattern:
+                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*+])[A-Za-z0-9!@#$%^&*+]{8,20}$/,
+                  minLength: {
+                    value: 8,
+                    message: "8자 이상 입력해주세요.",
+                  },
+                  maxLength: {
+                    value: 20,
+                    message: "최대 20자 입니다.",
+                  },
+                })}
+              ></FormInput>
+              <PasswordEye onClick={handlePasswordType}>
+                {passwordType.visible ? (
+                  <span className="material-symbols-outlined">visibility</span>
+                ) : (
+                  <span className="material-symbols-outlined">
+                    visibility_off
+                  </span>
+                )}
+              </PasswordEye>
+            </PasswordBox>
 
-            <div className="login__input__title">
+            <InputName>
               <span>비밀번호 확인</span>
-            </div>
+            </InputName>
             {errors.confirmPassword?.type === "required" && (
-              <span className="login__wrapper__error">
-                {errors.confirmPassword.message}
-              </span>
+              <ErrorSpan>{errors.confirmPassword.message}</ErrorSpan>
             )}
             {errors.confirmPassword?.type === "validate" && (
-              <span className="login__wrapper__error">
-                {errors.confirmPassword.message}
-              </span>
+              <ErrorSpan>{errors.confirmPassword.message}</ErrorSpan>
             )}
-            <input
-              className="login__wrapper-input login__wrapper-input__login"
-              type="password"
-              placeholder="비밀번호 확인"
-              {...register("confirmPassword", {
-                required: "비밀번호 확인을 입력해주세요!",
-                validate: {
-                  checked: (value) =>
-                    getValues("password") === value || "비밀번호가 다릅니다.",
-                },
-              })}
-            ></input>
-
-            <div className="login__input__title">
+            <PasswordBox>
+              <FormInput
+                errors={errors}
+                type={passwordConfirmType.type}
+                placeholder="비밀번호 확인"
+                {...register("confirmPassword", {
+                  required: "비밀번호 확인을 입력해주세요!",
+                  validate: {
+                    checked: (value) =>
+                      getValues("password") === value || "비밀번호가 다릅니다.",
+                  },
+                })}
+              ></FormInput>
+              <PasswordEye onClick={handlePasswordConfirmType}>
+                {passwordConfirmType.visible ? (
+                  <span className="material-symbols-outlined">visibility</span>
+                ) : (
+                  <span className="material-symbols-outlined">
+                    visibility_off
+                  </span>
+                )}
+              </PasswordEye>
+            </PasswordBox>
+            <InputName>
               <span>닉네임</span>
-            </div>
+            </InputName>
             {errors.nickname?.type === "required" && (
-              <span className="login__wrapper__error">
-                {errors.nickname.message}
-              </span>
+              <ErrorSpan>{errors.nickname.message}</ErrorSpan>
             )}
-            <input
-              className="login__wrapper-input login__wrapper-input__login"
+            <FormInput
+              errors={errors}
               type="text"
               placeholder="닉네임"
               {...register("nickname", { required: "닉네임을 입력해주세요!" })}
-            ></input>
+            ></FormInput>
 
-            <button className="login__wrapper-btn">회원가입</button>
+            <FormBtn>회원가입</FormBtn>
           </form>
         </SignupForm>
       </SignupWrapper>
@@ -231,11 +252,6 @@ const SignupWrapper = styled(FormWrapper)`
 
 const SignupForm = styled(FormDiv)`
   padding: 0;
-  .login__input__title {
-    font-weight: 500;
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-  }
   .login__wrapper-verification {
     margin-top: 0.5rem;
     margin-bottom: 1.125rem;
@@ -256,14 +272,35 @@ const SignupForm = styled(FormDiv)`
     font-size: 1rem;
     font-weight: 600;
   }
-  .login__wrapper__error {
-    font-weight: 400;
-    font-size: 0.875rem;
-    color: #ff3b30;
-    margin-bottom: 0.5rem;
-  }
   .login__wrapper__password {
     color: black;
     font-size: 0.8rem;
   }
+`;
+
+const InputName = styled.div`
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+`;
+
+const ErrorSpan = styled.span`
+  font-weight: 400;
+  font-size: 0.875rem;
+  color: #ff3b30;
+  margin-bottom: 0.5rem;
+`;
+
+const PasswordBox = styled.div`
+  position: relative;
+  input {
+    width: 100%;
+  }
+`;
+
+const PasswordEye = styled.div`
+  position: absolute;
+  right: 1rem;
+  top: 20%;
+  cursor: pointer;
 `;
