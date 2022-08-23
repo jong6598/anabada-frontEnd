@@ -8,7 +8,6 @@ import { useDispatch } from "react-redux";
 import styled from "styled-components";
 
 const Login = () => {
-  const [watchErr, setWatchErr] = useState(null);
   const { alertHandler } = useOutletContext();
 
   const {
@@ -25,7 +24,6 @@ const Login = () => {
   const cookies = new Cookies();
 
   const onSumbit = async (loginData) => {
-    setWatchErr(null);
     try {
       const getResponse = await userAuth.login(loginData);
       // 토큰 저장
@@ -38,15 +36,11 @@ const Login = () => {
       navigate("/");
       return alertHandler("로그인에 성공했습니다!");
     } catch (err) {
-      setWatchErr(null);
       console.log(err);
       return alertHandler("이메일과 비밀번호를 확인해주세요!");
     }
   };
   const onError = (err) => {
-    // 잘못된 input에 빨간 테두리 띄우기
-    const redLine = { ...err };
-    setWatchErr(redLine);
     // errors type에 따라 alertHandler 핸들
     if (errors.email?.type === "required") {
       alertHandler("이메일을 입력해주세요.");

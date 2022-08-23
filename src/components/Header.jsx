@@ -25,8 +25,6 @@ const Header = memo(() => {
   const [stateErrTimer, setStateErrTiemr] = useState(false);
   const alertHandler = useCallback(
     (errorMessage = "") => {
-      console.log("errorMessage ::: ", errorMessage);
-      console.log("stateErrTimer ::: ", stateErrTimer);
       if (refErrorTimer.current === null) {
         setStateErrTiemr(true);
         refErrorMessage.current = errorMessage;
