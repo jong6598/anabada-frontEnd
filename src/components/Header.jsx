@@ -17,10 +17,12 @@ const Header = memo(() => {
   const gapY = useRef(0);
 
   // alert 메시지 커스텀
+  /**
+   * 사용할 컴포넌트에서 const { alertHandler } = useOutletContext(); 로 호출해서 alertHandler("여기에 메시지를 넣으면 된다.")
+   */
   const refErrorTimer = useRef(null);
   const refErrorMessage = useRef("");
   const [stateErrTimer, setStateErrTiemr] = useState(false);
-
   const alertHandler = useCallback(
     (errorMessage = "") => {
       console.log("errorMessage ::: ", errorMessage);
@@ -95,8 +97,6 @@ const Header = memo(() => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  console.log(getCookies);
 
   return (
     <>

@@ -18,8 +18,8 @@ const AlertMessage = styled.div`
   right: 0;
   bottom: 17rem;
   text-align: center;
+  z-index: 999;
   span {
-    z-index: 999;
     border-radius: 0.25rem;
     padding: 10px;
     background-color: #3a3a3a;
