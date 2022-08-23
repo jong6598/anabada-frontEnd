@@ -6,6 +6,15 @@ import { userAuth } from "../shared/api";
 import { FormWrapper, FormDiv, FormInput, FormBtn } from "./Login";
 
 const SignUp = () => {
+  //password type 변경용 state
+  const [passwordType, setPasswordType] = useState({
+    type: "password",
+    visible: true,
+  });
+  const [passwordConfirmType, setPasswordConfirmType] = useState({
+    type: "password",
+    visible: true,
+  });
   const {
     register,
     handleSubmit,
@@ -34,6 +43,24 @@ const SignUp = () => {
       return alertHandler("중복확인을 해주세요.");
     }
     return alertHandler("유효하지 않은 형식입니다. 다시 확인해주세요.");
+  };
+  // password
+  const handlePasswordType = (e) => {
+    setPasswordType((prev) => {
+      if (prev.visible) {
+        return { type: "text", visible: false };
+      }
+      return { type: "password", visible: true };
+    });
+  };
+  // password confirm
+  const handlePasswordConfirmType = (e) => {
+    setPasswordConfirmType((prev) => {
+      if (prev.visible) {
+        return { type: "text", visible: false };
+      }
+      return { type: "password", visible: true };
+    });
   };
 
   useEffect(() => {
@@ -134,24 +161,35 @@ const SignUp = () => {
                 영어 대문자﹒소문자﹒숫자﹒특수문자!@#$%^&*+를 포함해주세요.
               </span>
             )}
-            <FormInput
-              errors={errors}
-              type="password"
-              placeholder="비밀번호"
-              {...register("password", {
-                required: "비밀번호를 입력해주세요!",
-                pattern:
-                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*+])[A-Za-z0-9!@#$%^&*+]{8,20}$/,
-                minLength: {
-                  value: 8,
-                  message: "8자 이상 입력해주세요.",
-                },
-                maxLength: {
-                  value: 20,
-                  message: "최대 20자 입니다.",
-                },
-              })}
-            ></FormInput>
+            <PasswordBox>
+              <FormInput
+                errors={errors}
+                type={passwordType.type}
+                placeholder="비밀번호"
+                {...register("password", {
+                  required: "비밀번호를 입력해주세요!",
+                  pattern:
+                    /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*+])[A-Za-z0-9!@#$%^&*+]{8,20}$/,
+                  minLength: {
+                    value: 8,
+                    message: "8자 이상 입력해주세요.",
+                  },
+                  maxLength: {
+                    value: 20,
+                    message: "최대 20자 입니다.",
+                  },
+                })}
+              ></FormInput>
+              <PasswordEye onClick={handlePasswordType}>
+                {passwordType.visible ? (
+                  <span className="material-symbols-outlined">visibility</span>
+                ) : (
+                  <span className="material-symbols-outlined">
+                    visibility_off
+                  </span>
+                )}
+              </PasswordEye>
+            </PasswordBox>
 
             <InputName>
               <span>비밀번호 확인</span>
@@ -162,19 +200,29 @@ const SignUp = () => {
             {errors.confirmPassword?.type === "validate" && (
               <ErrorSpan>{errors.confirmPassword.message}</ErrorSpan>
             )}
-            <FormInput
-              errors={errors}
-              type="password"
-              placeholder="비밀번호 확인"
-              {...register("confirmPassword", {
-                required: "비밀번호 확인을 입력해주세요!",
-                validate: {
-                  checked: (value) =>
-                    getValues("password") === value || "비밀번호가 다릅니다.",
-                },
-              })}
-            ></FormInput>
-
+            <PasswordBox>
+              <FormInput
+                errors={errors}
+                type={passwordConfirmType.type}
+                placeholder="비밀번호 확인"
+                {...register("confirmPassword", {
+                  required: "비밀번호 확인을 입력해주세요!",
+                  validate: {
+                    checked: (value) =>
+                      getValues("password") === value || "비밀번호가 다릅니다.",
+                  },
+                })}
+              ></FormInput>
+              <PasswordEye onClick={handlePasswordConfirmType}>
+                {passwordConfirmType.visible ? (
+                  <span className="material-symbols-outlined">visibility</span>
+                ) : (
+                  <span className="material-symbols-outlined">
+                    visibility_off
+                  </span>
+                )}
+              </PasswordEye>
+            </PasswordBox>
             <InputName>
               <span>닉네임</span>
             </InputName>
@@ -241,4 +289,18 @@ const ErrorSpan = styled.span`
   font-size: 0.875rem;
   color: #ff3b30;
   margin-bottom: 0.5rem;
+`;
+
+const PasswordBox = styled.div`
+  position: relative;
+  input {
+    width: 100%;
+  }
+`;
+
+const PasswordEye = styled.div`
+  position: absolute;
+  right: 1rem;
+  top: 20%;
+  cursor: pointer;
 `;
