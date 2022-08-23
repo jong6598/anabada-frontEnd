@@ -7,7 +7,7 @@ const PopularMeets = ({ popularPosts }) => {
       <h2>인기모임🔥</h2>
       <div className="meetsBox">
         {popularPosts.map((meet) => (
-          <div className="meetBox" key={meet.thunderpostId}>
+          <div className="meetBox" key={meet.thunderPostId}>
             <div className="meetImageWrapper">
               <img src={meet.thumbnailUrl} alt="" />
             </div>

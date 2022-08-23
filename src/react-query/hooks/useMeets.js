@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { meetsApi } from '../../shared/api';
 import { queryKeys } from '../constants';
@@ -6,6 +6,7 @@ import { queryKeys } from '../constants';
 // 모임 게시글
 const fetchMeetsList = async (pageParam, areaSelected) => {
   try {
+    console.log(areaSelected, 'areaSelected');
     const res = await meetsApi.getMeetsPosts(pageParam, areaSelected);
     return res.data;
   } catch (error) {

@@ -35,9 +35,9 @@ function App() {
             <Route path="*" element={<NotFound />} />
             <Route path="/meets" element={<Meets />} />
             <Route path="/meetAdd" element={<AddMeet />} />
-            <Route path="/meets/:meetId" element={<MeetDetail />} />
+            <Route path="/meetsAll" element={<MeetsAll />} />
           </Route>
-          <Route path="/meetsAll" element={<MeetsAll />} />
+          <Route path="/meets/:meetId" element={<MeetDetail />} />
         </Routes>
       </ThemeProvider>
     </>

@@ -13,6 +13,7 @@ const MeetDetail = () => {
   const { meet, isLiked, setIsLiked, isJoined, setIsJoined } = useDetailMeet();
 
   // TODO: 닉네임 비교
+  // TODO: 닉네임이 같으면 수정 삭제 버튼 생김!
   const nickname = useSelector((state) => state.auth.nickname);
 
   const onLike = (thunderPostId) => {

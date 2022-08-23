@@ -34,6 +34,20 @@ const GlobalStyle = createGlobalStyle`
   h2,p{
    margin: 0;
   }
+
+  select{
+   border: none;
+   outline: none;
+  }
+
+  input{
+   border: none;
+  }
+  input:focus-visible {
+      outline: 0.01rem solid #007aff;
+     
+    }
+ 
 `;
 
 export default GlobalStyle;

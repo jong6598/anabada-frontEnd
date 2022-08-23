@@ -70,7 +70,7 @@ userAxios.interceptors.response.use(
 );
 
 export const meetsApi = {
-  getPopularPosts: (area) => api.get(`/meets/hot${area}`),
+  getPopularPosts: (area) => api.get(`/meets/hot?area=${area}`),
 
   getMeetsPosts: (pageParam, area) =>
     api.get(`/meets?area=${area}&page=${pageParam}&size=5`),

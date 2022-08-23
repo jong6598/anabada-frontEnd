@@ -1,5 +1,5 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { meetsApi } from '../../shared/api';
 import { queryKeys } from '../constants';
 

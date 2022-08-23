@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import Meet from '../components/Meet';
 import { useInfiniteQuery } from '@tanstack/react-query';
@@ -7,65 +7,128 @@ import { meetsApi } from '../shared/api';
 import { thunderposts } from '../shared/data';
 import Loading from '../layout/Loading';
 import { useAllMeets } from '../react-query/hooks/useAllMeets';
+import { useSearchMeets } from '../react-query/hooks/useSearchMeets';
+import { queryKeys } from '../react-query/constants';
 
 const MeetsAll = () => {
-  const {
-    thunderPosts,
-    areaSelected,
-    setAreaSelected,
-    setKeyword,
-    isFetchingNextPage,
-    fetchNextPage
-  } = useAllMeets();
+  const [search, setSearch] = useState(null);
+  const [areaSelected, setAreaSelected] = useState('ALL');
+
+  const getPosts = async (pageParam = 0) => {
+    if (search) {
+      try {
+        const res = await meetsApi.getSearchPosts(
+          pageParam,
+          areaSelected,
+          search
+        );
+        const data = res.data.content;
+        const last = res.data.last;
+        return { data, nextPage: pageParam + 1, last };
+      } catch (error) {
+        console.log(error.response);
+      }
+    } else {
+      try {
+        const res = await meetsApi.getMeetsPosts(pageParam, areaSelected);
+        const data = res.data.content;
+        const last = res.data.last;
+        return { data, nextPage: pageParam + 1, last };
+      } catch (error) {
+        console.log(error.response);
+      }
+    }
+  };
+
+  const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
+    [queryKeys.allMeets, areaSelected, search],
+    ({ pageParam = 0 }) => getPosts(pageParam),
+    {
+      getNextPageParam: (lastPage) =>
+        !lastPage.last ? lastPage.nextPage : undefined
+    }
+  );
+
+  // FIXME: CUSTOM QUERY ?
+  // const {
+  //   data,
+  //   areaSelected,
+  //   setAreaSelected,
+  //   isFetchingNextPage,
+  //   setIsSearch,
+  //   fetchNextPage
+  // } = useAllMeets();
+
+  // const {
+  //   searchPosts,
+  //   setAreaSelectedSearch,
+  //   setKeyword,
+  //   isFetchingNextPageSearch,
+  //   fetchNextPageSearch
+  // } = useSearchMeets();
 
   const searchRef = useRef();
   const { ref, inView } = useInView();
 
   useEffect(() => {
-    if (inView) fetchNextPage();
+    if (inView) {
+      fetchNextPage();
+    }
   }, [inView]);
 
   const onKeyPress = (e) => {
     if (e.key === 'Enter') {
-      onSearch();
+      onSearch(e);
     }
   };
-  const onSearch = () => {
-    setKeyword(searchRef.current.value);
-    searchRef.current.value = '';
+
+  const onSearch = (e) => {
+    setSearch(e.target.value);
+    // searchRef.current.value = '';
+  };
+
+  const onChangeArea = (e) => {
+    setAreaSelected(e.target.value);
   };
 
   return (
     <MeetAllContainer>
       <CategoryContainer>
-        <select
-          name="area"
-          id="area"
-          onChange={setAreaSelected}
-          value={areaSelected}
-        >
-          <option value="GYEONGGI">서울, 경기, 인천</option>
-          <option value="GANGWON">강원</option>
-          <option value="GYEONBUK">대구, 경북</option>
-          <option value="GYEONGNAM">부산, 울산, 경남 </option>
-          <option value="JEONBUK">전북</option>
-          <option value="JEONNAM">광주, 전남</option>
-          <option value="CHUNGBUK">충북</option>
-          <option value="CHUNGNAM">충남</option>
-          <option value="JEJU">제주</option>
+        <select id="area" onChange={onChangeArea} value={areaSelected}>
+          <option value="서울·경기·인천">서울, 경기, 인천</option>
+          <option value="강원">강원</option>
+          <option value="대구·경북">대구, 경북</option>
+          <option value="부산·울산·경남">부산, 울산, 경남</option>
+          <option value="전북">전북</option>
+          <option value="광주·전남">광주, 전남</option>
+          <option value="충북">충북</option>
+          <option value="충남">충남</option>
+          <option value="제주">제주</option>
         </select>
-        <div>
-          <input
-            type="text"
-            placeholder="검색어를 입력해주세요."
-            ref={searchRef}
-            onKeyPress={onKeyPress}
-          />
-        </div>
+        <input
+          type="text"
+          placeholder="검색어를 입력해주세요"
+          ref={searchRef}
+          onKeyPress={onKeyPress}
+        />
       </CategoryContainer>
-      {thunderPosts.map((meet) => (
-        <Meet key={meet.thunderpostId} meet={meet} />
-      ))}
+      {/* {searchPosts &&
+        searchPosts.pages?.map((page) => {
+          return page.data?.map((meet) => (
+            <Meet key={meet.thunderPostId} meet={meet} />
+          ));
+        })}
+      {data.pages.map((page) => {
+        return page.data.map((meet) => (
+          <Meet key={meet.thunderPostId} meet={meet} />
+        ));
+      })} */}
+      {data.pages.map((page) => {
+        return page.data.map((meet) => (
+          <Meet key={meet.thunderPostId} meet={meet} />
+        ));
+      })}
+      {/* {isFetchingNextPage ? <Loading /> : <div ref={ref}></div>} */}
       {isFetchingNextPage ? <Loading /> : <div ref={ref}></div>}
     </MeetAllContainer>
   );
@@ -77,50 +140,31 @@ const MeetAllContainer = styled.div`
 
 const CategoryContainer = styled.div`
   display: flex;
+  justify-content: space-between;
   flex-direction: row;
   align-items: center;
   padding: 0.875rem 0;
-  gap: 0.875rem;
+  /* gap: 0.875rem; */
   select {
-    padding: 0.625rem;
-    gap: 0.188rem;
+    padding: 0.625rem 0;
+    /* gap: 0.188rem; */
     background: #ffffff;
     border: 1px solid #c7c7cc;
     border-radius: 4px;
     flex: none;
     order: 0;
     flex-grow: 0;
+    outline: none;
   }
-  div {
-    display: flex;
-    flex-direction: row;
-    /* align-items: flex-start; */
-    justify-content: center;
-    padding: 0.625rem 0;
-    gap: 0.625rem;
 
-    background: #f2f2f7;
-    border-radius: 42px;
-
-    flex: none;
-    order: 1;
-    flex-grow: 1;
-  }
   input {
-    font-style: normal;
     font-weight: 400;
-    font-size: 0.875;
+    font-size: 0.875rem;
     line-height: 1.125rem;
     /* identical to box height */
-
-    flex: none;
-    order: 0;
-    flex-grow: 0;
-
-    outline: none;
-    border: none;
-    background-color: transparent;
-    color: #c7c7cc;
+    padding: 0.625rem 1rem;
+    background-color: #f2f2f7;
+    border-radius: 4px;
   }
 `;
 

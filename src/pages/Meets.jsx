@@ -24,21 +24,16 @@ const Meets = () => {
   return (
     <MeetsContainer>
       <CategoryContainer>
-        <select
-          name="area"
-          id="area"
-          onChange={onChangeArea}
-          value={areaSelected}
-        >
-          <option value="GYEONGGI">서울, 경기, 인천</option>
-          <option value="GANGWON">강원</option>
-          <option value="GYEONBUK">대구, 경북</option>
-          <option value="GYEONGNAM">부산, 울산, 경남 </option>
-          <option value="JEONBUK">전북</option>
-          <option value="JEONNAM">광주, 전남</option>
-          <option value="CHUNGBUK">충북</option>
-          <option value="CHUNGNAM">충남</option>
-          <option value="JEJU">제주</option>
+        <select id="area" onChange={onChangeArea} value={areaSelected}>
+          <option value="서울·경기·인천">서울, 경기, 인천</option>
+          <option value="강원">강원</option>
+          <option value="대구·경북">대구, 경북</option>
+          <option value="부산·울산·경남">부산, 울산, 경남</option>
+          <option value="전북">전북</option>
+          <option value="광주·전남">광주, 전남</option>
+          <option value="충북">충북</option>
+          <option value="충남">충남</option>
+          <option value="제주">제주</option>
         </select>
       </CategoryContainer>
       {/* TODO: Slider, 분기, CSS 수정 */}
@@ -108,6 +103,7 @@ const CategoryContainer = styled.div`
     flex: none;
     order: 0;
     flex-grow: 0;
+    outline: none;
   }
   div {
     display: flex;

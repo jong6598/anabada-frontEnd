@@ -21,6 +21,7 @@ export function useAddMeet() {
   const { mutate: onAdd } = useMutation(addMeetPost, {
     onSuccess: () => {
       queryClient.invalidateQueries([queryKeys.meets]);
+      queryClient.invalidateQueries([queryKeys.allMeets]);
       const title = '성공적으로 모임이 등록되었습니다';
       toast({ title, status: 'success' });
       navigate(-1);

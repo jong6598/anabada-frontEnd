@@ -16,7 +16,7 @@ const toast = createStandaloneToast();
 function queryErrorHandler(error) {
   const title = error ? error.message : 'error connecting to server';
 
-  toast.closeAll();
+  // toast.closeAll();
   toast({ title, status: 'error', variant: 'subtle', isClosable: true });
 }
 
