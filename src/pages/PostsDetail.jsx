@@ -16,8 +16,9 @@ const PostsDetail = () => {
   const nickname = useSelector((state) => state.auth.nickname)
   const [liked, setLiked] = useState();
   const queryClient = useQueryClient();
+  const profileImg = useSelector((state) => state.auth.profileImg)
 
-  const [content, setContent] = useState("");
+  const [newComment, setNewComment] = useState("");
   const [isValid, setIsValid] = useState(false);
 
 
@@ -51,21 +52,18 @@ const PostsDetail = () => {
     if (result) {
       try {
         await postApi.deletePost(postId);
+        navigate("/posts")
       } catch (err) {
         console.log(err);
         alert(err);
       }
-    } else {
-      alert("err");
-      return navigate("/login");
-    }
+    } 
   };
 
 
   const postDeleteMutation = useMutation(postDelete, {
     onSuccess: () => {
       queryClient.invalidateQueries(["post"])
-      navigate("/posts")
     },
     onError: (err) => {
       console.log(err.respose);
@@ -102,15 +100,18 @@ const PostsDetail = () => {
   }, []);
 
 
-
-
   //댓글 작성
   const submitComments = async () => {
+    const content= {
+      content: newComment,
+    }
     try {
       await postApi.newComments(`${params.postId}`, content)
+      console.log(content)
       console.log("댓글 등록완료")
     } catch (err) {
       console.log(err)
+      console.log(content)
       alert(err);
     }
   }
@@ -118,15 +119,16 @@ const PostsDetail = () => {
 
 
 
-
   return (
     <>
-      <Title>{postInfo.title}</Title>
+      <TitleDiv>
+        <span>{postInfo.title}</span>
+      </TitleDiv>
 
       <UserBox>
         <img src={postInfo.profileImg} alt="" />
         <PostName>작성자:{postInfo.nickname}</PostName>
-        <span>{postInfo.createdAt}</span>
+        <span>{postInfo.after}</span>
       </UserBox>
 
       {postInfo.nickname === nickname ? (
@@ -183,9 +185,9 @@ const PostsDetail = () => {
           <span>좋아요 {postInfo.likeCount}개</span>
         </CountBox>
         <WriteComment>
-          <img src={postInfo.profileImg} alt="" />
+          <img src={profileImg} alt="" />
           <input type="text" placeholder="댓글 내용을 입력하세요."
-            onChange={e => { setContent(e.currentTarget.value) }}
+            onChange={e => { setNewComment(e.currentTarget.value) }}
             onKeyUp={e => {
               e.currentTarget.value.length > 0
                 ? setIsValid(true)
@@ -208,7 +210,8 @@ export default PostsDetail;
 
 
 
-const Title = styled.span`
+const TitleDiv = styled.div`
+    margin-top: 0.75rem;
     font-size: 1.3rem;
     font-weight: 600;
 `
@@ -259,15 +262,14 @@ const Dbtn = styled.button`
 const ThumbnailDiv = styled.div`
     display: flex;
     align-items: center;
-    height: 32.6875rem;
-    width: 100%;
+    /* width: 100%; */
     background-color: aliceblue;
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
     img{
-        height: 100%;
         width: 100%;
+        object-fit: cover;
     }
 `
 
@@ -276,7 +278,6 @@ const AddressBox = styled.div`
   align-items: center;
   height: 2.875rem;
   width: 100%;
-  /* width: 29.375rem; */
   padding: 0.9375rem, 1rem, 0.9375rem, 1rem;
 
   span{
@@ -306,11 +307,12 @@ const Amenity = styled.div`
 `
 
 const PostBox = styled.div`
-    height: 54.125rem;
-    /* width: 29.375rem; */
+    margin-top: 0.5rem;
     width: 100%;
     top: 55.625rem;
     padding: 1rem, 1rem, 1,5rem, 1rem;
+    font-size: 0.9375rem;
+    font-weight: 400;
 `
 
 
@@ -337,43 +339,45 @@ const CountBox = styled.div`
 `
 
 const WriteComment = styled.div`
-   display: flex;
+    display: flex;
     flex-direction: row;
     align-items: center;
     margin-top: 0.5625rem;
     height: 3.125rem;
     width: 100%;
-    left: 0rem;
-    top: 117.3125rem;
-    border-radius: 0rem;
     padding: 0.5rem, 1rem, 0.5rem, 1rem;
     div{
         display: flex;
         align-items: center;
+        position: relative;
         flex-grow: 1;
         justify-content: space-between;
         background-color: #F2F2F7;
         height: 2.125rem;
-        border: 0rem;
-        border-radius: 1rem;
+        border-radius: 2rem;
         padding: 0.625rem;
         padding-right: 1rem;
     }
     img{
         height: 2.125rem;
-        width: 9vw;
-        left: 0px;
-        top: 0rem;
+        width: 2rem;
         border-radius: 1rem;
         margin-right: 0.5rem;
     }
     input{
       flex: 1;
-      background-color: transparent;
+      background-color: #F2F2F7;
       border: none;
+      border-radius: 1rem;
+      height: 2.125rem;
       outline: none;
+      padding-left: 0.625rem;
+      font-size: 0.75rem; 
+      font-weight: 300;
     }
     button{
+        position: absolute;
+        right: 1.625rem;
         border-radius: 1rem;
         border: none;
         font-size: 0.75rem; 
@@ -381,9 +385,6 @@ const WriteComment = styled.div`
     }
 
 `
-
-
-
 
 
 const HeartBtn = styled.button`
@@ -394,7 +395,6 @@ const HeartBtn = styled.button`
     height: 2rem;
     width: 100%;
     border-radius: 0.25rem;
-    border: 0rem;
     background-color: #EFF7FF;
     padding: 0.0625rem, 0.625rem, 0.0625rem, 0.625rem;
     label{

@@ -140,8 +140,8 @@ export const postApi = {
   newComments(postId, content) {
     return api.post(`/comments/${postId}`, content);
   },
-  updateComments(commentsId, updateContent) {
-    return api.put(`/comments/${commentsId}`, updateContent);
+  updateComments(commentId, updateContent) {
+    return api.put(`/comments/${commentId}`, updateContent);
   },
   deleteComments(commentId) {
     return api.delete(`/comments/${commentId}`);

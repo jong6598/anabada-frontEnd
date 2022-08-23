@@ -17,6 +17,7 @@ import PostCU from "./pages/PostCU";
 import PostsDetail from "./pages/PostsDetail";
 import Posts from "./pages/Posts";
 import Welcome from "./pages/Welcome";
+import Mypage from "./pages/Mypage";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
             <Route path="/meets" element={<Meets />} />
             <Route path="/meetAdd" element={<AddMeet />} />
             <Route path="/meets/:meetId" element={<MeetDetail />} />
+            <Route path="/mypage" element={<Mypage />} />
           </Route>
           <Route path="/meetsAll" element={<MeetsAll />} />
         </Routes>

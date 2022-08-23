@@ -11,13 +11,12 @@ import { HiOutlinePhotograph } from "react-icons/hi";
 import { storage } from "../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-import { Editor } from '@toast-ui/react-editor';
 import '@toast-ui/editor/dist/toastui-editor.css';
+import { Editor } from '@toast-ui/react-editor';
 
 
 const PostCU = () => {
   const navigate = useNavigate();
-  const params = useParams();
   const postId = useParams().postId;
   const nickname = useSelector((state)=>state.auth.nickname)
   const [imgSrc, setImgSrc] = useState("");
@@ -61,7 +60,7 @@ const PostCU = () => {
         setValue("title", data.data.title);
         setValue("area", data.data.area);
         setValue("address", data.data.address);
-        setValue("creatAt", data.data.createAt);
+        setValue("creatAt", data.data.after);
         setValue("content", data.data.content);
         setValue("amenity", data.data.amenity);
         setImgSrc(data.data.thumbnailUrl);
@@ -239,20 +238,21 @@ const PostCU = () => {
         <Toastdiv>
           <Editor
             ref={editorRef}
+            initialValue={content}
             placeholder="내용을 입력해주세요."
             previewStyle="vertical" // 미리보기 스타일 지정
             height="300px" // 에디터 창 높이
             initialEditType="wysiwyg" // 초기 입력모드 설정(디폴트 markdown)
+            onChange={handleChangeInput}
+            useCommandShortcut={false}
+            language="ko-KR"
             toolbarItems={[
               // 툴바 옵션 설정
               ['heading', 'bold', 'italic', 'strike'],
               ['hr', 'quote'],
-              ['ul', 'ol', 'task', 'indent', 'outdent'],
               ['table', 'image', 'link'],
               ['code', 'codeblock']
             ]}
-            onChange={handleChangeInput}
-            useCommandShortcut={true}
             hooks={{
               // addImageBlobHook: onUploadImage
             }}
