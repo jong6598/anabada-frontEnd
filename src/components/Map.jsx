@@ -32,7 +32,7 @@ const Map = () => {
     const container = document.getElementById("myMap");
     // map의 options를 설정
     const options = {
-      center: new kakao.maps.LatLng(36.450701, 127.570667),
+      center: new kakao.maps.LatLng(36.350701, 127.870667),
       level: 13,
     };
     const temp = "24도";

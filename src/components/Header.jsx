@@ -157,8 +157,8 @@ const Header = memo(() => {
             )}
           </div>
         </MainHeader>
-        <MainNav pathname={pathname}>
-          <nav className="header__nav">
+        <MainNav>
+          <NavElement pathname={pathname}>
             <Link className="header__nav__home" to="/">
               메인홈
             </Link>
@@ -168,7 +168,7 @@ const Header = memo(() => {
             <Link className="header__nav__open" to="/meets">
               오픈 모임
             </Link>
-          </nav>
+          </NavElement>
         </MainNav>
       </HeaderWrapper>
       <Layout>
@@ -243,37 +243,36 @@ const MainNav = styled.div`
   padding: 0rem 1.375rem;
   font-size: 0.9375rem;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.6px;
-  .header__nav {
+`;
+
+const NavElement = styled.nav`
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  align-items: center;
+  .header__nav__home {
     display: flex;
-    justify-content: space-between;
-    height: 100%;
     align-items: center;
-    .header__nav__home {
-      display: flex;
-      align-items: center;
-      height: 100%;
-      color: ${(props) => (props.pathname === "/" ? "#2756FF" : "inherit")};
-      border-bottom: ${(props) =>
-        props.pathname === "/" ? "0.15rem solid #2756FF" : "inherit"};
-    }
-    .header__nav__posting {
-      display: flex;
-      align-items: center;
-      height: 100%;
-      color: ${(props) =>
-        props.pathname === "/posts" ? "#2756FF" : "inherit"};
-      border-bottom: ${(props) =>
-        props.pathname === "/posts" ? "0.15rem solid #2756FF" : "inherit"};
-    }
-    .header__nav__open {
-      display: flex;
-      align-items: center;
-      height: 100%;
-      color: ${(props) =>
-        props.pathname === "/meets" ? "#2756FF" : "inherit"};
-      border-bottom: ${(props) =>
-        props.pathname === "/meets" ? "0.15rem solid #2756FF" : "inherit"};
-    }
+    height: 100%;
+    color: ${(props) => (props.pathname === "/" ? "#2756FF" : "inherit")};
+    border-bottom: ${(props) =>
+      props.pathname === "/" ? "0.15rem solid #2756FF" : "inherit"};
+  }
+  .header__nav__posting {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    color: ${(props) => (props.pathname === "/posts" ? "#2756FF" : "inherit")};
+    border-bottom: ${(props) =>
+      props.pathname === "/posts" ? "0.15rem solid #2756FF" : "inherit"};
+  }
+  .header__nav__open {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    color: ${(props) => (props.pathname === "/meets" ? "#2756FF" : "inherit")};
+    border-bottom: ${(props) =>
+      props.pathname === "/meets" ? "0.15rem solid #2756FF" : "inherit"};
   }
 `;
 
