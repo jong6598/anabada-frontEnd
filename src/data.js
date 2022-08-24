@@ -81,3 +81,22 @@ export const meet = {
     }
   ]
 };
+
+export const amenityInfo = [
+  [
+    {id:1, image:'https://cdn-icons-png.flaticon.com/512/3005/3005366.png',text:'에어건이 있습니다', value: 'airgun'},
+    {id:2, image:'https://cdn-icons-png.flaticon.com/512/3005/3005366.png',text:'서핑샵이 있습니다', value:'shop'},
+  ]
+  ,
+  [ 
+    {id:3, image:'https://cdn-icons-png.flaticon.com/512/3005/3005366.png',text:'샤워시설이 있습니다', value:'shower' },
+    {id:4, image:'https://cdn-icons-png.flaticon.com/512/3005/3005366.png',text:'식당 카페가 있습니다', value:'cafe'},]
+  ,
+  [
+    {id:5, image:'https://cdn-icons-png.flaticon.com/512/3005/3005366.png',text:'주차장이 있습니다', value: 'park'},
+    {id:6, image:'https://cdn-icons-png.flaticon.com/512/3005/3005366.png',text:'숙박시설이 있습니다', value: 'sleep'},
+ ]
+]
+
+
+

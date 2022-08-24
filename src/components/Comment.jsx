@@ -6,16 +6,13 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
 
-const Comment=({data}) => {
-    const [updateContent, setUpdateContent] = useState(data.content);
+const Comment=({comment}) => {
+    const [updateContent, setUpdateContent] = useState(comment.content);
     const params = useParams();
     const [editing, setEditing] = useState(false);
     const queryClient = useQueryClient();
     const nickname = useSelector((state)=>state.auth.nickname)
 
-
-  console.log(data)
-  console.log(params)
   
   //댓글 수정 
   //editing 상태에 따라 댓글 수정 input button 랜더링
@@ -30,7 +27,7 @@ const Comment=({data}) => {
         content: updateContent,
       }
       try {
-        await postApi.updateComments(`${data.commentId}`, content)
+        await postApi.updateComments(`${comment.commentId}`, content)
         console.log("댓글 수정완료")
         }catch(err) {
           alert(err);
@@ -54,7 +51,7 @@ const Comment=({data}) => {
     const result = window.confirm("댓글을 삭제하시겠습니까?");
     if (result) {
         try {
-          await postApi.deleteComments(`${data.commentId}`);
+          await postApi.deleteComments(`${comment.commentId}`);
         } catch (err) {
           console.log(err);
           alert(err);
@@ -78,12 +75,12 @@ const Comment=({data}) => {
     return(
 
     <ViewComments>
-       <img src={data.profileImg} alt="" />
+       <img src={comment.profileImg} alt="" />
         {editing? (
           <>
           <Comments>
-            <CommentsNick>{data.nickname}</CommentsNick>
-            <CommentsCreateAt>{data.createdAt}</CommentsCreateAt>
+            <CommentsNick>{comment.nickname}</CommentsNick>
+            <CommentsCreateAt>{comment.createdAt}</CommentsCreateAt>
             <UpdateContent  type="text" value={updateContent} onChange={e => { setUpdateContent(e.currentTarget.value) }} required></UpdateContent>
           </Comments>
           <BtnDiv>
@@ -94,11 +91,11 @@ const Comment=({data}) => {
           ):(
           <>
             <Comments>
-              <CommentsNick>{data.nickname}</CommentsNick>
-              <CommentsCreateAt>{data.after}</CommentsCreateAt>
-              <CommentsContent>{data.content}</CommentsContent>
+              <CommentsNick>{comment.nickname}</CommentsNick>
+              <CommentsCreateAt>{comment.createdAt}</CommentsCreateAt>
+              <CommentsContent>{comment.content}</CommentsContent>
             </Comments>
-            {data.nickname === nickname && (
+            {comment.nickname === nickname && (
               <BtnDiv>
                 <button onClick={startEditing}>수정</button>
                 <button onClick={deletecomments}>삭제</button>

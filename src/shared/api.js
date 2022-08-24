@@ -118,6 +118,9 @@ export const postApi = {
   getPost(postId) {
     return api.get(`/posts/${postId}`);
   },
+  getComments(pageParam, postId) {
+    return api.get(`comments/${postId}?page=${pageParam}&size=5`);
+  },
 
   newPost(newPost) {
     return api.post(`/posts`, newPost);
