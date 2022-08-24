@@ -95,6 +95,7 @@ const MeetsAll = () => {
     <MeetAllContainer>
       <CategoryContainer>
         <select id="area" onChange={onChangeArea} value={areaSelected}>
+          <option value="ALL">전체</option>
           <option value="서울·경기·인천">서울, 경기, 인천</option>
           <option value="강원">강원</option>
           <option value="대구·경북">대구, 경북</option>

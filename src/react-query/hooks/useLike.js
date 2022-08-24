@@ -25,7 +25,7 @@ const addMeetPost = async (post, isEdit, thunderPostId) => {
   }
 };
 
-export function useAddMeet(isEdit) {
+export function useLike(isEdit) {
   const navigate = useNavigate();
   //FIXME: const toast = useCustomToast();
   const queryClient = useQueryClient();

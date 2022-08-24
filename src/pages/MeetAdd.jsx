@@ -1,99 +1,145 @@
-import React, { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useRef, useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAddMeet } from '../react-query/hooks/useAddMeet';
 
 const MeetAdd = () => {
   const navigate = useNavigate();
+  const { state } = useLocation(); // navgiation으로 전달받음
+  const [isEdit, setIsEdit] = useState(false);
 
-  const [area, setArea] = useState('GYEONGGI');
+  const onAdd = useAddMeet(isEdit);
 
-  const onAdd = useAddMeet();
+  useEffect(() => {
+    if (state) {
+      // 기존의 post가 있다면
+      const startDate = state.startDate.replaceAll('.', '-');
+      const endDate = state.endDate.replaceAll('.', '-');
+      const editedState = { ...state, startDate, endDate };
 
-  const titleRef = useRef();
-  const areaRef = useRef();
-  const addressRef = useRef();
-  const goalMemberRef = useRef();
-  const imageRef = useRef();
-  const startDateRef = useRef();
-  const endDateRef = useRef();
-  const contentRef = useRef();
+      setIsInputValue(editedState);
+      setIsEdit(true); // edit 체크
+    }
+  }, []);
 
-  const onSelectArea = (e) => {
-    setArea(e.target.value);
+  const [isInputValue, setIsInputValue] = useState({
+    title: '',
+    content: '',
+    area: '서울·경기·인천',
+    address: '',
+    goalMember: '',
+    thumbnailUrl: '',
+    startDate: '',
+    endDate: ''
+  });
+
+  const {
+    thunderPostId,
+    title,
+    content,
+    area,
+    address,
+    goalMember,
+    thumbnailUrl,
+    startDate,
+    endDate
+  } = isInputValue;
+
+  const onChange = (e) => {
+    setIsInputValue({
+      ...isInputValue,
+      [e.target.name]: e.target.value
+    });
   };
 
   return (
     <Container>
       <div>
         <p>제목</p>
-        <input type="text" ref={titleRef} placeholder="제목을 입력해주세요" />
+        <input
+          type="text"
+          name="title"
+          placeholder="제목을 입력해주세요"
+          onChange={onChange}
+          value={title}
+        />
       </div>
       <div>
         <p>지역</p>
-        <select
-          name="area"
-          id="area"
-          ref={areaRef}
-          onChange={onSelectArea}
-          value={area}
-        >
-          <option value="GYEONGGI">서울, 경기, 인천</option>
-          <option value="GANGWON">강원</option>
-          <option value="GYEONBUK">대구, 경북</option>
-          <option value="GYEONGNAM">부산, 울산, 경남 </option>
-          <option value="JEONBUK">전북</option>
-          <option value="JEONNAM">광주, 전남</option>
-          <option value="CHUNGBUK">충북</option>
-          <option value="CHUNGNAM">충남</option>
-          <option value="JEJU">제주</option>
+        <select name="area" id="area" onChange={onChange} value={area}>
+          <option value="서울·경기·인천">서울·경기·인천</option>
+          <option value="강원">강원</option>
+          <option value="대구·경북">대구·경북</option>
+          <option value="부산·울산·경남">부산·울산·경남</option>
+          <option value="전북">전북</option>
+          <option value="광주·전남">광주·전남</option>
+          <option value="충북">충북</option>
+          <option value="충남">충남</option>
+          <option value="제주">제주</option>
         </select>
       </div>
       <div>
         <p>위치 정보</p>
-        <input type="text" ref={addressRef} />
+        <input type="text" name="address" onChange={onChange} value={address} />
       </div>
       <div>
         <p>모집 인원</p>
-        <input type="text" ref={goalMemberRef} />
+        <input
+          type="text"
+          name="goalMember"
+          onChange={onChange}
+          value={goalMember}
+        />
       </div>
       <div>
         <p>시작일</p>
-        <input type="date" ref={startDateRef} />
+        <input
+          type="date"
+          name="startDate"
+          onChange={onChange}
+          value={startDate}
+        />
       </div>
       <div>
         <p>종료일</p>
-        <input type="date" ref={endDateRef} />
+        <input type="date" name="endDate" onChange={onChange} value={endDate} />
       </div>
       <div>
         <p>썸네일</p>
-        <input type="file" ref={imageRef} />
+        <input
+          type="file"
+          name="thumbnailUrl"
+          onChange={onChange}
+          //FIXME: value={thumbnailUrl}
+        />
       </div>
       <div>
         <p>모임 상세 내용</p>
         <textarea
+          onChange={onChange}
           className="textArea"
+          name="content"
           id=""
           cols="30"
           rows="10"
-          ref={contentRef}
+          value={content}
         />
       </div>
       <button
         onClick={() => {
           const post = {
-            title: titleRef.current.value,
-            content: contentRef.current.value,
-            area: areaRef.current.value,
-            address: addressRef.current.value,
-            goalMember: goalMemberRef.current.value,
-            thumbnailUrl: imageRef.current.value,
-            startDate: startDateRef.current.value,
-            endDate: endDateRef.current.value
+            title,
+            content,
+            area,
+            address,
+            goalMember,
+            thumbnailUrl,
+            startDate,
+            endDate
           };
           const result = window.confirm('등록하시겠습니까?');
           if (result) {
-            onAdd(post);
+            onAdd(post, thunderPostId);
           }
         }}
       >
@@ -142,8 +188,6 @@ const Container = styled.div`
       font-size: 0.875rem;
       line-height: 1.063rem;
       /* identical to box height */
-
-      outline: none;
     }
     select {
       padding: 0.75rem 0.625rem;

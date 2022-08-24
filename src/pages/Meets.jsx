@@ -25,12 +25,12 @@ const Meets = () => {
     <MeetsContainer>
       <CategoryContainer>
         <select id="area" onChange={onChangeArea} value={areaSelected}>
-          <option value="서울·경기·인천">서울, 경기, 인천</option>
+          <option value="서울·경기·인천">서울·경기·인천</option>
           <option value="강원">강원</option>
-          <option value="대구·경북">대구, 경북</option>
-          <option value="부산·울산·경남">부산, 울산, 경남</option>
+          <option value="대구·경북">대구·경북</option>
+          <option value="부산·울산·경남">부산·울산·경남</option>
           <option value="전북">전북</option>
-          <option value="광주·전남">광주, 전남</option>
+          <option value="광주·전남">광주·전남</option>
           <option value="충북">충북</option>
           <option value="충남">충남</option>
           <option value="제주">제주</option>

@@ -37,7 +37,7 @@ function App() {
             <Route path="/meetAdd" element={<AddMeet />} />
             <Route path="/meetsAll" element={<MeetsAll />} />
           </Route>
-          <Route path="/meets/:meetId" element={<MeetDetail />} />
+          <Route path="/meets/:thunderPostId" element={<MeetDetail />} />
         </Routes>
       </ThemeProvider>
     </>

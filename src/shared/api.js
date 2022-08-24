@@ -89,15 +89,14 @@ export const meetsApi = {
 
   getMeetDetail: (thunderPostId) => api.get(`/meets/${thunderPostId}`),
 
-  postRequest: (thunderPostId) => api.post(`/meetlikes/${thunderPostId}`),
+  postLike: (thunderPostId) => api.post(`/meetlikes/${thunderPostId}`),
+  deleteLike: (thunderPostId) => api.delete(`/meetlikes/${thunderPostId}`),
 
-  deleteRequest: (thunderPostId) => api.delete(`/meetlikes/${thunderPostId}`),
-
-  postLike: (thunderPostId) =>
+  postRequest: (thunderPostId) =>
     api.post(`/requests/${thunderPostId}
   `),
 
-  deleteLike: (thunderPostId) => api.delete(`/requests/${thunderPostId}`)
+  deleteRequest: (thunderPostId) => api.delete(`/requests/${thunderPostId}`)
 };
 
 // 로그인/회원가입 요청 객체
