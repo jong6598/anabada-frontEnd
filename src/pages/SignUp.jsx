@@ -152,6 +152,7 @@ const SignUp = () => {
               <ErrorSpan>{errors.email.message}</ErrorSpan>
             )}
             <FormInput
+              errors={errors?.email}
               type="email"
               placeholder="이메일"
               {...register("email", {
@@ -161,7 +162,7 @@ const SignUp = () => {
               })}
             ></FormInput>
             <div
-              className="login__wrapper-email__verification"
+              className="login__wrapper-verification login__wrapper-email__verification"
               onClick={handleEmailValidation}
             >
               이메일 중복체크
@@ -191,6 +192,7 @@ const SignUp = () => {
             )}
             <PasswordBox>
               <FormInput
+                errors={errors?.password}
                 type={passwordType.type}
                 placeholder="비밀번호"
                 {...register("password", {
@@ -229,6 +231,7 @@ const SignUp = () => {
             )}
             <PasswordBox>
               <FormInput
+                errors={errors.confirmPassword}
                 type={passwordConfirmType.type}
                 placeholder="비밀번호 확인"
                 {...register("confirmPassword", {
@@ -259,6 +262,7 @@ const SignUp = () => {
               <ErrorSpan>{errors.nickname.message}</ErrorSpan>
             )}
             <FormInput
+              errors={errors?.nickname}
               type="text"
               placeholder="닉네임"
               {...register("nickname", {
@@ -267,7 +271,7 @@ const SignUp = () => {
               })}
             ></FormInput>
             <div
-              className="login__wrapper-nickname__verification"
+              className="login__wrapper-verification login__wrapper-nickname__verification"
               onClick={handleNicknameValidation}
             >
               닉네임 중복체크
@@ -288,46 +292,30 @@ const SignupWrapper = styled(FormWrapper)`
 
 const SignupForm = styled(FormDiv)`
   padding: 0;
-  .login__wrapper-email__verification {
-    margin-top: 0.5rem;
+  margin-top: 0.5rem;
+
+  .login__wrapper-verification {
     margin-bottom: 1.125rem;
-
-    background-color: ${(props) => (props.emailState ? "#E5E5EA" : "#E3F0FF")};
     cursor: pointer;
-    pointer-events: ${(props) => (props.emailState ? "none" : "auto")};
-
     display: flex;
     justify-content: center;
     align-items: center;
-
     border-radius: 0.3125rem;
     width: 100%;
     height: 2.5625rem;
-
-    color: ${(props) => (props.emailState ? "#AEAEB2" : "#007aff")};
     font-size: 1rem;
     font-weight: 600;
   }
+  .login__wrapper-email__verification {
+    background-color: ${(props) => (props.emailState ? "#E5E5EA" : "#E3F0FF")};
+    pointer-events: ${(props) => (props.emailState ? "none" : "auto")};
+    color: ${(props) => (props.emailState ? "#AEAEB2" : "#007aff")};
+  }
   .login__wrapper-nickname__verification {
-    margin-top: 0.5rem;
-    margin-bottom: 1.125rem;
-
     background-color: ${(props) =>
       props.nicknameState ? "#E5E5EA" : "#E3F0FF"};
-    cursor: pointer;
     pointer-events: ${(props) => (props.nicknameState ? "none" : "auto")};
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    border-radius: 0.3125rem;
-    width: 100%;
-    height: 2.5625rem;
-
     color: ${(props) => (props.nicknameState ? "#AEAEB2" : "#007aff")};
-    font-size: 1rem;
-    font-weight: 600;
   }
   .login__wrapper__password {
     color: black;
