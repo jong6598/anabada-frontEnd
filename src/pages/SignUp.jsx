@@ -24,6 +24,7 @@ const SignUp = () => {
     mode: "onBlur",
   });
   const [emailState, setEmailState] = useState(false);
+  const [nicknameState, setNicknameState] = useState(false);
   const { alertHandler } = useOutletContext();
 
   const navigate = useNavigate();
@@ -40,7 +41,10 @@ const SignUp = () => {
   const onError = (err) => {
     console.log(err);
     if (!emailState) {
-      return alertHandler("중복확인을 해주세요.");
+      return alertHandler("이메일 중복확인을 해주세요.");
+    }
+    if (!nicknameState) {
+      return alertHandler("닉네임 중복확인을 해주세요.");
     }
     return alertHandler("유효하지 않은 형식입니다. 다시 확인해주세요.");
   };
@@ -65,7 +69,8 @@ const SignUp = () => {
 
   useEffect(() => {
     setEmailState(!dirtyFields.email);
-  }, [dirtyFields.email]);
+    setNicknameState(!dirtyFields.nickname);
+  }, [dirtyFields.email, dirtyFields.nickname]);
 
   const handleEmailValidation = async () => {
     if (errors.email.type === "pattern") {
@@ -77,7 +82,12 @@ const SignUp = () => {
       if (response.status === 200) {
         dirtyFields.email = false;
         setEmailState(true);
+        errors.email = null;
         return alertHandler("계속 진행해주세요!");
+      }
+      // 중복체크 실패했을 때
+      if (response.response.status === 409) {
+        return alertHandler("존재하는 이메일 입니다!");
       }
     } catch (err) {
       console.log(err);
@@ -93,6 +103,26 @@ const SignUp = () => {
     }
   };
 
+  const handleNicknameValidation = async () => {
+    try {
+      const nickname = getValues("nickname");
+      const response = await userAuth.nicknameValidation(nickname);
+      if (response.status === 200) {
+        dirtyFields.nickname = false;
+        setNicknameState(true);
+        errors.nickname = null;
+        return alertHandler("계속 진행해주세요!");
+      }
+      // 중복체크 실패했을 때
+      if (response.response.status === 409) {
+        return alertHandler("존재하는 닉네임 입니다!");
+      }
+    } catch (err) {
+      console.log(err);
+      return alertHandler("서버와 통신에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
+
   // 로그인한 상태에서 접근 시 차단
   useEffect(() => {
     if (localStorage.getItem("accessToken")) {
@@ -104,7 +134,7 @@ const SignUp = () => {
   return (
     <>
       <SignupWrapper>
-        <SignupForm>
+        <SignupForm emailState={emailState} nicknameState={nicknameState}>
           <form
             className="login__wrapper-form"
             onSubmit={handleSubmit(onSumbit, onError)}
@@ -122,21 +152,19 @@ const SignUp = () => {
               <ErrorSpan>{errors.email.message}</ErrorSpan>
             )}
             <FormInput
-              errors={errors}
               type="email"
               placeholder="이메일"
               {...register("email", {
                 required: "이메일을 입력해주세요!",
                 pattern: /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/,
-                validate: () => emailState || "중복확인을 해주세요!",
+                validate: () => emailState || "이메일 중복확인을 해주세요!",
               })}
             ></FormInput>
             <div
-              className="login__wrapper-verification"
-              emailState={emailState}
+              className="login__wrapper-email__verification"
               onClick={handleEmailValidation}
             >
-              중복체크
+              이메일 중복체크
             </div>
             <InputName>
               <span>비밀번호</span>
@@ -163,7 +191,6 @@ const SignUp = () => {
             )}
             <PasswordBox>
               <FormInput
-                errors={errors}
                 type={passwordType.type}
                 placeholder="비밀번호"
                 {...register("password", {
@@ -202,7 +229,6 @@ const SignUp = () => {
             )}
             <PasswordBox>
               <FormInput
-                errors={errors}
                 type={passwordConfirmType.type}
                 placeholder="비밀번호 확인"
                 {...register("confirmPassword", {
@@ -229,13 +255,23 @@ const SignUp = () => {
             {errors.nickname?.type === "required" && (
               <ErrorSpan>{errors.nickname.message}</ErrorSpan>
             )}
+            {errors.nickname?.type === "validate" && (
+              <ErrorSpan>{errors.nickname.message}</ErrorSpan>
+            )}
             <FormInput
-              errors={errors}
               type="text"
               placeholder="닉네임"
-              {...register("nickname", { required: "닉네임을 입력해주세요!" })}
+              {...register("nickname", {
+                required: "닉네임을 입력해주세요!",
+                validate: () => nicknameState || "닉네임 중복확인을 해주세요!",
+              })}
             ></FormInput>
-
+            <div
+              className="login__wrapper-nickname__verification"
+              onClick={handleNicknameValidation}
+            >
+              닉네임 중복체크
+            </div>
             <FormBtn>회원가입</FormBtn>
           </form>
         </SignupForm>
@@ -252,7 +288,7 @@ const SignupWrapper = styled(FormWrapper)`
 
 const SignupForm = styled(FormDiv)`
   padding: 0;
-  .login__wrapper-verification {
+  .login__wrapper-email__verification {
     margin-top: 0.5rem;
     margin-bottom: 1.125rem;
 
@@ -269,6 +305,27 @@ const SignupForm = styled(FormDiv)`
     height: 2.5625rem;
 
     color: ${(props) => (props.emailState ? "#AEAEB2" : "#007aff")};
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  .login__wrapper-nickname__verification {
+    margin-top: 0.5rem;
+    margin-bottom: 1.125rem;
+
+    background-color: ${(props) =>
+      props.nicknameState ? "#E5E5EA" : "#E3F0FF"};
+    cursor: pointer;
+    pointer-events: ${(props) => (props.nicknameState ? "none" : "auto")};
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 0.3125rem;
+    width: 100%;
+    height: 2.5625rem;
+
+    color: ${(props) => (props.nicknameState ? "#AEAEB2" : "#007aff")};
     font-size: 1rem;
     font-weight: 600;
   }
