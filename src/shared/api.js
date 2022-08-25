@@ -108,9 +108,12 @@ export const userAuth = {
     return userAxios.post('/signup', signupData);
   },
   emailValidation(email) {
-    return userAxios.post(`/validation`, {
+    return userAxios.post(`/validation/email`, {
       email
     });
+  },
+  nicknameValidation(nickname) {
+    return userAxios.post(`/validation/nickname/${nickname}`);
   },
   useAccess(token) {
     // 유저정보 받아오기
