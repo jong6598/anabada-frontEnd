@@ -14,9 +14,9 @@ import 'tui-color-picker/dist/tui-color-picker.css';
 import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css';
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
 import "../App.css";
-import { amenityInfo } from "../data";
 import { Editor } from '@toast-ui/react-editor';
 import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { amenityInfo } from "../shared/data";
 
 const PostCU = () => {
   const navigate = useNavigate();

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { thunderposts } from '../data';
+import { thunderposts } from "../shared/data";
 import Meet from '../components/Meet';
 
 
