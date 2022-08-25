@@ -16,8 +16,7 @@ import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
 import "../App.css";
 import { amenityInfo } from "../data";
 import { Editor } from '@toast-ui/react-editor';
-
-
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 
 const PostCU = () => {
   const navigate = useNavigate();
@@ -25,6 +24,8 @@ const PostCU = () => {
   const nickname = useSelector((state) => state.auth.nickname)
   const [imgSrc, setImgSrc] = useState("");
   const [check, setCheck] = useState({ airgun: false, shower: false, shop: false, cafe: false, park: false, sleep: false });
+
+  const queryClient = useQueryClient();
 
   const [content, setContent] = useState("");
   const editorRef = useRef();
@@ -73,7 +74,7 @@ const PostCU = () => {
   }, []);
 
 
-  
+
 
   //usemutation을 사용해서 수정, 작성 해야함
   //useRef를 사용해서 이미지(랜더링 되도 값이 초기화되지 않음.)
@@ -95,11 +96,11 @@ const PostCU = () => {
   // console.log(watch())
 
   const amenityCheck = (el) => {
-   
-   setCheck({
-        ...check,
-        [el.value]: !check[el.value]
-   });
+
+    setCheck({
+      ...check,
+      [el.value]: !check[el.value]
+    });
   }
 
   console.log(check, 'check')
@@ -109,7 +110,7 @@ const PostCU = () => {
 
 
   const onSubmitPost = async (formData) => {
-  
+
     let thumbnailUrl;
 
     if (formData.postImg.length > 0) {
@@ -131,15 +132,9 @@ const PostCU = () => {
       area: formData.area,
       address: formData.address,
       content: content,
-      amenity:`${check.airgun} ${check.shower} ${check.shop} ${check.cafe} ${check.park} ${check.sleep}` ,
+      amenity: `${check.airgun} ${check.shower} ${check.shop} ${check.cafe} ${check.park} ${check.sleep}`,
       thumbnailUrl: thumbnailUrl,
     };
-    
-    // TODO: 객체로 전달하면 안되나요!?!
-   
-    // amenity.split(' ')
-    // [true, false, true, false, true]
-
 
 
     if (!postId) {
@@ -148,7 +143,6 @@ const PostCU = () => {
         alert("게시글이 등록되었습니다!");
         navigate("/posts");
       } catch (err) {
-
         alert(err);
       }
     } else {
@@ -163,6 +157,17 @@ const PostCU = () => {
     }
   };
 
+
+  const onSubmitPostMutation = useMutation(onSubmitPost, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["posts"])
+    },
+    onError: (err) => {
+      console.log(err.respose);
+    }
+  })
+
+
   const handleChangeInput = () => {
     setContent(editorRef.current.getInstance().getHTML()
     )
@@ -170,9 +175,13 @@ const PostCU = () => {
   }
 
   const onUploadImage = async (blob, callback) => {
-    console.log(blob);
-  }
+      let formData= new FormData();
+      formData.append('file', blob); 
+      const {data:url} = await postApi.uploadImages(formData)
+      callback(url.url, "콜백 이미지 URL")
+    }
 
+  
 
 
   return (
@@ -241,13 +250,14 @@ const PostCU = () => {
         <Element>
           <label>주변 정보</label>
           <SelectAmenity>
-             {
-              amenityInfo.map((it,idx) => {return <div key={idx}>{it.map((el)=>{return <AmenityButton active={check[el.value]}  check={check[el.value]} className="amenityBtn" onClick={()=>amenityCheck(el)} key={el.id}><img src={el.image} alt='icon'/>{el.text}</AmenityButton>})}</div>})
+            {
+              amenityInfo.map((it, idx) => { return <div key={idx}>{it.map((el) => { return <AmenityButton type="button" active={check[el.value]} check={check[el.value]} className="amenityBtn" onClick={() => amenityCheck(el)} key={el.id}>{el.text}</AmenityButton> })}</div> })
             }
           </SelectAmenity>
         </Element>
 
         <Toastdiv>
+          <label>본문</label>
           <Editor
             ref={editorRef}
             placeholder="내용을 입력해주세요."
@@ -255,7 +265,6 @@ const PostCU = () => {
             height="300px" // 에디터 창 높이
             initialEditType="wysiwyg" // 초기 입력모드 설정(디폴트 markdown)
             onChange={handleChangeInput}
-  
             useCommandShortcut={true}
             // colorSyntax 플러그인 적용
             plugins={[
@@ -274,10 +283,10 @@ const PostCU = () => {
               ['ul', 'ol'],
               ["link"],
             ]}
+            //FIXME:DOMPURIFY
             // customHTMLSanitizer={
             //   html=>{return DOMPuri}
             // }
-
             previewHighlight={false}
             hooks={{
               addImageBlobHook: onUploadImage
@@ -383,16 +392,13 @@ const SelectAmenity = styled.div`
     display:flex;
     flex-direction: column;
     gap: 0.5rem;
-  div{
-    display: flex;
-    column-gap: 0.625rem;
-  }
- 
+    div{
+      display: flex;
+      gap: 0.5rem;
+    }
 `
 
 const AmenityButton = styled.button`
-
-  /* text-align: center; */
   align-items: center;
   padding: 0.625rem 0.875rem;
   border-radius: 2.875rem;
@@ -400,24 +406,25 @@ const AmenityButton = styled.button`
 
   font-size: 0.875rem;
   font-weight: 600;
-${({active}) => active&& css`
+${({ active }) => active && css`
 background-color:#007AFF;
 color:white;
 border:none;
 `}
-
-      img{
-      width: 1rem;
-      height: 1rem;
-      }
   &:hover{
-    color:${(props) => (props.check ? 'white': 'black')};
-    background-color: ${(props) => (props.check ? '#007AFF': 'transparent')};
-    border:${(props) => (props.check ? 'none': '0.0625rem solid #000000')};
+    color:${(props) => (props.check ? 'white' : 'black')};
+    background-color: ${(props) => (props.check ? '#007AFF' : 'transparent')};
+    border:${(props) => (props.check ? 'none' : '0.0625rem solid #000000')};
   }
 `
 
 const Toastdiv = styled.div`
+  margin-top: 1.125rem;
+  margin-bottom: 1.875rem;
+  label{
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
 `
 
 

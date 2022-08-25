@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { postApi } from "../shared/api";
@@ -43,17 +43,6 @@ const PostsDetail = () => {
 
   const getAmenity = postInfo.amenity.split(' ');
  
-  const objAmenity = {
-    airgun: getAmenity[0],
-    shower: getAmenity[1],
-    shop: getAmenity[2],
-    cafe: getAmenity[3],
-    park: getAmenity[4],
-    sleep: getAmenity[5]
-  }
-
-  // TODO:
-
 
   const fetchComments = async (pageParam) => {
     try {
@@ -81,6 +70,8 @@ const PostsDetail = () => {
 
 
 
+  console.log(postInfo)
+
   useEffect(() => {
     if (inView) {
       fetchNextPage();
@@ -104,6 +95,7 @@ const PostsDetail = () => {
     if (result) {
       try {
         await postApi.deletePost(postId);
+        alert('삭제가 완료되었습니다')
         navigate("/posts")
       } catch (err) {
         console.log(err);
@@ -115,7 +107,7 @@ const PostsDetail = () => {
 
   const postDeleteMutation = useMutation(postDelete, {
     onSuccess: () => {
-      queryClient.invalidateQueries(["post"])
+      queryClient.invalidateQueries(["posts"])
     },
     onError: (err) => {
       console.log(err.respose);
@@ -123,7 +115,7 @@ const PostsDetail = () => {
   })
 
 
-  //북마크 기능구현
+  //좋아요 기능구현
   const toggleLike = async () => {
     if (postInfo.liked === false) {
       try {
@@ -168,6 +160,14 @@ const PostsDetail = () => {
     }
   }
 
+    const submitCommentsMutation = useMutation(submitComments, {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["post"])
+      },
+      onError: (err) => {
+        console.log(err.respose);
+      }
+    })
 
 
 
@@ -179,7 +179,11 @@ const PostsDetail = () => {
 
       <UserBox>
         <img src={postInfo.profileImg} alt="" />
-        <PostName>작성자:{postInfo.nickname}</PostName>
+        <PostName>{postInfo.nickname}</PostName>
+        {/* FIXME:dm페이지로 링크수정 */}
+        <Link to="/posts">
+          <button>📨</button>
+        </Link>
         <span>{postInfo.createdAt}</span>
         <span>조회 {postInfo.viewCount}</span>
       </UserBox>
@@ -211,7 +215,14 @@ const PostsDetail = () => {
 
       <Amenity>
         <label>시설정보</label>
-        <span>{postInfo.amenity}</span>
+        <div>
+          {getAmenity[0]==='true'? <p>💨 에어건이 있어요</p>:null}
+          {getAmenity[1]==='true'? <p>🏄 서핑샵이 있어요</p>:null}
+          {getAmenity[2]==='true'? <p>🛀 샤워시설이 있어요</p>:null}
+          {getAmenity[3]==='true'? <p>🍽 식당 카페가 있어요</p>:null}
+          {getAmenity[4]==='true'? <p>🚘 주차장이 있어요</p>:null}
+          {getAmenity[5]==='true'? <p>🏨 숙박시설이 있어요</p>:null}
+        </div>
       </Amenity>
 
       <PostBox>
@@ -240,8 +251,8 @@ const PostsDetail = () => {
 
       <CommentBox>
         <CountBox>
-          {/* <span>댓글 {postInfo.comments.content.length}개</span>
-          <span>좋아요 {postInfo.likeCount}개</span> */}
+          <span>댓글 {postInfo.totalComment}개</span>
+          <span>좋아요 {postInfo.likeCount}개</span>
         </CountBox>
         <WriteComment>
           <img src={profileImg} alt="" />
@@ -258,11 +269,7 @@ const PostsDetail = () => {
 
         }
              {isFetchingNextPage ? <p>스피너</p> : <div ref={ref} />}
-        {/* {postInfo.comments.content.length > 0 &&
-          postInfo.comments.content.map((data) => (
-            <Comment data={data} />
-          ))} */}
-   
+        
       </CommentBox>
     </>
   )
@@ -366,6 +373,19 @@ const Amenity = styled.div`
         top: 44.4375rem;
         border-radius: none;
         padding: 0.625rem, 1rem, 0.625rem, 1rem;     
+    }
+    div{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+    p{
+      align-items: center;
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 0.625rem 0.875rem;
+      border-radius: 2.875rem;
+      border: 0.0625rem solid #000000;
     }
 `
 

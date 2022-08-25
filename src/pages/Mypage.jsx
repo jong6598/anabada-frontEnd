@@ -15,9 +15,10 @@ const Mypage = () => {
 
 
     const handleLogout = () => {
-        localStorage.clear();
-        Cookies.clear();
-        alert("로그아웃 되었습니다.");
+        localStorage.removeItem("accessToken");
+        const cookies = new Cookies();
+        cookies.remove("refreshToken");
+
         navigate("/");
     };
 

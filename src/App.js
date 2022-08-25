@@ -18,6 +18,8 @@ import PostsDetail from "./pages/PostsDetail";
 import Posts from "./pages/Posts";
 import Welcome from "./pages/Welcome";
 import Mypage from "./pages/Mypage";
+import MyPosts from "./pages/MyPosts";
+import MyMeets from "./pages/MyMeets"
 
 function App() {
   return (
@@ -39,6 +41,8 @@ function App() {
             <Route path="/meetAdd" element={<AddMeet />} />
             <Route path="/meets/:meetId" element={<MeetDetail />} />
             <Route path="/mypage" element={<Mypage />} />
+            <Route path="/mymeets" element={<MyMeets />} />
+            <Route path="/myposts" element={<MyPosts />} />
           </Route>
           <Route path="/meetsAll" element={<MeetsAll />} />
         </Routes>

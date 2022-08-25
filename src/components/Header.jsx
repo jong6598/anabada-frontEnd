@@ -151,7 +151,9 @@ const Header = memo(() => {
             ) : (
               <>
                 <div className="header__user__info">
-                  {userInfo?.nickname} 님 :)
+                  <Link to="/mypage">
+                    {userInfo?.nickname} 님 :)
+                  </Link>
                 </div>
               </>
             )}

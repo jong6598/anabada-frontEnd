@@ -109,6 +109,10 @@ export const userAuth = {
 };
 
 export const postApi = {
+  uploadImages(file) {
+    return api.post('/posts/images', file);
+  },
+
   deleteImages(images) {
     return api.delete('/images', images);
   },

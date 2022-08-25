@@ -37,7 +37,7 @@ const Comment=({comment}) => {
 
   const commentEditMutation = useMutation(editcomments, {
     onSuccess: () => {
-      queryClient.invalidateQueries(["post"])
+      queryClient.invalidateQueries(["commentList"])
     },
     onError: (err) => {
       console.log(err.respose);
@@ -64,7 +64,7 @@ const Comment=({comment}) => {
 
   const commentDeleteMutation = useMutation(deletecomments, {
     onSuccess: () => {
-      queryClient.invalidateQueries(["post"])
+      queryClient.invalidateQueries(["commentList"])
     },
     onError: (err) => {
       console.log(err.respose);
@@ -84,7 +84,7 @@ const Comment=({comment}) => {
             <UpdateContent  type="text" value={updateContent} onChange={e => { setUpdateContent(e.currentTarget.value) }} required></UpdateContent>
           </Comments>
           <BtnDiv>
-           <button onClick={editcomments}>수정 완료</button>
+           <button onClick={()=>commentEditMutation.mutate(comment.commentId)}>수정 완료</button>
            <button onClick={startEditing}>취소</button>
           </BtnDiv>
           </>
@@ -98,7 +98,7 @@ const Comment=({comment}) => {
             {comment.nickname === nickname && (
               <BtnDiv>
                 <button onClick={startEditing}>수정</button>
-                <button onClick={deletecomments}>삭제</button>
+                <button onClick={()=>commentDeleteMutation.mutate(comment.commentId)}>삭제</button>
               </BtnDiv>
             )}
             </>
