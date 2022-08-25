@@ -44,17 +44,17 @@ const Map = () => {
     const map = new kakao.maps.Map(container, options);
     const content = (el) => {
       const weatherIcons = checkedWeather(el.sky, el.pty);
-      console.log(weatherIcons);
+
       return `
-      <div class="marker__wrapper">
-      <svg class="class="marker__wrapper__pointer" width="29" height="54" viewBox="0 0 29 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M14.07 0C6.3 0 0 6.3 0 14.07V36.14C0 42.97 4.87 48.66 11.32 49.94L13.1 53.02C13.53 53.77 14.61 53.77 15.04 53.02L16.82 49.94C23.28 48.66 28.14 42.97 28.14 36.14V14.07C28.14 6.3 21.84 0 14.07 0Z" fill="white"/>
-  </svg>
-      <section class="marker__wrapper__info">
-      weatherIcons
-      <div>${weatherIcons}</div>
-      <div>${el.tmp}</div>
-      </section>
+      
+      <div class="marker__wrapper" onclick="alert('Hello world');">
+        <svg class="marker__wrapper__pointer" width="29" height="54" viewBox="0 0 29 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M14.07 0C6.3 0 0 6.3 0 14.07V36.14C0 42.97 4.87 48.66 11.32 49.94L13.1 53.02C13.53 53.77 14.61 53.77 15.04 53.02L16.82 49.94C23.28 48.66 28.14 42.97 28.14 36.14V14.07C28.14 6.3 21.84 0 14.07 0Z" fill="white"/>
+        </svg>
+        <div class="marker__wrapper__info">
+          <div><img src=${weatherIcons}></img></div>
+          <div>${el.tmp}</div>
+        </div>
       </div>
       `;
     };
@@ -124,8 +124,9 @@ const Map = () => {
         return 16;
       }
     }
-    const markers = data.data.map((el, i) => {
+    const markers = data.data.map((el) => {
       const marker__answer = new kakao.maps.CustomOverlay({
+        clickable: true,
         content: content(el),
         position: new kakao.maps.LatLng(el.x, el.y),
       });
@@ -155,21 +156,28 @@ const MapWrapper = styled.div`
   position: absolute;
   top: 0;
   left: 0;
+
   .marker__wrapper {
+    padding: 0;
     position: relative;
+
     .marker__wrapper__info {
       position: absolute;
+      top: 43%;
+      bottom: 50%;
+      left: 49%;
+      right: 50%;
 
-      background-color: white;
-      bottom: 10px;
-      div {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-    }
-    .marker__wrapper__info {
       border-radius: 100%;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      div {
+        margin-top: -0.3rem;
+      }
     }
   }
 `;
