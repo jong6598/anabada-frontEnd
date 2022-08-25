@@ -3,7 +3,7 @@ import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { userAuth } from "../shared/api";
 import { Cookies } from "react-cookie";
 import { userThunk } from "../redux/auth-slice";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 
@@ -75,7 +75,7 @@ const Login = () => {
             onSubmit={handleSubmit(onSumbit, onError)}
           >
             <FormInput
-              errors={errors}
+              errors={errors.email}
               type="text"
               placeholder="이메일"
               {...register("email", {
@@ -84,7 +84,7 @@ const Login = () => {
               })}
             ></FormInput>
             <FormInput
-              errors={errors}
+              errors={errors.password}
               type="password"
               placeholder="비밀번호"
               {...register("password", {
@@ -155,22 +155,7 @@ export const FormInput = styled.input`
   &:focus-visible {
     outline: 0.01rem solid #007aff;
   }
-  &:first-child {
-    outline: ${(props) =>
-      props.errors?.email ? "0.01rem solid #FF3B30" : "inherit"};
-  }
-  &:nth-child(2) {
-    outline: ${(props) =>
-      props.errors?.password ? "0.01rem solid #FF3B30" : "inherit"};
-  }
-  &:nth-child(3) {
-    outline: ${(props) =>
-      props.errors?.confirmPassword ? "0.01rem solid #FF3B30" : "inherit"};
-  }
-  &:nth-child(4) {
-    outline: ${(props) =>
-      props.errors?.nickname ? "0.01rem solid #FF3B30" : "inherit"};
-  }
+  outline: ${(props) => (props.errors ? "0.01rem solid #FF3B30" : "inherit")};
 `;
 
 export const FormBtn = styled.button`

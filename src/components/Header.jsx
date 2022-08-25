@@ -1,10 +1,10 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
-import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
-import { userThunk } from "../redux/auth-slice";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { Cookies } from "react-cookie";
-import AlertToast from "./AlertToast";
+import { Link, Outlet, useLocation } from 'react-router-dom';
+import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { userThunk } from '../redux/auth-slice';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { Cookies } from 'react-cookie';
+import AlertToast from './AlertToast';
 
 const Header = memo(() => {
   const location = useLocation();
@@ -12,7 +12,7 @@ const Header = memo(() => {
   const timer = useRef(null);
   const dispatch = useDispatch();
   const cookies = new Cookies();
-  const getCookies = cookies.get("refreshToken");
+  const getCookies = cookies.get('refreshToken');
   const [valueY, setValueY] = useState(null);
   const gapY = useRef(0);
 
@@ -21,10 +21,10 @@ const Header = memo(() => {
    * 사용할 컴포넌트에서 const { alertHandler } = useOutletContext(); 로 호출해서 alertHandler("여기에 메시지를 넣으면 된다.")
    */
   const refErrorTimer = useRef(null);
-  const refErrorMessage = useRef("");
+  const refErrorMessage = useRef('');
   const [stateErrTimer, setStateErrTiemr] = useState(false);
   const alertHandler = useCallback(
-    (errorMessage = "") => {
+    (errorMessage = '') => {
       if (refErrorTimer.current === null) {
         setStateErrTiemr(true);
         refErrorMessage.current = errorMessage;
@@ -44,7 +44,7 @@ const Header = memo(() => {
       return;
     } else {
       // 로그인 한 유저가 유저이면 새로고침 시 유저정보를 요청함
-      const getAccess = localStorage.getItem("accessToken");
+      const getAccess = localStorage.getItem('accessToken');
       dispatch(userThunk(getAccess));
     }
   }, []);
@@ -92,8 +92,8 @@ const Header = memo(() => {
 
   // 스크롤 이벤트 바인딩
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
@@ -157,8 +157,8 @@ const Header = memo(() => {
             )}
           </div>
         </MainHeader>
-        <MainNav pathname={pathname}>
-          <nav className="header__nav">
+        <MainNav>
+          <NavElement pathname={pathname}>
             <Link className="header__nav__home" to="/">
               메인홈
             </Link>
@@ -168,7 +168,7 @@ const Header = memo(() => {
             <Link className="header__nav__open" to="/meets">
               오픈 모임
             </Link>
-          </nav>
+          </NavElement>
         </MainNav>
       </HeaderWrapper>
       <Layout>
@@ -217,10 +217,10 @@ const MainHeader = styled.div`
     cursor: pointer;
   }
   .header__user__signup {
-    color: ${(props) => (props.pathname === "/signup" ? "#6486FF" : "inherit")};
+    color: ${(props) => (props.pathname === '/signup' ? '#6486FF' : 'inherit')};
   }
   .header__user__login {
-    color: ${(props) => (props.pathname === "/login" ? "#6486FF" : "inherit")};
+    color: ${(props) => (props.pathname === '/login' ? '#6486FF' : 'inherit')};
   }
   .header__user__divider {
     display: flex;
@@ -243,37 +243,37 @@ const MainNav = styled.div`
   padding: 0rem 1.375rem;
   font-size: 0.9375rem;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.6px;
-  .header__nav {
+`;
+
+const NavElement = styled.nav`
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  align-items: center;
+  .header__nav__home {
     display: flex;
-    justify-content: space-between;
-    height: 100%;
     align-items: center;
-    .header__nav__home {
-      display: flex;
-      align-items: center;
-      height: 100%;
-      color: ${(props) => (props.pathname === "/" ? "#2756FF" : "inherit")};
-      border-bottom: ${(props) =>
-        props.pathname === "/" ? "0.15rem solid #2756FF" : "inherit"};
-    }
-    .header__nav__posting {
-      display: flex;
-      align-items: center;
-      height: 100%;
-      color: ${(props) =>
-        props.pathname === "/posts" ? "#2756FF" : "inherit"};
-      border-bottom: ${(props) =>
-        props.pathname === "/posts" ? "0.15rem solid #2756FF" : "inherit"};
-    }
-    .header__nav__open {
-      display: flex;
-      align-items: center;
-      height: 100%;
-      color: ${(props) =>
-        props.pathname === "/meets" ? "#2756FF" : "inherit"};
-      border-bottom: ${(props) =>
-        props.pathname === "/meets" ? "0.15rem solid #2756FF" : "inherit"};
-    }
+
+    height: 100%;
+    color: ${(props) => (props.pathname === '/' ? '#2756FF' : 'inherit')};
+    border-bottom: ${(props) =>
+      props.pathname === '/' ? '0.15rem solid #2756FF' : 'inherit'};
+  }
+  .header__nav__posting {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    color: ${(props) => (props.pathname === '/posts' ? '#2756FF' : 'inherit')};
+    border-bottom: ${(props) =>
+      props.pathname === '/posts' ? '0.15rem solid #2756FF' : 'inherit'};
+  }
+  .header__nav__open {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    color: ${(props) => (props.pathname === '/meets' ? '#2756FF' : 'inherit')};
+    border-bottom: ${(props) =>
+      props.pathname === '/meets' ? '0.15rem solid #2756FF' : 'inherit'};
   }
 `;
 

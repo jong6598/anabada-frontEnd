@@ -134,22 +134,37 @@ const MainDiv = styled.div`
 `
 
 const PostDiv = styled.div`
+  margin-top: 0.625rem;
   display: grid;
-  grid-template-columns: 50% 50%;
+  /* display: flex; */
+  flex-wrap: wrap;
+  grid-template-columns: 1fr 1fr;
   column-gap: 1rem;
-  grid-auto-rows: auto;
-`
-
-const Areabar = styled.div`
+  row-gap: 0.625rem;
   
 `
 
+const Areabar = styled.div`
+    height: 3.75rem;
+    padding: 0.875rem, 1rem, 0.5rem, 1rem;
+
+  select{
+    height: 2rem;
+    width: 5rem;
+    border-radius: 0.25rem;
+    padding: 0.375rem, 0.25rem, 0.375rem, 0.625rem;
+    margin-top: 0.9375rem;
+  }
+`
+
 const PostContainer = styled.div`
+    display: inline-block;
+
 `
 
 
 
-const PostBtn = styled.div`
+const PostBtn = styled.div` 
   cursor: pointer;
    position: fixed;
   bottom: 1rem;

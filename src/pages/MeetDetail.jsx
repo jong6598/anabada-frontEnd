@@ -1,88 +1,127 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { meetsApi } from '../shared/api';
 import { useQuery } from '@tanstack/react-query';
-import { MdOutlineMoreVert } from 'react-icons/md';
-import { meet as data } from '../data';
-
-const getMeetPost = async () => {
-  try {
-    const res = await meetsApi.getMeetDetail();
-    if (res.status === 200) {
-      console.log('Okay success get meet detail');
-      return res.data;
-    }
-  } catch (error) {
-    if (error.response.status === 404) {
-      console.log('404 Error');
-    }
-  }
-};
+import { FiMoreHorizontal } from 'react-icons/fi';
+import { FiEdit2 } from 'react-icons/fi';
+import { RiDeleteBin5Line } from 'react-icons/ri';
+// import { meet } from '../shared/data';
+import { useDetailMeet } from '../react-query/hooks/useDetailMeet';
+import { useSelector } from 'react-redux';
+import { useAddMeet } from '../react-query/hooks/useDeleteMeet';
+import { useLike } from '../react-query/hooks/useLike';
+import { useJoin } from '../react-query/hooks/useJoin';
 
 const MeetDetail = () => {
-  // FIXME: const { data } = useQuery(['meet'], getMeetPost);
+  const [showModal, setShowModal] = useState(false);
+  const params = useParams();
+  const navigate = useNavigate();
 
-  const [isLiked, setIsLiked] = useState();
-  const [isJoined, setIsJoined] = useState();
+  const { meet, isLiked, setIsLiked, isJoined, setIsJoined } = useDetailMeet(
+    params.thunderPostId
+  );
+  const onDelete = useAddMeet();
+  const onLike = useLike(isLiked);
+  const onJoin = useJoin(isJoined);
 
-  const onLike = (thunderPostId) => {
-    if (isLiked) {
-      meetsApi.deleteLike(thunderPostId);
-    } else {
-      meetsApi.postLike(thunderPostId);
-    }
-    setIsLiked((prev) => !prev);
-  };
-
-  const onRequest = (thunderPostId) => {
-    if (isJoined) {
-      meetsApi.deleteRequest(thunderPostId);
-    } else {
-      meetsApi.postRequest(thunderPostId);
-    }
-    setIsJoined((prev) => !prev);
-  };
-
+  // initial like, join state 값 설정
   useEffect(() => {
-    if (data) {
-      setIsLiked(data.liked);
-      setIsJoined(data.joined);
+    if (meet) {
+      setIsLiked(meet.liked);
+      setIsJoined(meet.joined);
     }
-  }, []);
+  }, [isLiked, isJoined]);
+
+  const nickname = useSelector((state) => state.auth.nickname);
+
+  // FIXME:
+  // const onLike = (thunderPostId) => {
+  //   if (isLiked) {
+  //     meetsApi.deleteLike(thunderPostId);
+  //   } else {
+  //     meetsApi.postLike(thunderPostId);
+  //   }
+  //   setIsLiked((prev) => !prev);
+  // };
+
+  // const onRequest = (thunderPostId) => {
+  //   if (isJoined) {
+  //     meetsApi.deleteRequest(thunderPostId);
+  //   } else {
+  //     meetsApi.postRequest(thunderPostId);
+  //   }
+  //   setIsJoined((prev) => !prev);
+  // };
+
+  const onShowModal = () => {
+    setShowModal((prev) => !prev);
+  };
 
   return (
     <Container>
       <div className="postTopInfo">
-        <p className="title">{data.title}</p>
-        <div className="postUserInfo">
-          <img src={data.profileUrl} alt="profileUrl" />
-          <p className="nickname">{data.nickname}</p>
-          <svg
-            width="2"
-            height="10"
-            viewBox="0 0 2 10"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M1 1V9" stroke="#C7C7CC" stroke-linecap="round" />
-          </svg>
-          <p>{data.createdAt}</p>
-          <svg
-            width="2"
-            height="10"
-            viewBox="0 0 2 10"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path d="M1 1V9" stroke="#C7C7CC" stroke-linecap="round" />
-          </svg>
-          <p>조회 {data.viewCount}</p>
-          <MdOutlineMoreVert />
+        <p className="title">{meet.title}</p>
+        <div className="postUserInfoContainer">
+          <div className="postUserInfo">
+            <img src={meet.profileUrl} alt="profileUrl" />
+            <p className="nickname">{meet.nickname}</p>
+            <svg
+              width="2"
+              height="10"
+              viewBox="0 0 2 10"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M1 1V9" stroke="#C7C7CC" stroke-linecap="round" />
+            </svg>
+            <p>{meet.createdAt}</p>
+            <svg
+              width="2"
+              height="10"
+              viewBox="0 0 2 10"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M1 1V9" stroke="#C7C7CC" stroke-linecap="round" />
+            </svg>
+            <p>조회 {meet.viewCount}</p>
+          </div>
+          {nickname === meet.nickname && (
+            <button className="moreBtn" onClick={onShowModal}>
+              <FiMoreHorizontal />
+            </button>
+          )}
+          {showModal && (
+            <SelectContainer>
+              <div
+                className="editBtn"
+                onClick={() => {
+                  navigate('/meetAdd', { state: meet });
+                }}
+              >
+                수정하기
+                <FiEdit2 />
+              </div>
+              <div
+                className="deleteBtn"
+                onClick={() => {
+                  const result = window.confirm('정말 삭제하시겠습니까?');
+                  if (result) {
+                    onDelete(meet.thunderPostId);
+                    navigate('/meets');
+                  }
+                }}
+              >
+                삭제하기
+                <RiDeleteBin5Line />
+              </div>
+            </SelectContainer>
+          )}
         </div>
       </div>
       <ImageWrapper>
-        <img src={data.thumbnailUrl} alt="thumbnail" />
+        <img src={meet.thumbnailUrl} alt="thumbnail" />
       </ImageWrapper>
       <AddressContainer>
         <svg
@@ -99,16 +138,16 @@ const MeetDetail = () => {
             fill="#007AFF"
           />
         </svg>
-
         <p>
-          {data.area} {data.address}
+          {meet.area} {meet.address}
         </p>
       </AddressContainer>
       <PostDetailInfo>
         <h2>모집 정보</h2>
         <div className="meetInfo">
           <div>
-            <svg
+            <img src={'/assets/wave.png'} alt="" />
+            {/* <svg
               width="16"
               height="17"
               viewBox="0 0 16 17"
@@ -116,13 +155,13 @@ const MeetDetail = () => {
               xmlns="http://www.w3.org/2000/svg"
             >
               <rect y="0.5" width="16" height="16" rx="8" fill="#E5E5EA" />
-            </svg>
+            </svg> */}
             <p>
-              인원 {data.currentMember} / {data.goalMember}
+              인원 {meet.currentMember} / {meet.goalMember}
             </p>
           </div>
           <div>
-            <svg
+            {/* <svg
               width="16"
               height="17"
               viewBox="0 0 16 17"
@@ -130,12 +169,13 @@ const MeetDetail = () => {
               xmlns="http://www.w3.org/2000/svg"
             >
               <rect y="0.5" width="16" height="16" rx="8" fill="#E5E5EA" />
-            </svg>
+            </svg> */}
+            <img src={'/assets/wave.png'} alt="" />
             <p>모임 날짜</p>
-            <p>{data.meetDate}</p>
+            <p>{meet.meetDate}</p>
           </div>
           <div>
-            <svg
+            {/* <svg
               width="16"
               height="17"
               viewBox="0 0 16 17"
@@ -143,37 +183,52 @@ const MeetDetail = () => {
               xmlns="http://www.w3.org/2000/svg"
             >
               <rect y="0.5" width="16" height="16" rx="8" fill="#E5E5EA" />
-            </svg>
+            </svg> */}
+            <img src={'/assets/wave.png'} alt="" />
             <p>모임 기간</p>
             <p>
-              {data.startDate} ~ {data.endDate}
+              {meet.startDate} ~ {meet.endDate}
             </p>
           </div>
         </div>
       </PostDetailInfo>
-      <PostDescription>{data.content}</PostDescription>
-      <ButtonContainer>
-        <button className="likeBtn" onClick={onLike} isLiked={isLiked}>
-          <svg
-            width="17"
-            height="15"
-            viewBox="0 0 17 15"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
+      <PostDescription>{meet.content}</PostDescription>
+      {nickname !== meet.nickname && (
+        <ButtonContainer>
+          <button
+            className="likeBtn"
+            onClick={() => onLike(meet.thunderPostId)}
+            isLiked={isLiked}
           >
-            <path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M0.6875 5.125C0.6875 2.53618 2.78617 0.4375 5.375 0.4375C6.70079 0.4375 7.89792 0.988282 8.75 1.87203C9.60208 0.988282 10.7992 0.4375 12.125 0.4375C14.7138 0.4375 16.8125 2.53618 16.8125 5.125C16.8125 7.40357 15.4751 9.50747 13.8841 11.1142C12.2876 12.7265 10.3393 13.9369 8.92739 14.4061C8.81223 14.4444 8.68777 14.4444 8.57261 14.4061C7.16068 13.9369 5.21241 12.7265 3.61593 11.1142C2.02492 9.50747 0.6875 7.40357 0.6875 5.125ZM5.375 1.5625C3.40749 1.5625 1.8125 3.1575 1.8125 5.125C1.8125 6.97144 2.91258 8.80503 4.41532 10.3226C5.84122 11.7626 7.54324 12.8295 8.75 13.2762C9.95676 12.8295 11.6588 11.7626 13.0847 10.3226C14.5874 8.80503 15.6875 6.97144 15.6875 5.125C15.6875 3.1575 14.0925 1.5625 12.125 1.5625C10.9206 1.5625 9.85558 2.15966 9.20991 3.07654C9.10455 3.22616 8.93299 3.31518 8.75 3.31518C8.56701 3.31518 8.39545 3.22616 8.29009 3.07654C7.64442 2.15966 6.57941 1.5625 5.375 1.5625Z"
-              fill="#FF2D55"
-            />
-          </svg>
-          좋아요
-        </button>
-        <button className="requestBtn" onClick={onRequest}>
-          참가할래요
-        </button>
-      </ButtonContainer>
+            <svg
+              width="17"
+              height="15"
+              viewBox="0 0 17 15"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M0.6875 5.125C0.6875 2.53618 2.78617 0.4375 5.375 0.4375C6.70079 0.4375 7.89792 0.988282 8.75 1.87203C9.60208 0.988282 10.7992 0.4375 12.125 0.4375C14.7138 0.4375 16.8125 2.53618 16.8125 5.125C16.8125 7.40357 15.4751 9.50747 13.8841 11.1142C12.2876 12.7265 10.3393 13.9369 8.92739 14.4061C8.81223 14.4444 8.68777 14.4444 8.57261 14.4061C7.16068 13.9369 5.21241 12.7265 3.61593 11.1142C2.02492 9.50747 0.6875 7.40357 0.6875 5.125ZM5.375 1.5625C3.40749 1.5625 1.8125 3.1575 1.8125 5.125C1.8125 6.97144 2.91258 8.80503 4.41532 10.3226C5.84122 11.7626 7.54324 12.8295 8.75 13.2762C9.95676 12.8295 11.6588 11.7626 13.0847 10.3226C14.5874 8.80503 15.6875 6.97144 15.6875 5.125C15.6875 3.1575 14.0925 1.5625 12.125 1.5625C10.9206 1.5625 9.85558 2.15966 9.20991 3.07654C9.10455 3.22616 8.93299 3.31518 8.75 3.31518C8.56701 3.31518 8.39545 3.22616 8.29009 3.07654C7.64442 2.15966 6.57941 1.5625 5.375 1.5625Z"
+                fill="#FF2D55"
+              />
+            </svg>
+            좋아요
+          </button>
+          <button
+            className="requestBtn"
+            onClick={() => {
+              const result = window.confirm('모임에 참여하시겠습니까?');
+              if (result) {
+                onJoin(meet.thunderPostId);
+              }
+            }}
+          >
+            참가할래요
+          </button>
+        </ButtonContainer>
+      )}
     </Container>
   );
 };
@@ -190,8 +245,24 @@ const Container = styled.div`
       margin-bottom: 0.875rem;
     }
   }
+
+  .postUserInfoContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .moreBtn {
+      display: flex;
+      padding: 0;
+      svg {
+        font-size: 1rem;
+      }
+    }
+  }
+
   .postUserInfo {
     display: flex;
+
     align-items: center;
     p {
       font-style: normal;
@@ -213,12 +284,60 @@ const Container = styled.div`
       font-size: 0.938rem;
       line-height: 1.125rem;
       /* identical to box height */
-      margin: 0;
+      margin-right: 5px;
+      margin-left: 0;
       color: #000000;
     }
+    .moreBtn {
+      display: flex;
 
+      align-items: center;
+      padding: 0;
+    }
     svg {
-      height: 8px;
+      font-size: 1rem;
+    }
+  }
+`;
+
+const SelectContainer = styled.div`
+  position: absolute;
+  z-index: 99;
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(230, 230, 230);
+  box-shadow: rgb(0 0 0 / 15%) 0px 2px 4px 0px;
+  border-radius: 4px;
+  /* padding: 4px 0px; */
+  color: rgb(61, 61, 61);
+  bottom: auto;
+  top: 1.2rem;
+  left: auto;
+  right: 0;
+  transform: none;
+  font-weight: bold;
+  box-sizing: border-box;
+  .editBtn {
+    border-bottom: 1px solid #ececec;
+  }
+  .deleteBtn {
+    color: #f54e4e;
+  }
+  div {
+    display: flex;
+    align-items: center;
+
+    font-weight: bold;
+    color: gray;
+    white-space: nowrap;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    /* min-width: 50px; */
+    /* height: 40px;
+    line-height: 40px; */
+    font-size: 0.75rem;
+    box-sizing: border-box;
+    svg {
+      margin-left: 0.5rem;
     }
   }
 `;
@@ -260,6 +379,14 @@ const PostDetailInfo = styled.div`
   div.meetInfo {
     display: flex;
     flex-direction: column;
+    div {
+      display: flex;
+      align-items: center;
+      img {
+        width: 1rem;
+        margin-right: 0.375rem;
+      }
+    }
   }
   div {
     display: flex;
