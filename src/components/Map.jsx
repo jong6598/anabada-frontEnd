@@ -3,12 +3,14 @@ import axios from "axios";
 import { useState } from "react";
 import { useEffect } from "react";
 import styled from "styled-components";
+import checkedWeather from "../styles/weather";
 
 // kakao api를 호출하면 kakao가 window전역객체에 바인딩된다.
 const { kakao } = window;
 
 const Map = () => {
   const [markers, setMarkers] = useState([]);
+  const [weatherIcons, setWeatherIcons] = useState([]);
 
   // fetcher
   const fetchingSpot = () =>
@@ -21,7 +23,7 @@ const Map = () => {
       staleTime: 1000 * 60 * 30,
       refetchOnWindowFocus: false,
       onSuccess(data) {
-        console.log("Map Data를 성공적으로 fetch했습니다. ::: ");
+        console.log("Map Data를 성공적으로 fetch했습니다. ::: ", data.data);
       },
       onError(err) {
         console.log("에러가 발생했습니다!! ::: ", err);
@@ -29,6 +31,15 @@ const Map = () => {
     }
   );
 
+  // 마커 icons
+  useEffect(() => {
+    const resultWeatherIcons = data.data?.map((el) => {
+      return checkedWeather(el.sky, el.pty);
+    });
+    setWeatherIcons(resultWeatherIcons);
+  }, [data]);
+  console.log(weatherIcons);
+  // kakao map setting
   useEffect(() => {
     // map을 띄울 노드 객체
     const container = document.getElementById("myMap");
@@ -37,31 +48,37 @@ const Map = () => {
       center: new kakao.maps.LatLng(36.350701, 127.870667),
       level: 13,
     };
-    const temp = "24도";
-    const pos = "카카오!";
+
     // map생성
     const map = new kakao.maps.Map(container, options);
-    const content = `
-    <div class="marker__wraper">
-    <span>기온: ${temp}</span>
-    <br/>
-    <span>지역명: ${pos}</span>
-    <span></span>
-    </div>
-    `;
+    const content = (el, i) => {
+      if (weatherIcons.length !== 0) {
+        return `
+      <div class="marker__wrapper">
+      <svg class="class="marker__wrapper__pointer" width="29" height="54" viewBox="0 0 29 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M14.07 0C6.3 0 0 6.3 0 14.07V36.14C0 42.97 4.87 48.66 11.32 49.94L13.1 53.02C13.53 53.77 14.61 53.77 15.04 53.02L16.82 49.94C23.28 48.66 28.14 42.97 28.14 36.14V14.07C28.14 6.3 21.84 0 14.07 0Z" fill="white"/>
+  </svg>
+      <section class="marker__wrapper__info">
+      <div><svg>${weatherIcons[i]}</svg></div>
+      <div>${el.tmp}</div>
+      </section>
+      </div>
+      `;
+      }
+    };
     // 마커 클러스터러를 생성
     const clusterer = new kakao.maps.MarkerClusterer({
       map: map, // 마커들을 클러스터로 관리하고 표시할 지도 객체
       averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
-      minLevel: 10, // 클러스터 할 최소 지도 레벨
-      calculator: [2, 4, 6], // 클러스터의 크기 구분 값, 각 사이값마다 설정된 text나 style이 적용된다. 크기 구분 값에
+      minLevel: 8, // 클러스터 할 최소 지도 레벨
+      calculator: [4, 8, 12, 16], // 클러스터의 크기 구분 값, 각 사이값마다 설정된 text나 style이 적용된다. 크기 구분 값에
       texts: getTexts, // texts는 배열로도 설정가능
       styles: [
         {
           // calculator 각 사이 값 마다 적용될 스타일을 지정한다
           width: "30px",
           height: "30px",
-          background: "rgba(51, 204, 255, 0.1)",
+          background: "rgba(51, 204, 255)",
           borderRadius: "15px",
           color: "#000",
           textAlign: "center",
@@ -71,7 +88,7 @@ const Map = () => {
         {
           width: "40px",
           height: "40px",
-          background: "rgba(255, 153, 0, 0.9)",
+          background: "rgba(255, 153, 0)",
           borderRadius: "20px",
           color: "#000",
           textAlign: "center",
@@ -81,9 +98,8 @@ const Map = () => {
         {
           width: "50px",
           height: "50px",
-          // background: "rgba(255, 51, 204, .8)",
-          background: 'url("/android-chrome-192x192.png")',
-          opacity: 0.4,
+          background: "rgba(255, 51, 204)",
+          // background: 'url("/android-chrome-192x192.png")',
           borderRadius: "25px",
           color: "#000",
           textAlign: "center",
@@ -95,7 +111,7 @@ const Map = () => {
         {
           width: "60px",
           height: "60px",
-          background: "rgba(255, 80, 80, .8)",
+          background: "rgba(255, 80, 80)",
           borderRadius: "30px",
           color: "#000",
           textAlign: "center",
@@ -106,31 +122,35 @@ const Map = () => {
     });
     // 클러스터의 범위에 따른 문자열 생성
     function getTexts(count) {
-      if (count < 2) {
-        return "가";
-      } else if (count < 4) {
-        return "온도: 23";
-      } else if (count < 6) {
-        return null;
+      if (count < 4) {
+        return 4;
+      } else if (count < 8) {
+        return 8;
+      } else if (count < 12) {
+        return 12;
       } else {
-        return "라";
+        return 16;
       }
     }
-    const markers = data.data.map((el) => {
+    const markers = data.data.map((el, i) => {
       const marker__answer = new kakao.maps.CustomOverlay({
-        content: content,
+        content: content(el, i),
         position: new kakao.maps.LatLng(el.x, el.y),
       });
       return marker__answer;
     });
-    //
+
     setMarkers(markers);
     clusterer.addMarkers(markers);
   }, [data]);
 
   return (
     <>
-      <MapWrapper id="myMap"></MapWrapper>
+      {isLoading ? (
+        <div>로딩중입니다.</div>
+      ) : (
+        <MapWrapper id="myMap"></MapWrapper>
+      )}
     </>
   );
 };
@@ -143,4 +163,21 @@ const MapWrapper = styled.div`
   position: absolute;
   top: 0;
   left: 0;
+  .marker__wrapper {
+    position: relative;
+    .marker__wrapper__info {
+      position: absolute;
+
+      background-color: white;
+      bottom: 10px;
+      div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+    .marker__wrapper__info {
+      border-radius: 100%;
+    }
+  }
 `;
