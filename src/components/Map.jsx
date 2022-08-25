@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -7,26 +8,27 @@ import styled from "styled-components";
 const { kakao } = window;
 
 const Map = () => {
-  const [mapData, setMapData] = useState([]);
   const [markers, setMarkers] = useState([]);
 
-  // 비동기 데이터 호출 작업(완료되면 두 번째 useEffect로)
-  useEffect(() => {
-    try {
-      const response = (async () =>
-        await axios.get("http://43.200.6.110/api/beach ", {
-          headers: {
-            "Content-Type": "application/json",
-            accept: "application/json",
-          },
-        }))();
-      response.then((res) => setMapData(res.data));
-    } catch (err) {
-      return console.log(err);
+  // fetcher
+  const fetchingSpot = () =>
+    axios.get(`http://${process.env.REACT_APP_API_SERVER}/api/beach`);
+  // react-query
+  const { data, isLoading, isFetching, isError, error } = useQuery(
+    ["spotData"],
+    fetchingSpot,
+    {
+      staleTime: 1000 * 60 * 30,
+      refetchOnWindowFocus: false,
+      onSuccess(data) {
+        console.log("Map Data를 성공적으로 fetch했습니다. ::: ");
+      },
+      onError(err) {
+        console.log("에러가 발생했습니다!! ::: ", err);
+      },
     }
-  }, []);
+  );
 
-  // 첫 번째 useEffect를 하고 나서 mapData에 데이터 들어오면 실행되는 부분
   useEffect(() => {
     // map을 띄울 노드 객체
     const container = document.getElementById("myMap");
@@ -114,8 +116,7 @@ const Map = () => {
         return "라";
       }
     }
-    // 받아온 mapData를 바탕으로 클러스터에 찍을 marker를 생성한다.
-    const markers = mapData.map((el) => {
+    const markers = data.data.map((el) => {
       const marker__answer = new kakao.maps.CustomOverlay({
         content: content,
         position: new kakao.maps.LatLng(el.x, el.y),
@@ -125,7 +126,7 @@ const Map = () => {
     //
     setMarkers(markers);
     clusterer.addMarkers(markers);
-  }, [mapData]);
+  }, [data]);
 
   return (
     <>
