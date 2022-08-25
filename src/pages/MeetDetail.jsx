@@ -10,6 +10,8 @@ import { RiDeleteBin5Line } from 'react-icons/ri';
 import { useDetailMeet } from '../react-query/hooks/useDetailMeet';
 import { useSelector } from 'react-redux';
 import { useAddMeet } from '../react-query/hooks/useDeleteMeet';
+import { useLike } from '../react-query/hooks/useLike';
+import { useJoin } from '../react-query/hooks/useJoin';
 
 const MeetDetail = () => {
   const [showModal, setShowModal] = useState(false);
@@ -19,36 +21,38 @@ const MeetDetail = () => {
   const { meet, isLiked, setIsLiked, isJoined, setIsJoined } = useDetailMeet(
     params.thunderPostId
   );
-
   const onDelete = useAddMeet();
+  const onLike = useLike(isLiked);
+  const onJoin = useJoin(isJoined);
 
+  // initial like, join state 값 설정
   useEffect(() => {
     if (meet) {
       setIsLiked(meet.liked);
       setIsJoined(meet.joined);
     }
-  }, []);
+  }, [isLiked, isJoined]);
 
   const nickname = useSelector((state) => state.auth.nickname);
 
-  // FIXME: MUTATION으로 바꿔야함
-  const onLike = (thunderPostId) => {
-    if (isLiked) {
-      meetsApi.deleteLike(thunderPostId);
-    } else {
-      meetsApi.postLike(thunderPostId);
-    }
-    setIsLiked((prev) => !prev);
-  };
+  // FIXME:
+  // const onLike = (thunderPostId) => {
+  //   if (isLiked) {
+  //     meetsApi.deleteLike(thunderPostId);
+  //   } else {
+  //     meetsApi.postLike(thunderPostId);
+  //   }
+  //   setIsLiked((prev) => !prev);
+  // };
 
-  const onRequest = (thunderPostId) => {
-    if (isJoined) {
-      meetsApi.deleteRequest(thunderPostId);
-    } else {
-      meetsApi.postRequest(thunderPostId);
-    }
-    setIsJoined((prev) => !prev);
-  };
+  // const onRequest = (thunderPostId) => {
+  //   if (isJoined) {
+  //     meetsApi.deleteRequest(thunderPostId);
+  //   } else {
+  //     meetsApi.postRequest(thunderPostId);
+  //   }
+  //   setIsJoined((prev) => !prev);
+  // };
 
   const onShowModal = () => {
     setShowModal((prev) => !prev);
@@ -214,7 +218,12 @@ const MeetDetail = () => {
           </button>
           <button
             className="requestBtn"
-            onClick={() => onRequest(meet.thunderPostId)}
+            onClick={() => {
+              const result = window.confirm('모임에 참여하시겠습니까?');
+              if (result) {
+                onJoin(meet.thunderPostId);
+              }
+            }}
           >
             참가할래요
           </button>

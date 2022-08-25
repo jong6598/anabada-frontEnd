@@ -8,19 +8,7 @@ const MeetAdd = () => {
   const { state } = useLocation(); // navgiation으로 전달받음
   const [isEdit, setIsEdit] = useState(false);
 
-  const onAdd = useAddMeet(isEdit);
-
-  useEffect(() => {
-    if (state) {
-      // 기존의 post가 있다면
-      const startDate = state.startDate.replaceAll('.', '-');
-      const endDate = state.endDate.replaceAll('.', '-');
-      const editedState = { ...state, startDate, endDate };
-
-      setIsInputValue(editedState);
-      setIsEdit(true); // edit 체크
-    }
-  }, []);
+  const onAdd = useAddMeet();
 
   const [isInputValue, setIsInputValue] = useState({
     title: '',
@@ -32,6 +20,20 @@ const MeetAdd = () => {
     startDate: '',
     endDate: ''
   });
+
+  useEffect(() => {
+    if (state) {
+      // 기존의 post가 있다면
+      const startDate = state.startDate.replaceAll('.', '-');
+      const endDate = state.endDate.replaceAll('.', '-');
+      const editedState = { ...state, startDate, endDate };
+
+      console.log(editedState, 'eiditedState, 확인해보자');
+
+      setIsInputValue(editedState);
+      setIsEdit(true); // edit 체크
+    }
+  }, []);
 
   const {
     thunderPostId,
@@ -139,7 +141,9 @@ const MeetAdd = () => {
           };
           const result = window.confirm('등록하시겠습니까?');
           if (result) {
-            onAdd(post, thunderPostId);
+            console.log(thunderPostId, 'thunderPostId 확인할거임');
+            const state = { isEdit, post, thunderPostId };
+            onAdd(state);
           }
         }}
       >

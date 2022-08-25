@@ -6,7 +6,6 @@ import { queryKeys } from '../constants';
 // 모임 게시글
 const fetchMeetsList = async (pageParam, areaSelected) => {
   try {
-    console.log(areaSelected, 'areaSelected');
     const res = await meetsApi.getMeetsPosts(pageParam, areaSelected);
     return res.data;
   } catch (error) {

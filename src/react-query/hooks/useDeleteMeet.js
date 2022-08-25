@@ -26,7 +26,7 @@ export function useAddMeet() {
       alert('모임이 삭제되었습니다');
       // const title = '모임이 삭제되었습니다';
       // toast({ title, status: 'success' });
-      navigate(-1);
+      navigate('/meets');
     },
     onError: () => {
       alert('모임 삭제에 실패하였습니다');

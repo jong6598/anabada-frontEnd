@@ -6,7 +6,6 @@ import { queryKeys } from '../constants';
 // 모임 상세 페이지
 const getMeetPost = async (thunderPostId) => {
   try {
-    console.log(thunderPostId, 'check');
     const res = await meetsApi.getMeetDetail(thunderPostId);
     return res.data;
   } catch (error) {
