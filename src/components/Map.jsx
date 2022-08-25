@@ -10,7 +10,6 @@ const { kakao } = window;
 
 const Map = () => {
   const [markers, setMarkers] = useState([]);
-  const [weatherIcons, setWeatherIcons] = useState([]);
 
   // fetcher
   const fetchingSpot = () =>
@@ -31,14 +30,6 @@ const Map = () => {
     }
   );
 
-  // 마커 icons
-  useEffect(() => {
-    const resultWeatherIcons = data.data?.map((el) => {
-      return checkedWeather(el.sky, el.pty);
-    });
-    setWeatherIcons(resultWeatherIcons);
-  }, [data]);
-  console.log(weatherIcons);
   // kakao map setting
   useEffect(() => {
     // map을 띄울 노드 객체
@@ -51,20 +42,21 @@ const Map = () => {
 
     // map생성
     const map = new kakao.maps.Map(container, options);
-    const content = (el, i) => {
-      if (weatherIcons.length !== 0) {
-        return `
+    const content = (el) => {
+      const weatherIcons = checkedWeather(el.sky, el.pty);
+      console.log(weatherIcons);
+      return `
       <div class="marker__wrapper">
       <svg class="class="marker__wrapper__pointer" width="29" height="54" viewBox="0 0 29 54" fill="none" xmlns="http://www.w3.org/2000/svg">
   <path d="M14.07 0C6.3 0 0 6.3 0 14.07V36.14C0 42.97 4.87 48.66 11.32 49.94L13.1 53.02C13.53 53.77 14.61 53.77 15.04 53.02L16.82 49.94C23.28 48.66 28.14 42.97 28.14 36.14V14.07C28.14 6.3 21.84 0 14.07 0Z" fill="white"/>
   </svg>
       <section class="marker__wrapper__info">
-      <div><svg>${weatherIcons[i]}</svg></div>
+      weatherIcons
+      <div>${weatherIcons}</div>
       <div>${el.tmp}</div>
       </section>
       </div>
       `;
-      }
     };
     // 마커 클러스터러를 생성
     const clusterer = new kakao.maps.MarkerClusterer({
@@ -134,7 +126,7 @@ const Map = () => {
     }
     const markers = data.data.map((el, i) => {
       const marker__answer = new kakao.maps.CustomOverlay({
-        content: content(el, i),
+        content: content(el),
         position: new kakao.maps.LatLng(el.x, el.y),
       });
       return marker__answer;
