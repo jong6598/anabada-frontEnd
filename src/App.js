@@ -8,7 +8,6 @@ import AddMeet from "./pages/MeetAdd";
 import MeetDetail from "./pages/MeetDetail";
 import Header from "./components/Header";
 import MeetsAll from "./pages/MeetsAll";
-import "./App.css";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/SignUp";
@@ -39,12 +38,12 @@ function App() {
             <Route path="*" element={<NotFound />} />
             <Route path="/meets" element={<Meets />} />
             <Route path="/meetAdd" element={<AddMeet />} />
-            <Route path="/meets/:meetId" element={<MeetDetail />} />
             <Route path="/mypage" element={<Mypage />} />
             <Route path="/mymeets" element={<MyMeets />} />
             <Route path="/myposts" element={<MyPosts />} />
+            <Route path="/meetsAll" element={<MeetsAll />} />
           </Route>
-          <Route path="/meetsAll" element={<MeetsAll />} />
+          <Route path="/meets/:thunderPostId" element={<MeetDetail />} />
         </Routes>
       </ThemeProvider>
     </>

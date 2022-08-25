@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 const AlertToast = ({ errorMsg }) => {
   return (
     <>
@@ -11,6 +11,21 @@ const AlertToast = ({ errorMsg }) => {
 
 export default AlertToast;
 
+const alertAnimation = keyframes`
+  0% {
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  95%{
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+`;
+
 const AlertMessage = styled.div`
   position: fixed;
   margin: 0 auto;
@@ -19,6 +34,7 @@ const AlertMessage = styled.div`
   bottom: 17rem;
   text-align: center;
   z-index: 999;
+  animation: ${alertAnimation} 5s ease-in-out;
   span {
     border-radius: 0.25rem;
     padding: 10px;

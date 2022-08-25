@@ -493,5 +493,3 @@ const HeartBtn = styled.button`
     }
   `
 
-
-

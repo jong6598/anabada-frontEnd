@@ -70,19 +70,33 @@ userAxios.interceptors.response.use(
 );
 
 export const meetsApi = {
+  getPopularPosts: (area) => api.get(`/meets/hot?area=${area}`),
+
   getMeetsPosts: (pageParam, area) =>
     api.get(`/meets?area=${area}&page=${pageParam}&size=5`),
+
+  getSearchPosts: (pageParam, area, keyword) =>
+    api.get(
+      `/meets/search?area=${area}&keyword=${keyword}&page=${pageParam}&size=10`
+    ),
+
   postMeetPost: (post) => api.post('/meets', post),
+
   editMeetPost: (post, thunderPostId) =>
     api.put(`/meets/${thunderPostId}`, post),
+
   deleteMeetPost: (thunderPostId) => api.delete(`/meets/${thunderPostId}`),
+
   getMeetDetail: (thunderPostId) => api.get(`/meets/${thunderPostId}`),
-  postRequest: (thunderPostId) => api.post(`/meetlikes/${thunderPostId}`),
-  deleteRequest: (thunderPostId) => api.delete(`/meetlikes/${thunderPostId}`),
-  postLike: (thunderPostId) =>
+
+  postLike: (thunderPostId) => api.post(`/meetlikes/${thunderPostId}`),
+  deleteLike: (thunderPostId) => api.delete(`/meetlikes/${thunderPostId}`),
+
+  postRequest: (thunderPostId) =>
     api.post(`/requests/${thunderPostId}
   `),
-  deleteLike: (thunderPostId) => api.delete(`/requests/${thunderPostId}`)
+
+  deleteRequest: (thunderPostId) => api.delete(`/requests/${thunderPostId}`)
 };
 
 // 로그인/회원가입 요청 객체
@@ -94,9 +108,12 @@ export const userAuth = {
     return userAxios.post('/signup', signupData);
   },
   emailValidation(email) {
-    return userAxios.post(`/validation`, {
+    return userAxios.post(`/validation/email`, {
       email
     });
+  },
+  nicknameValidation(nickname) {
+    return userAxios.post(`/validation/nickname/${nickname}`);
   },
   useAccess(token) {
     // 유저정보 받아오기

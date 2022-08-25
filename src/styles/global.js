@@ -1,8 +1,10 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
+   
    *{
       box-sizing: border-box;
+      
    }
 
  body{
@@ -32,6 +34,20 @@ const GlobalStyle = createGlobalStyle`
   h2,p{
    margin: 0;
   }
+
+  select{
+   border: none;
+   outline: none;
+  }
+
+  input{
+   border: none;
+  }
+  input:focus-visible {
+      outline: 0.01rem solid #007aff;
+     
+    }
+ 
 `;
 
 export default GlobalStyle;

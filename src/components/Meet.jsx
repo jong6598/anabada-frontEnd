@@ -1,12 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { useDetailMeet } from '../react-query/hooks/useDetailMeet';
 
 const Meet = ({ meet }) => {
   const navigate = useNavigate();
 
   return (
-    <MeetContinaer onClick={() => navigate(`/meets/${meet.thunderpostId}`)}>
+    <MeetContinaer onClick={() => navigate(`/meets/${meet.thunderPostId}`)}>
       <LeftWrapper>
         <img src={meet.thumbnailUrl} alt="meetimg" />
       </LeftWrapper>
