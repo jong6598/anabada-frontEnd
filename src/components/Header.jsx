@@ -31,7 +31,7 @@ const Header = memo(() => {
         refErrorTimer.current = setTimeout(() => {
           setStateErrTiemr(false);
           return (refErrorTimer.current = null);
-        }, 5000);
+        }, 3500);
       }
     },
     [refErrorTimer]

@@ -22,7 +22,7 @@ const checkedWeather = (sky, pty) => {
   const requestDate = new Date();
   const currHour = requestDate.getHours();
   // 저녁
-  if (currHour >= 18 || currHour <= 6) {
+  if (currHour >= 18 || currHour < 6) {
     // 맑을 때
     if (Number(sky) === 1) {
       switch (Number(pty)) {
