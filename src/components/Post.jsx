@@ -2,10 +2,10 @@ import React from "react";
 import styled from "styled-components";
 
 
-const Post = ({ data }) => {
+const Post = ({ data}) => {
 
     return (
-        <>
+     
             <PostInfoBox>
                 <ImageBox>
                     <img src={data.thumbnailUrl} alt="thumbnailimage" />
@@ -39,7 +39,7 @@ const Post = ({ data }) => {
             </PostInfoBox>
 
 
-        </>
+      
     )
 
 }
@@ -58,7 +58,7 @@ const PostInfoBox = styled.div`
 const ImageBox = styled.div`
     display: flex;
     position: relative;
-
+    
     div{
         position: absolute;
         display: flex;

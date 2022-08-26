@@ -17,6 +17,7 @@ import "../App.css";
 import { Editor } from '@toast-ui/react-editor';
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { amenityInfo } from "../shared/data";
+import { queryKeys } from "../react-query/constants";
 
 const PostCU = () => {
   const navigate = useNavigate();
@@ -35,19 +36,16 @@ const PostCU = () => {
     register,
     handleSubmit,
     setValue,
-    watch,
     formState: { isValid },
   } = useForm({
     mode: "all",
   });
 
-  //FIXME: try catch
 
   useEffect(() => {
     if (postId) {
       const setPost = async () => {
         const postInfo = await postApi.getPost(`${postId}`);
-        console.log(postInfo)
 
         if (postInfo.data.nickname !== nickname) {
           alert("수정 권한이 없습니다.");
@@ -61,7 +59,7 @@ const PostCU = () => {
         setValue("title", data.title);
         setValue("area", data.area);
         setValue("address", data.address);
-        setValue("creatAt", data.after);
+        setValue("createAt", data.createAt);
         setValue("content", data.content);
         setValue("amenity", data.amenity);
         setImgSrc(data.thumbnailUrl);
@@ -73,12 +71,8 @@ const PostCU = () => {
     }
   }, []);
 
-
-
-
   //usemutation을 사용해서 수정, 작성 해야함
   //useRef를 사용해서 이미지(랜더링 되도 값이 초기화되지 않음.)
-
 
   const previewImage = async (e) => {
     const image = e.target.files[0];
@@ -103,19 +97,49 @@ const PostCU = () => {
     });
   }
 
-  console.log(check, 'check')
 
 
 
 
+  const onSubmitPost = async (newPost) => {
+    if (!postId) {
+      try {
+        const post =await  postApi.newPost(newPost);
+        alert("게시글이 등록되었습니다!");
+        navigate("/posts");
+      } catch (err) {
+        alert(err);
+      }
+    } else {
+      try {
+        const update =await postApi.updatePost(newPost);
+        alert("게시글이 수정되었습니다!")
+        navigate(`/posts`);
+      } catch (err) {
+        console.log(err);
+        alert(err);
+      }
+    }
+  };
 
-  const onSubmitPost = async (formData) => {
+  const {mutate:onAdd} = useMutation(onSubmitPost, {
+    onSuccess: () => {
+      console.log('호출확인ㄴㄴㄴ')
+      queryClient.invalidateQueries([queryKeys.postList])
+    },
+    onError: (err) => {
+      console.log(err.respose);
+    }
+  })
 
+  const onSubmit = async(formData) => {
+   
     let thumbnailUrl;
 
     if (formData.postImg.length > 0) {
+      console.log(formData.postImg[0],"test")
       const uploaded_file = await uploadBytes(
-        ref(storage, `images/${formData.postImg[0].name}`),
+        ref(storage, `images/post/${formData.postImg[0].name}`),
         formData.postImg[0],
       )
       thumbnailUrl = await getDownloadURL(uploaded_file.ref);
@@ -124,8 +148,6 @@ const PostCU = () => {
     } else {
       thumbnailUrl = '';
     }
-
-
 
     const newPost = {
       title: formData.title,
@@ -136,38 +158,10 @@ const PostCU = () => {
       thumbnailUrl: thumbnailUrl,
     };
 
+    onAdd(newPost)
+  }
 
-    if (!postId) {
-      try {
-        const post = postApi.newPost(newPost);
-        alert("게시글이 등록되었습니다!");
-        navigate("/posts");
-      } catch (err) {
-        alert(err);
-      }
-    } else {
-      try {
-        const update = postApi.updatePost(newPost);
-        alert("게시글이 수정되었습니다!")
-        navigate(`/api/posts/${postId}`);
-      } catch (err) {
-        console.log(err);
-        alert(err);
-      }
-    }
-  };
-
-
-  const onSubmitPostMutation = useMutation(onSubmitPost, {
-    onSuccess: () => {
-      queryClient.invalidateQueries(["posts"])
-    },
-    onError: (err) => {
-      console.log(err.respose);
-    }
-  })
-
-
+//toast ui 
   const handleChangeInput = () => {
     setContent(editorRef.current.getInstance().getHTML()
     )
@@ -181,12 +175,10 @@ const PostCU = () => {
       callback(url.url, "콜백 이미지 URL")
     }
 
-  
-
 
   return (
     <>
-      <PostForm onSubmit={handleSubmit(onSubmitPost)}>
+      <PostForm onSubmit={handleSubmit(onSubmit)}>
         <Element>
           <label>제목</label>
           <input
@@ -224,15 +216,15 @@ const PostCU = () => {
               required: true,
             })}
           >
-            <option value="GYEONGGI">서울, 경기, 인천</option>
-            <option value="GANGWON">강원</option>
-            <option value="GYEONBUK">대구, 경북</option>
-            <option value="GYEONGNAM">부산, 울산, 경남 </option>
-            <option value="JEONBUK">전북</option>
-            <option value="JEONNAM">광주, 전남</option>
-            <option value="CHUNGBUK">충북</option>
-            <option value="CHUNGNAM">충남</option>
-            <option value="JEJU">제주</option>
+            <option value="서울·경기·인천">서울·경기·인천</option>
+          <option value="강원">강원</option>
+          <option value="대구·경북">대구·경북</option>
+          <option value="부산·울산·경남">부산·울산·경남</option>
+          <option value="전북">전북</option>
+          <option value="광주·전남">광주·전남</option>
+          <option value="충북">충북</option>
+          <option value="충남">충남</option>
+          <option value="제주">제주</option>
           </select>
         </Element>
 

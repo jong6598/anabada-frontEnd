@@ -4,8 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import Post from "../components/Post";
 import { postApi } from "../shared/api";
-import { useQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
+import { queryKeys } from "../react-query/constants";
+
 
 
 const Posts = () => {
@@ -13,14 +14,14 @@ const Posts = () => {
   const area_ref = useRef();
   const [areaSelected, setAreaSelected] = useState("ALL");
   const { ref, inView } = useInView();
+  const queryClient = useQueryClient();
 
-
-
-  const getPosts = async (pageParam = 0) => {
+  const getPosts = async (pageParam) => {
     try {
       const res = await postApi.getPosts(pageParam, areaSelected)
-      console.log(res)
+      
       const data= res.data.content;
+    
       const last = res.data.last;
       return { data, nextPage: pageParam + 1, last };
     } catch (err) {
@@ -30,14 +31,18 @@ const Posts = () => {
   }
 
 
-  const { data, fetchNextPage, isFetchingNextPage, refetch } = useInfiniteQuery(
-    ["postList"],
+
+  const { data, fetchNextPage, isFetchingNextPage,refetch } = useInfiniteQuery(
+    [queryKeys.postList],
     ({ pageParam = 0 }) => getPosts(pageParam),
     {
       getNextPageParam: (lastPage) =>
         !lastPage.last ? lastPage.nextPage : undefined,
+        
     }
   );
+
+
 
 
   useEffect(() => {
@@ -48,13 +53,15 @@ const Posts = () => {
 
   
 
-  useEffect(() => {
-    refetch();
-  }, [areaSelected, data]);
+ useEffect(()=>{
+  queryClient.invalidateQueries([queryKeys.postList])
+  refetch();
+},[data, areaSelected])
 
 
-  const handleArea = () => {
-    setAreaSelected(area_ref.current.value);
+
+  const handleArea = (e) => {
+    setAreaSelected(e.target.value);
   };
 
   return (
@@ -63,17 +70,18 @@ const Posts = () => {
       <Areabar>
         <select onChange={handleArea} ref={area_ref}>
           <option value="ALL">전국</option>
-          <option value="GYEONGGI">서울, 경기, 인천</option>
-          <option value="GANGWON">강원</option>
-          <option value="GYEONBUK">대구, 경북</option>
-          <option value="GYEONGNAM">부산, 울산, 경남 </option>
-          <option value="JEONBUK">전북</option>
-          <option value="JEONNAM">광주, 전남</option>
-          <option value="CHUNGBUK">충북</option>
-          <option value="CHUNGNAM">충남</option>
-          <option value="JEJU">제주</option>
+          <option value="서울·경기·인천">서울·경기·인천</option>
+          <option value="강원">강원</option>
+          <option value="대구·경북">대구·경북</option>
+          <option value="부산·울산·경남">부산·울산·경남</option>
+          <option value="전북">전북</option>
+          <option value="광주·전남">광주·전남</option>
+          <option value="충북">충북</option>
+          <option value="충남">충남</option>
+          <option value="제주">제주</option>
         </select>
       </Areabar>
+            
       <PostDiv>
       {data &&
           data.pages.map((page, idx) => {
@@ -131,6 +139,7 @@ export default Posts;
 
 const MainDiv = styled.div`
   width: 100%;
+ 
 `
 
 const PostDiv = styled.div`
@@ -149,11 +158,12 @@ const Areabar = styled.div`
     padding: 0.875rem, 1rem, 0.5rem, 1rem;
 
   select{
-    height: 2rem;
-    width: 5rem;
     border-radius: 0.25rem;
-    padding: 0.375rem, 0.25rem, 0.375rem, 0.625rem;
     margin-top: 0.9375rem;
+    padding: 0.625rem;
+    gap: 0.188rem;
+    background: #ffffff;
+    border: 0.0625rem solid #c7c7cc;
   }
 `
 
@@ -163,10 +173,11 @@ const PostContainer = styled.div`
 `
 
 
-
 const PostBtn = styled.div` 
   cursor: pointer;
    position: fixed;
   bottom: 1rem;
   right: 1rem;
   `
+
+

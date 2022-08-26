@@ -21,7 +21,7 @@ const postLike = async (isLiked, thunderPostId) => {
   }
 };
 
-export function useLike() {
+export function useLike(isLiked) {
   const navigate = useNavigate();
   //FIXME: const toast = useCustomToast();
   const queryClient = useQueryClient();

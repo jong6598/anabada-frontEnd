@@ -201,4 +201,4 @@ const LogoutDiv = styled.div`
         margin-top: 2.125rem;
         margin-bottom: 2.125rem;
     }
-`
+    `

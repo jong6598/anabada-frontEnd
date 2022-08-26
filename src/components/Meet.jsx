@@ -28,7 +28,17 @@ const Meet = ({ meet }) => {
           </svg>
 
           <p>
-            {meet.area} {meet.address}
+            {meet.address}
+          </p>
+        </div>
+        <div className="subBox bottom">
+          <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7.33301 8.5H11.333V12.5H7.33301V8.5Z" fill="#C7C7CC" />
+            <path d="M12.6667 3.16634H11.3333V1.83301H10V3.16634H6V1.83301H4.66667V3.16634H3.33333C2.598 3.16634 2 3.76434 2 4.49967V13.833C2 14.5683 2.598 15.1663 3.33333 15.1663H12.6667C13.402 15.1663 14 14.5683 14 13.833V4.49967C14 3.76434 13.402 3.16634 12.6667 3.16634ZM12.6673 13.833H3.33333V5.83301H12.6667L12.6673 13.833Z" fill="#C7C7CC" />
+          </svg>
+
+          <p>
+            {meet.meetDate}
           </p>
         </div>
         <div className="subBox bottom">
@@ -144,6 +154,9 @@ const RightWrapper = styled.div`
   }
   .subBox {
     margin-bottom: 0.5rem;
+    svg{
+      margin-right: 0.5rem;
+    }
     p:first-child {
       font-style: normal;
       font-weight: 600;

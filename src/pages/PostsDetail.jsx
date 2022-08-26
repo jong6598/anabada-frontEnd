@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
@@ -8,7 +8,10 @@ import { Viewer } from '@toast-ui/react-editor';
 import '@toast-ui/editor/dist/toastui-editor-viewer.css';
 import Comment from "../components/Comment";
 import { useInView } from "react-intersection-observer";
-
+import { FiMoreHorizontal } from 'react-icons/fi';
+import { FiEdit2 } from 'react-icons/fi';
+import { RiDeleteBin5Line } from 'react-icons/ri';
+import { queryKeys } from "../react-query/constants";
 
 
 const PostsDetail = () => {
@@ -18,18 +21,20 @@ const PostsDetail = () => {
   const [liked, setLiked] = useState();
   const queryClient = useQueryClient();
   const profileImg = useSelector((state) => state.auth.profileImg)
-
   const [newComment, setNewComment] = useState("");
   const [isValid, setIsValid] = useState(false);
-
   const { ref, inView } = useInView();
+  const write_ref = useRef();
+
+  const [showModal, setShowModal] = useState(false);
+
 
 
 
   const getPost = async () => {
     try {
       const res = await postApi.getPost(`${params.postId}`);
-      console.log(res.data);
+      console.log(res.data.liked, 'liked 확인해보자');
       return res.data;
     } catch (err) {
       console.log(err);
@@ -37,20 +42,18 @@ const PostsDetail = () => {
     }
   };
 
-  const postInfo = useQuery(["post"], getPost, {
+  const postInfo = useQuery(["post", liked], getPost, {
     refetchOnWindowFocus: false,
   }).data;
 
   const getAmenity = postInfo.amenity.split(' ');
- 
+
 
   const fetchComments = async (pageParam) => {
     try {
-      const res = await postApi.getComments(pageParam,`${params.postId}`)
-
-      const data= res.data.content;
+      const res = await postApi.getComments(pageParam, `${params.postId}`)
+      const data = res.data.content;
       const last = res.data.last;
-
       return { data, nextPage: pageParam + 1, last };
     } catch (err) {
       console.log(err);
@@ -58,9 +61,9 @@ const PostsDetail = () => {
     }
   }
 
-
-  const { data:comments, fetchNextPage, isFetchingNextPage  } = useInfiniteQuery(
-    ["commentList"],
+  //뮤테이션
+  const { data: comments, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
+    [queryKeys.commentList],
     ({ pageParam = 0 }) => fetchComments(pageParam),
     {
       getNextPageParam: (lastPage) =>
@@ -68,9 +71,6 @@ const PostsDetail = () => {
     }
   );
 
-
-
-  console.log(postInfo)
 
   useEffect(() => {
     if (inView) {
@@ -80,34 +80,32 @@ const PostsDetail = () => {
 
 
   // useEffect(() => {
-  //   refetch();
-  // }, [comments]);
+  //   queryClient.invalidateQueries("post");
+  // }, [liked]);
 
 
-  useEffect(() => {
-    queryClient.invalidateQueries("post");
-  }, [liked]);
-
+  const onShowModal = () => {
+    setShowModal((prev) => !prev);
+  };
 
   //게시글 삭제
   const postDelete = async (postId) => {
-    const result = window.confirm("게시글을 삭제하시겠습니까?");
-    if (result) {
-      try {
-        await postApi.deletePost(postId);
-        alert('삭제가 완료되었습니다')
-        navigate("/posts")
-      } catch (err) {
-        console.log(err);
-        alert(err);
-      }
+    try {
+      const res = await postApi.deletePost(postId);
+      navigate("/posts")
+    } catch (err) {
+      console.log(err);
+      alert(err);
     }
-  };
+  }
 
 
-  const postDeleteMutation = useMutation(postDelete, {
+
+  const { mutate: onDelete } = useMutation(postDelete, {
     onSuccess: () => {
-      queryClient.invalidateQueries(["posts"])
+      // queryClient.invalidateQueries(["post"])
+      queryClient.invalidateQueries([queryKeys.postList])
+      alert('게시글이 삭제되었습니다')
     },
     onError: (err) => {
       console.log(err.respose);
@@ -116,19 +114,19 @@ const PostsDetail = () => {
 
 
   //좋아요 기능구현
-  const toggleLike = async () => {
+  const toggleLike = async (postId) => {
     if (postInfo.liked === false) {
       try {
-        await postApi.postLike(`${params.postId}`);
-        console.log(postInfo.liked);
+       const res =  await postApi.postLike(postId);
+        
         setLiked(true);
+   
       } catch (err) {
         console.log(err);
       }
-    } else if (postInfo.liked === true) {
+    } else {
       try {
-        await postApi.deleteLike(`${params.postId}`);
-        console.log(postInfo.liked);
+        await postApi.deleteLike(postId);
         setLiked(false);
       } catch (err) {
         console.log(err);
@@ -137,38 +135,38 @@ const PostsDetail = () => {
     }
   };
 
-
-
-  useEffect(() => {
-    queryClient.invalidateQueries("post");
-  }, []);
+  const { mutate: onToggleLike } = useMutation(toggleLike, {
+    onSuccess: () => {
+      queryClient.invalidateQueries([queryKeys.detailPost])
+      queryClient.invalidateQueries([queryKeys.postList])
+    },
+    onError: (err) => {
+      console.log(err.respose);
+    }
+  })
 
 
   //댓글 작성
-  const submitComments = async () => {
-    const content = {
-      content: newComment,
-    }
+  const submitComments = async (newComment) => {
     try {
-      await postApi.newComments(`${params.postId}`, content)
-      console.log(content)
-      console.log("댓글 등록완료")
+      await postApi.newComments(`${params.postId}`, newComment)
+      alert('댓글을 등록하였습니다')
     } catch (err) {
-      console.log(err)
-      console.log(content)
       alert(err);
     }
   }
 
-    const submitCommentsMutation = useMutation(submitComments, {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["post"])
-      },
-      onError: (err) => {
-        console.log(err.respose);
-      }
-    })
+  const submitCommentsMutation = useMutation(submitComments, {
+    onSuccess: () => {
+      queryClient.invalidateQueries([queryKeys.detailPost])
+      write_ref.current.value = "";
+    },
+    onError: (err) => {
+      console.log(err.respose);
+    }
+  })
 
+    console.log(postInfo, 'postInfo')
 
 
   return (
@@ -176,27 +174,74 @@ const PostsDetail = () => {
       <TitleDiv>
         <span>{postInfo.title}</span>
       </TitleDiv>
+      <Box>
+        <UserBox>
+          <img src={postInfo.profileImg} alt="" />
+          <span>{postInfo.nickname}</span>
+          <svg
+            width="2"
+            height="10"
+            viewBox="0 0 2 10"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M1 1V9" stroke="#C7C7CC" stroke-linecap="round" />
+          </svg>
+          {/* FIXME:dm페이지로 링크수정 */}
 
-      <UserBox>
-        <img src={postInfo.profileImg} alt="" />
-        <PostName>{postInfo.nickname}</PostName>
-        {/* FIXME:dm페이지로 링크수정 */}
-        <Link to="/posts">
-          <button>📨</button>
-        </Link>
-        <span>{postInfo.createdAt}</span>
-        <span>조회 {postInfo.viewCount}</span>
-      </UserBox>
-
-      {postInfo.nickname === nickname ? (
-        <Btnbox>
-          <Ubtn onClick={() => navigate(`/posts/${params.postId}/edit`)}>
-            수정
-          </Ubtn>
-          <Dbtn onClick={() => postDeleteMutation.mutate(postInfo.postId)}>삭제</Dbtn>
-        </Btnbox>
-      ) : null}
-
+          <span>{postInfo.createdAt}</span>
+          <svg
+            width="2"
+            height="10"
+            viewBox="0 0 2 10"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M1 1V9" stroke="#C7C7CC" stroke-linecap="round" />
+          </svg>
+          <span>{postInfo.after}</span>
+          <svg
+            width="2"
+            height="10"
+            viewBox="0 0 2 10"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path d="M1 1V9" stroke="#C7C7CC" stroke-linecap="round" />
+          </svg>
+          <span>조회 {postInfo.viewCount}</span>
+        </UserBox>
+        {nickname === postInfo.nickname ? (
+          <button className="moreBtn" onClick={onShowModal}>
+            <FiMoreHorizontal />
+          </button>
+        ) : (
+          <button className="moreBtn" onClick={() => navigate("/")}>📨</button>
+        )}
+        {showModal && (
+          <SelectContainer>
+            <div
+              className="editBtn"
+              onClick={() => navigate(`/posts/${params.postId}/edit`)}
+            >
+              수정하기
+              <FiEdit2 />
+            </div>
+            <div
+              className="deleteBtn"
+              onClick={() => {
+                const result = window.confirm('정말 삭제하시겠습니까?');
+                if (result) {
+                  onDelete(params.postId);
+                }
+              }}
+            >
+              삭제하기
+              <RiDeleteBin5Line />
+            </div>
+          </SelectContainer>
+        )}
+      </Box>
       <ThumbnailDiv>
         <img src={postInfo.thumbnailUrl} alt="" />
       </ThumbnailDiv>
@@ -209,29 +254,29 @@ const PostsDetail = () => {
           <path fill-rule="evenodd" clip-rule="evenodd" d="M5.5 6.3335C5.5 4.95279 6.61929 3.8335 8 3.8335C9.38071 3.8335 10.5 4.95279 10.5 6.3335C10.5 7.71421 9.38071 8.8335 8 8.8335C6.61929 8.8335 5.5 7.71421 5.5 6.3335ZM8 4.8335C7.17158 4.8335 6.5 5.50507 6.5 6.3335C6.5 7.16192 7.17158 7.8335 8 7.8335C8.82842 7.8335 9.5 7.16192 9.5 6.3335C9.5 5.50507 8.82842 4.8335 8 4.8335Z" fill="#FFFBFF" />
         </svg>
 
-
+        <span>{postInfo.area}</span>
         <span>{postInfo.address}</span>
       </AddressBox>
 
       <Amenity>
         <label>시설정보</label>
         <div>
-          {getAmenity[0]==='true'? <p>💨 에어건이 있어요</p>:null}
-          {getAmenity[1]==='true'? <p>🏄 서핑샵이 있어요</p>:null}
-          {getAmenity[2]==='true'? <p>🛀 샤워시설이 있어요</p>:null}
-          {getAmenity[3]==='true'? <p>🍽 식당 카페가 있어요</p>:null}
-          {getAmenity[4]==='true'? <p>🚘 주차장이 있어요</p>:null}
-          {getAmenity[5]==='true'? <p>🏨 숙박시설이 있어요</p>:null}
+          {getAmenity[0] === 'true' ? <p>💨 에어건이 있어요</p> : null}
+          {getAmenity[1] === 'true' ? <p>🏄 서핑샵이 있어요</p> : null}
+          {getAmenity[2] === 'true' ? <p>🛀 샤워시설이 있어요</p> : null}
+          {getAmenity[3] === 'true' ? <p>🍽 식당 카페가 있어요</p> : null}
+          {getAmenity[4] === 'true' ? <p>🚘 주차장이 있어요</p> : null}
+          {getAmenity[5] === 'true' ? <p>🏨 숙박시설이 있어요</p> : null}
         </div>
       </Amenity>
 
       <PostBox>
-        <label>본문</label>
         <Viewer initialValue={postInfo.content} />
       </PostBox>
-
-      <HeartBtn onClick={toggleLike}>
-        {liked === true ? (
+    
+      {postInfo.nickname!==nickname?(
+        <HeartBtn onClick={() => { onToggleLike(postInfo.postId) }}>
+        {postInfo.liked === true ? (
           <>
             <svg width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M6.375 3C4.09683 3 2.25 4.84684 2.25 7.125C2.25 11.25 7.125 15 9.75 15.8723C12.375 15 17.25 11.25 17.25 7.125C17.25 4.84684 15.4032 3 13.125 3C11.7299 3 10.4965 3.69259 9.75 4.75268C9.00349 3.69259 7.77011 3 6.375 3Z" fill="#FF2D55" />
@@ -248,7 +293,8 @@ const PostsDetail = () => {
           </>
         )}
       </HeartBtn>
-
+      ):null}
+     
       <CommentBox>
         <CountBox>
           <span>댓글 {postInfo.totalComment}개</span>
@@ -257,19 +303,26 @@ const PostsDetail = () => {
         <WriteComment>
           <img src={profileImg} alt="" />
           <input type="text" placeholder="댓글 내용을 입력하세요."
+            ref={write_ref}
             onChange={e => { setNewComment(e.currentTarget.value) }}
             onKeyUp={e => {
               e.currentTarget.value.length > 0
                 ? setIsValid(true)
                 : setIsValid(false)
             }} />
-          <button type="submit" disabled={isValid === false} onClick={submitComments}>게시</button>
+          <button type="submit" disabled={isValid === false}
+            onClick={() => {
+              const postComment = {
+                content: newComment
+              }
+              submitCommentsMutation.mutate(postComment)
+            }}>게시</button>
         </WriteComment>
-        {comments.pages.map((page)=> page.data.map((comment) => {return <Comment comment={comment} />}))
+        {comments.pages.map((page) => page.data.map((comment) => { return <Comment comment={comment} key={comment.commentId} /> }))
 
         }
-             {isFetchingNextPage ? <p>스피너</p> : <div ref={ref} />}
-        
+        {isFetchingNextPage ? <p>스피너</p> : <div ref={ref} />}
+
       </CommentBox>
     </>
   )
@@ -279,20 +332,28 @@ const PostsDetail = () => {
 export default PostsDetail;
 
 
+const Box = styled.div`
+  display:flex;
+  position: relative;
+  justify-content: space-between;
+  .moreBtn{
+    padding: 0;
+  }
+`
 
 
 const TitleDiv = styled.div`
     margin-top: 0.75rem;
     font-size: 1.3rem;
     font-weight: 600;
+    margin-bottom: 1rem;
 `
 
 const UserBox = styled.div`
     display: flex;
     align-items: center;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
     font-size: 0.9375rem;
+    font-weight: 400;
     img{
       height: 1.5rem;
       width: 1.5rem;
@@ -300,47 +361,26 @@ const UserBox = styled.div`
     }
     span{
       padding-left: 0.3125rem;
-      border-right: 0.0625rem solid #C7C7CC; 
+      padding-right: 0.3125rem;
+    }
+    button{
+      margin:0;
     }
 `
 
-const PostName = styled.span`
-  font-size: 0.9375rem;
-  font-weight: 400;
-  line-height: 1rem;
-  padding-right: 0.3125rem;
-`
-
-const Btnbox = styled.div`
-  display: flex;
-`;
-
-const Ubtn = styled.button`
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-    border-radius: 0.5rem;
-
-`;
-const Dbtn = styled.button`
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-    border-radius: 0.5rem;
-`;
 
 
 const ThumbnailDiv = styled.div`
     display: flex;
     align-items: center;
-    /* width: 100%; */
+    margin-top: 1rem;
     background-color: aliceblue;
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
     img{
         width: 100%;
-        object-fit: cover;
+        /* object-fit: cover; */
     }
 `
 
@@ -367,6 +407,8 @@ const AddressBox = styled.div`
 const Amenity = styled.div`
     display: flex;
     flex-direction: column;
+
+
     label{
         height: 2.375rem;
         width: 100%;
@@ -390,6 +432,7 @@ const Amenity = styled.div`
 `
 
 const PostBox = styled.div`
+    /* border-top: 0.3rem dashed #f1f1f6; */
     margin-top: 0.5rem;
     width: 100%;
     top: 55.625rem;
@@ -492,4 +535,40 @@ const HeartBtn = styled.button`
       margin-right: 0.46875rem;
     }
   `
+const SelectContainer = styled.div`
+  position: absolute;
+  z-index: 99;
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(230, 230, 230);
+  box-shadow: rgb(0 0 0 / 15%) 0px 2px 4px 0px;
+  border-radius: 4px;
+  color: rgb(61, 61, 61);
+  bottom: auto;
+  top: 2.5rem;
+  left: auto;
+  right: 0;
+  transform: none;
+  font-weight: bold;
+  box-sizing: border-box;
+  .editBtn {
+    border-bottom: 1px solid #ececec;
+  }
+  .deleteBtn {
+    color: #f54e4e;
+  }
+  div {
+    display: flex;
+    align-items: center;
 
+    font-weight: bold;
+    color: gray;
+    white-space: nowrap;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+    box-sizing: border-box;
+    svg {
+      margin-left: 0.5rem;
+    }
+  }
+`;

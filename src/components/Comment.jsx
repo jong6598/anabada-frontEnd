@@ -5,39 +5,44 @@ import { postApi } from "../shared/api";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
+import { FiMoreHorizontal } from 'react-icons/fi';
+import { FiEdit2 } from 'react-icons/fi';
+import { RiDeleteBin5Line } from 'react-icons/ri';
 
-const Comment=({comment}) => {
-    const [updateContent, setUpdateContent] = useState(comment.content);
-    const params = useParams();
-    const [editing, setEditing] = useState(false);
-    const queryClient = useQueryClient();
-    const nickname = useSelector((state)=>state.auth.nickname)
+const Comment = ({ comment }) => {
+  const [updateContent, setUpdateContent] = useState(comment.content);
+  const [editing, setEditing] = useState(false);
+  const queryClient = useQueryClient();
+  const nickname = useSelector((state) => state.auth.nickname)
 
-  
+  const [showModal, setShowModal] = useState(false);
+
+
   //댓글 수정 
-  //editing 상태에 따라 댓글 수정 input button 랜더링
   const startEditing = () => {
-      setEditing((prev) => !prev)
-      console.log("수정모드!")
+    setEditing((prev) => !prev)
+    console.log("수정모드!")
   }
+
+  const onShowModal = () => {
+    setShowModal((prev) => !prev);
+  };
+
 
   //댓글 수정완료 button 클릭시 작동할 axios 함수
-  const editcomments = async() => {
-      const content={
-        content: updateContent,
-      }
-      try {
-        await postApi.updateComments(`${comment.commentId}`, content)
-        console.log("댓글 수정완료")
-        }catch(err) {
-          alert(err);
-          console.log(err);
-      }
+  const editcomments = async (updateContent) => {
+    try {
+      await postApi.updateComments(`${comment.commentId}`, updateContent)
+      alert("댓글 수정완료")
+    } catch (err) {
+      alert(err);
+    }
   }
 
-  const commentEditMutation = useMutation(editcomments, {
+  const editCommentMutation = useMutation(editcomments, {
     onSuccess: () => {
       queryClient.invalidateQueries(["commentList"])
+      setEditing((prev) => !prev)
     },
     onError: (err) => {
       console.log(err.respose);
@@ -50,16 +55,13 @@ const Comment=({comment}) => {
   const deletecomments = async () => {
     const result = window.confirm("댓글을 삭제하시겠습니까?");
     if (result) {
-        try {
-          await postApi.deleteComments(`${comment.commentId}`);
-        } catch (err) {
-          console.log(err);
-          alert(err);
-        }
-      }  
-      // else {
-      //   queryClient.invalidateQueries(["post"])
-      // }
+      try {
+        await postApi.deleteComments(`${comment.commentId}`);
+      } catch (err) {
+        console.log(err);
+        alert(err);
+      }
+    }
   };
 
   const commentDeleteMutation = useMutation(deletecomments, {
@@ -72,40 +74,67 @@ const Comment=({comment}) => {
   })
 
 
-    return(
+  return (
 
     <ViewComments>
-       <img src={comment.profileImg} alt="" />
-        {editing? (
-          <>
+      <img src={comment.profileImg} alt="" />
+      {editing ? (
+        <>
           <Comments>
             <CommentsNick>{comment.nickname}</CommentsNick>
             <CommentsCreateAt>{comment.createdAt}</CommentsCreateAt>
-            <UpdateContent  type="text" value={updateContent} onChange={e => { setUpdateContent(e.currentTarget.value) }} required></UpdateContent>
+            <UpdateContent type="text" value={updateContent} onChange={e => { setUpdateContent(e.target.value) }} required></UpdateContent>
           </Comments>
           <BtnDiv>
-           <button onClick={()=>commentEditMutation.mutate(comment.commentId)}>수정 완료</button>
-           <button onClick={startEditing}>취소</button>
+            <button onClick={() => {
+              const updateComment = {
+                content: updateContent
+              }
+              editCommentMutation.mutate(updateComment)
+            }}>수정 완료</button>
+            <button onClick={startEditing}>취소</button>
           </BtnDiv>
-          </>
-          ):(
-          <>
-            <Comments>
-              <CommentsNick>{comment.nickname}</CommentsNick>
-              <CommentsCreateAt>{comment.createdAt}</CommentsCreateAt>
-              <CommentsContent>{comment.content}</CommentsContent>
-            </Comments>
-            {comment.nickname === nickname && (
-              <BtnDiv>
-                <button onClick={startEditing}>수정</button>
-                <button onClick={()=>commentDeleteMutation.mutate(comment.commentId)}>삭제</button>
-              </BtnDiv>
+        </>
+      ) : (
+        <>
+          <Comments>
+            <CommentsNick>{comment.nickname}</CommentsNick>
+            <CommentsCreateAt>{comment.createdAt}</CommentsCreateAt>
+            <CommentsContent>{comment.content}</CommentsContent>
+          </Comments>
+          {comment.nickname === nickname && (
+              <button className="moreBtn" onClick={onShowModal}>
+                <FiMoreHorizontal />
+              </button>
+               )}
+            {showModal&&(
+              <SelectContainer>
+              <div
+                className="editBtn"
+                onClick={() => {
+                  setUpdateContent(comment.content);
+                  startEditing()
+                }}
+              >
+                수정하기
+                <FiEdit2 />
+              </div>
+              <div
+                className="deleteBtn"
+                onClick={() => commentDeleteMutation.mutate(comment.commentId)}
+              >
+                삭제하기
+                <RiDeleteBin5Line />
+              </div>
+            </SelectContainer>
             )}
-            </>
-          )}
-      </ViewComments>)
+            
+           
+        </>
+      )}
+    </ViewComments>)
 
-    
+
 }
 
 
@@ -185,3 +214,41 @@ const CommentsContent = styled.span`
     line-height: 1.1875rem;
     color: black;
 `
+
+const SelectContainer = styled.div`
+  position: absolute;
+  z-index: 99;
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(230, 230, 230);
+  box-shadow: rgb(0 0 0 / 15%) 0px 2px 4px 0px;
+  border-radius: 4px;
+  color: rgb(61, 61, 61);
+  bottom: auto;
+  top: 2.5rem;
+  left: auto;
+  right: 0;
+  transform: none;
+  font-weight: bold;
+  box-sizing: border-box;
+  .editBtn {
+    border-bottom: 1px solid #ececec;
+  }
+  .deleteBtn {
+    color: #f54e4e;
+  }
+  div {
+    display: flex;
+    align-items: center;
+
+    font-weight: bold;
+    color: gray;
+    white-space: nowrap;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+    box-sizing: border-box;
+    svg {
+      margin-left: 0.5rem;
+    }
+  }
+`;
