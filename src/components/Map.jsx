@@ -24,18 +24,6 @@ const KakaoMap = memo(() => {
     y: 0,
   });
 
-  const geocoder = new kakao.maps.services.Geocoder();
-  console.log(geocoder);
-  const coord = new kakao.maps.LatLng(37.56496830314491, 126.93990862062978);
-  const callback = function (result, status) {
-    if (status === kakao.maps.services.Status.OK) {
-      console.log(
-        "그런 너를 마주칠까 " + result[0].address.address_name + "을 못가"
-      );
-    }
-  };
-  geocoder.coord2Address(coord.getLng(), coord.getLat(), callback);
-
   const handlePicker = useCallback((pickerInfo) => {
     setPicker((prev) => {
       return { ...prev, ...pickerInfo };
