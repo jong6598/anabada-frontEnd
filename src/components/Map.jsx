@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { memo, useCallback, useState } from "react";
-import { useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import checkedWeather from "../styles/weather";
 import { Map, CustomOverlayMap, MarkerClusterer } from "react-kakao-maps-sdk";

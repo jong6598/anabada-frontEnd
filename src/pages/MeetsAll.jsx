@@ -1,53 +1,172 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import Meet from '../components/Meet';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import { meetsApi } from '../shared/api';
-import { thunderposts } from '../data';
-
-const fetchMeetsList = async (pageParam, area) => {
-  try {
-    const res = await meetsApi.getMeetsPosts(pageParam, area);
-    // if (res.status === 200) {}
-    console.log('Okay get Meets Posts');
-    const { posts, isLast } = res.data;
-    return { posts, nextPage: pageParam + 1, isLast };
-  } catch (error) {
-    // if (error.response.status === 404) {}
-    console.log('404 Error');
-  }
-};
+import { thunderposts } from '../shared/data';
+import Loading from '../layout/Loading';
+import { useAllMeets } from '../react-query/hooks/useAllMeets';
+import { useSearchMeets } from '../react-query/hooks/useSearchMeets';
+import { queryKeys } from '../react-query/constants';
 
 const MeetsAll = () => {
-  // TODO: infinite scroll
-  // const { ref, inView } = useInView();
-  // const { data:thunderposts, status, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
-  //   ['meetsPosts'],
-  //   ({ pageParam = 1 }) => fetchMeetsList(pageParam),
-  //   {
-  //     getNextPageParam: (lastPage) =>
-  //       !lastPage.isLast ? lastPage.nextPage : undefined,
-  //     suspense: true
-  //   }
-  // );
+  const [search, setSearch] = useState(null);
+  const [areaSelected, setAreaSelected] = useState('ALL');
 
-  // useEffect(() => {
-  //   if (inView) fetchNextPage();
-  // }, [inView]);
+  const getPosts = async (pageParam = 0) => {
+    if (search) {
+      try {
+        const res = await meetsApi.getSearchPosts(
+          pageParam,
+          areaSelected,
+          search
+        );
+        const data = res.data.content;
+        const last = res.data.last;
+        return { data, nextPage: pageParam + 1, last };
+      } catch (error) {
+        console.log(error.response);
+      }
+    } else {
+      try {
+        const res = await meetsApi.getMeetsPosts(pageParam, areaSelected);
+        const data = res.data.content;
+        const last = res.data.last;
+        return { data, nextPage: pageParam + 1, last };
+      } catch (error) {
+        console.log(error.response);
+      }
+    }
+  };
+
+  const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
+    [queryKeys.allMeets, areaSelected, search],
+    ({ pageParam = 0 }) => getPosts(pageParam),
+    {
+      getNextPageParam: (lastPage) =>
+        !lastPage.last ? lastPage.nextPage : undefined
+    }
+  );
+
+  // FIXME: CUSTOM QUERY ?
+  // const {
+  //   data,
+  //   areaSelected,
+  //   setAreaSelected,
+  //   isFetchingNextPage,
+  //   setIsSearch,
+  //   fetchNextPage
+  // } = useAllMeets();
+
+  // const {
+  //   searchPosts,
+  //   setAreaSelectedSearch,
+  //   setKeyword,
+  //   isFetchingNextPageSearch,
+  //   fetchNextPageSearch
+  // } = useSearchMeets();
+
+  const searchRef = useRef();
+  const { ref, inView } = useInView();
+
+  useEffect(() => {
+    if (inView) {
+      fetchNextPage();
+    }
+  }, [inView]);
+
+  const onKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      onSearch(e);
+    }
+  };
+
+  const onSearch = (e) => {
+    setSearch(e.target.value);
+    // searchRef.current.value = '';
+  };
+
+  const onChangeArea = (e) => {
+    setAreaSelected(e.target.value);
+  };
 
   return (
     <MeetAllContainer>
-      {thunderposts.map((meet) => (
-        <Meet key={meet.thunderpostId} meet={meet} />
-      ))}
-      {/* {isFetchingNextPage ? <Loading/> : <div ref={ref}></div>} */}
+      <CategoryContainer>
+        <select id="area" onChange={onChangeArea} value={areaSelected}>
+          <option value="ALL">전체</option>
+          <option value="서울·경기·인천">서울, 경기, 인천</option>
+          <option value="강원">강원</option>
+          <option value="대구·경북">대구, 경북</option>
+          <option value="부산·울산·경남">부산, 울산, 경남</option>
+          <option value="전북">전북</option>
+          <option value="광주·전남">광주, 전남</option>
+          <option value="충북">충북</option>
+          <option value="충남">충남</option>
+          <option value="제주">제주</option>
+        </select>
+        <input
+          type="text"
+          placeholder="검색어를 입력해주세요"
+          ref={searchRef}
+          onKeyPress={onKeyPress}
+        />
+      </CategoryContainer>
+      {/* {searchPosts &&
+        searchPosts.pages?.map((page) => {
+          return page.data?.map((meet) => (
+            <Meet key={meet.thunderPostId} meet={meet} />
+          ));
+        })}
+      {data.pages.map((page) => {
+        return page.data.map((meet) => (
+          <Meet key={meet.thunderPostId} meet={meet} />
+        ));
+      })} */}
+      {data.pages.map((page) => {
+        return page.data.map((meet) => (
+          <Meet key={meet.thunderPostId} meet={meet} />
+        ));
+      })}
+      {/* {isFetchingNextPage ? <Loading /> : <div ref={ref}></div>} */}
+      {isFetchingNextPage ? <Loading /> : <div ref={ref}></div>}
     </MeetAllContainer>
   );
 };
 
 const MeetAllContainer = styled.div`
   padding: 10px 0;
+`;
+
+const CategoryContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  align-items: center;
+  padding: 0.875rem 0;
+  /* gap: 0.875rem; */
+  select {
+    padding: 0.625rem 0;
+    /* gap: 0.188rem; */
+    background: #ffffff;
+    border: 1px solid #c7c7cc;
+    border-radius: 4px;
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+    outline: none;
+  }
+
+  input {
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 1.125rem;
+    /* identical to box height */
+    padding: 0.625rem 1rem;
+    background-color: #f2f2f7;
+    border-radius: 4px;
+  }
 `;
 
 export default MeetsAll;
