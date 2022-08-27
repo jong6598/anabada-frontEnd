@@ -1,11 +1,11 @@
-import React from 'react';
-import CircleLoader from 'react-spinners/CircleLoader';
-import styled from 'styled-components';
+import React from "react";
+// import CircleLoader from 'react-spinners/CircleLoader';
+import styled from "styled-components";
 
 const Loading = () => {
   return (
     <Container>
-      <img src={'/assets/waterwave.gif'} alt="" />
+      <img src={"/assets/waterwave.gif"} alt="" />
       {/* <CircleLoader color="#007AFF" size={100} speedMultiplier={1} /> */}
     </Container>
   );
