@@ -2,11 +2,18 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAddMeet } from '../react-query/hooks/useAddMeet';
+import { HiOutlinePhotograph } from "react-icons/hi";
+import { storage } from "../firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const MeetAdd = () => {
   const navigate = useNavigate();
+
+  const fileInput = React.useRef();
+
   const { state } = useLocation(); // navgiation으로 전달받음
   const [isEdit, setIsEdit] = useState(false);
+  const [imgSrc, setImgSrc] = useState("");
 
   const onAdd = useAddMeet();
 
@@ -18,7 +25,8 @@ const MeetAdd = () => {
     goalMember: '',
     thumbnailUrl: '',
     startDate: '',
-    endDate: ''
+    endDate: '',
+    meetDate: ''
   });
 
   useEffect(() => {
@@ -26,7 +34,8 @@ const MeetAdd = () => {
       // 기존의 post가 있다면
       const startDate = state.startDate.replaceAll('.', '-');
       const endDate = state.endDate.replaceAll('.', '-');
-      const editedState = { ...state, startDate, endDate };
+      const meetDate = state.meetDate.replaceAll('.', '-');
+      const editedState = { ...state, startDate, endDate, meetDate };
 
       console.log(editedState, 'eiditedState, 확인해보자');
 
@@ -44,8 +53,26 @@ const MeetAdd = () => {
     goalMember,
     thumbnailUrl,
     startDate,
-    endDate
+    endDate,
+    meetDate
   } = isInputValue;
+
+  
+  const previewImage = async (e) => {
+ 
+    const image = e.target.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(image);
+
+    return new Promise((resolve) => {
+      reader.onload = () => {
+        setImgSrc(reader.result);
+        resolve();
+     
+      };
+    });
+    
+  };
 
   const onChange = (e) => {
     setIsInputValue({
@@ -53,6 +80,48 @@ const MeetAdd = () => {
       [e.target.name]: e.target.value
     });
   };
+
+ const onPostData = async() => {
+  console.log(fileInput.current.files[0], '체크체크')
+  let uploadUrl;
+  if(fileInput.current?.files.length>0){
+    
+      const uploaded_file = await uploadBytes(
+          ref(storage, `images/meet/${ 
+            fileInput.current?.files[0].name}`)
+         ,fileInput.current?.files[0]
+        )
+        uploadUrl = await getDownloadURL(uploaded_file.ref);
+      } else if (thunderPostId) {
+        uploadUrl = imgSrc;
+      } else {
+        uploadUrl = '';
+      }
+
+      console.log(uploadUrl, 'uploadUrl')
+
+  const post = {
+    title,
+    content,
+    area,
+    address,
+    goalMember,
+    thumbnailUrl : uploadUrl,
+    startDate,
+    endDate,
+    meetDate
+  };
+
+  const result = window.confirm('등록하시겠습니까?');
+  if (result) {
+           
+        console.log(post,'post!!')
+    const state = { isEdit, post, thunderPostId };
+    onAdd(state);
+  }
+
+ 
+ }
 
   return (
     <Container>
@@ -87,7 +156,7 @@ const MeetAdd = () => {
       <div>
         <p>모집 인원</p>
         <input
-          type="text"
+          type="number"
           name="goalMember"
           onChange={onChange}
           value={goalMember}
@@ -107,13 +176,26 @@ const MeetAdd = () => {
         <input type="date" name="endDate" onChange={onChange} value={endDate} />
       </div>
       <div>
+        <p>모임일</p>
+        <input
+          type="date"
+          name="meetDate"
+          onChange={onChange}
+          value={meetDate}
+        />
+      </div>
+      <div>
         <p>썸네일</p>
         <input
           type="file"
           name="thumbnailUrl"
-          onChange={onChange}
-          //FIXME: value={thumbnailUrl}
+          onChange={previewImage}
+          ref={fileInput}
         />
+         <ImageLabel>
+                        {imgSrc ? <img src={imgSrc} alt="thumbnail" /> : <HiOutlinePhotograph />}
+                    </ImageLabel>
+  
       </div>
       <div>
         <p>모임 상세 내용</p>
@@ -128,24 +210,11 @@ const MeetAdd = () => {
         />
       </div>
       <button
-        onClick={() => {
-          const post = {
-            title,
-            content,
-            area,
-            address,
-            goalMember,
-            thumbnailUrl,
-            startDate,
-            endDate
-          };
-          const result = window.confirm('등록하시겠습니까?');
-          if (result) {
-            console.log(thunderPostId, 'thunderPostId 확인할거임');
-            const state = { isEdit, post, thunderPostId };
-            onAdd(state);
-          }
-        }}
+        onClick={
+       
+          onPostData
+        
+        }
       >
         게시하기
       </button>
@@ -215,5 +284,21 @@ const Container = styled.div`
     outline: none;
   }
 `;
+
+const ImageLabel = styled.label`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1rem;
+  cursor: pointer;
+  img{
+    width: 100%;
+  }
+  svg {
+    margin: 1rem 3rem;
+    font-size: 5rem;
+  }
+
+`
 
 export default MeetAdd;

@@ -1,45 +1,46 @@
-import { upload } from '@testing-library/user-event/dist/upload';
-import React, { useEffect, useState, useRef } from 'react';
-import { useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-import styled from 'styled-components';
-import { postApi } from '../shared/api';
-
-import { HiOutlinePhotograph } from 'react-icons/hi';
-import { storage } from '../firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-
-import { Editor } from '@toast-ui/react-editor';
+import { upload } from "@testing-library/user-event/dist/upload";
+import React, { useEffect, useState, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
+import { css } from "styled-components";
+import styled from "styled-components";
+import { postApi } from "../shared/api";
+import { useSelector } from "react-redux";
+import { HiOutlinePhotograph } from "react-icons/hi";
+import { storage } from "../firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import '@toast-ui/editor/dist/toastui-editor.css';
+import 'tui-color-picker/dist/tui-color-picker.css';
+import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css';
+import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
+import "../App.css";
+import { Editor } from '@toast-ui/react-editor';
+import { useQueryClient, useMutation } from "@tanstack/react-query";
+import { amenityInfo } from "../shared/data";
+import { queryKeys } from "../react-query/constants";
 
 const PostCU = () => {
   const navigate = useNavigate();
-
   const postId = useParams().postId;
-  //FIXME: nickname useSelector 로 리덕스에서 꺼내쓰기
-  const nickname = localStorage.getItem('nickname');
-  const [imgSrc, setImgSrc] = useState('');
-  const [check, setCheck] = useState({
-    airgun: '',
-    shower: '',
-    shop: '',
-    park: ''
-  });
+  const nickname = useSelector((state) => state.auth.nickname)
+  const [imgSrc, setImgSrc] = useState("");
+  const [check, setCheck] = useState({ airgun: false, shower: false, shop: false, cafe: false, park: false, sleep: false });
 
-  const [content, setContent] = useState('');
+  const queryClient = useQueryClient();
+
+  const [content, setContent] = useState("");
   const editorRef = useRef();
+
 
   const {
     register,
     handleSubmit,
     setValue,
-    watch,
-    formState: { isValid }
+    formState: { isValid },
   } = useForm({
-    mode: 'all'
+    mode: "all",
   });
 
-  //FIXME: try catch
 
   useEffect(() => {
     if (postId) {
@@ -47,23 +48,24 @@ const PostCU = () => {
         const postInfo = await postApi.getPost(`${postId}`);
 
         if (postInfo.data.nickname !== nickname) {
-          alert('수정 권한이 없습니다.');
+          alert("수정 권한이 없습니다.");
           navigate(-1);
           return;
         }
 
-        //FIXME: 구조분해 할당
-        // const {title,area,createAt,content} = data;
-        // const dataSet = {"title":title}
-        const data = postInfo;
-        console.log(data);
-        setValue('title', data.data.title);
-        setValue('area', data.data.area);
-        setValue('address', data.data.address);
-        setValue('creatAt', data.data.createAt);
-        setValue('content', data.data.content);
-        setValue('amenity', data.data.amenity);
-        setImgSrc(data.data.thumbnailUrl);
+
+        const data = postInfo.data;
+        console.log(data)
+        setValue("title", data.title);
+        setValue("area", data.area);
+        setValue("address", data.address);
+        setValue("createAt", data.createAt);
+        setValue("content", data.content);
+        setValue("amenity", data.amenity);
+        setImgSrc(data.thumbnailUrl);
+
+        const htmlString = data.content;
+        editorRef.current?.getInstance().setHTML(htmlString);
       };
       setPost();
     }
@@ -85,30 +87,61 @@ const PostCU = () => {
     });
   };
 
-  console.log(watch());
+  // console.log(watch())
 
-  const amenityCheck = (e) => {
-    if (e.target.checked) {
-      setCheck({
-        ...check,
-        [e.target.value]: e.target.value
-      });
+  const amenityCheck = (el) => {
+
+    setCheck({
+      ...check,
+      [el.value]: !check[el.value]
+    });
+  }
+
+
+
+
+
+  const onSubmitPost = async (newPost) => {
+    if (!postId) {
+      try {
+        const post =await  postApi.newPost(newPost);
+        alert("게시글이 등록되었습니다!");
+        navigate("/posts");
+      } catch (err) {
+        alert(err);
+      }
+    } else {
+      try {
+        const update =await postApi.updatePost(newPost);
+        alert("게시글이 수정되었습니다!")
+        navigate(`/posts`);
+      } catch (err) {
+        console.log(err);
+        alert(err);
+      }
     }
   };
 
-  const amenity = `${check.airgun}, ${check.shower}, ${check.shop}, ${check.park}`;
-  // console.log(amenity)
+  const {mutate:onAdd} = useMutation(onSubmitPost, {
+    onSuccess: () => {
+      console.log('호출확인ㄴㄴㄴ')
+      queryClient.invalidateQueries([queryKeys.postList])
+    },
+    onError: (err) => {
+      console.log(err.respose);
+    }
+  })
 
-  const onSubmitPost = async (formData) => {
-    console.log(amenity);
-
+  const onSubmit = async(formData) => {
+   
     let thumbnailUrl;
 
     if (formData.postImg.length > 0) {
+      console.log(formData.postImg[0],"test")
       const uploaded_file = await uploadBytes(
-        ref(storage, `images/${formData.postImg[0].name}`),
-        formData.postImg[0]
-      );
+        ref(storage, `images/post/${formData.postImg[0].name}`),
+        formData.postImg[0],
+      )
       thumbnailUrl = await getDownloadURL(uploaded_file.ref);
     } else if (postId) {
       thumbnailUrl = imgSrc;
@@ -121,69 +154,39 @@ const PostCU = () => {
       area: formData.area,
       address: formData.address,
       content: content,
-      amenity: amenity,
-      thumbnailUrl
+      amenity: `${check.airgun} ${check.shower} ${check.shop} ${check.cafe} ${check.park} ${check.sleep}`,
+      thumbnailUrl: thumbnailUrl,
     };
-    console.log('새 게시글', newPost);
 
-    if (!postId) {
-      try {
-        const post = postApi.newPost(newPost);
-        console.log(post);
-        alert('게시글이 등록되었습니다!');
-        navigate('/home');
-      } catch (err) {
-        console.log(err);
-        alert(err);
-      }
-    } else {
-      try {
-        const update = postApi.updatePost(newPost);
-        console.log(update);
-        alert('게시글이 수정되었습니다!');
-        navigate(`/api/posts/${postId}`);
-      } catch (err) {
-        console.log(err);
-        alert(err);
-      }
-    }
-  };
+    onAdd(newPost)
+  }
 
+//toast ui 
   const handleChangeInput = () => {
-    setContent(editorRef.current.getInstance().getHTML());
-    console.log(content);
-  };
+    setContent(editorRef.current.getInstance().getHTML()
+    )
+
+  }
+
+  const onUploadImage = async (blob, callback) => {
+      let formData= new FormData();
+      formData.append('file', blob); 
+      const {data:url} = await postApi.uploadImages(formData)
+      callback(url.url, "콜백 이미지 URL")
+    }
+
 
   return (
     <>
-      <BackDiv>
-        <button onClick={() => navigate('-1')}>
-          <svg
-            width="9"
-            height="14"
-            viewBox="0 0 9 14"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
-              d="M8.03033 13.5303C7.73744 13.8232 7.26256 13.8232 6.96967 13.5303L0.96967 7.53033C0.676777 7.23744 0.676777 6.76256 0.96967 6.46967L6.96967 0.46967C7.26256 0.176777 7.73744 0.176777 8.03033 0.46967C8.32322 0.762563 8.32322 1.23744 8.03033 1.53033L2.56066 7L8.03033 12.4697C8.32322 12.7626 8.32322 13.2374 8.03033 13.5303Z"
-              fill="#1C1B1F"
-            />
-          </svg>
-        </button>
-        <p>포스트</p>
-      </BackDiv>
-      <PostForm onSubmit={handleSubmit(onSubmitPost)}>
+      <PostForm onSubmit={handleSubmit(onSubmit)}>
         <Element>
           <label>제목</label>
           <input
             type="text"
             placeholder="제목을 입력해 주세요"
             autoComplete="off"
-            {...register('title', {
-              required: true
+            {...register("title", {
+              required: true,
             })}
           />
         </Element>
@@ -193,7 +196,7 @@ const PostCU = () => {
           <input
             type="file"
             accept="image/*"
-            {...register('postImg', {
+            {...register("postImg", {
               onChange: (e) => previewImage(e)
             })}
           />
@@ -209,19 +212,19 @@ const PostCU = () => {
           <select
             name="area"
             id="area"
-            {...register('area', {
-              required: true
+            {...register("area", {
+              required: true,
             })}
           >
-            <option value="GYEONGGI">서울, 경기, 인천</option>
-            <option value="GANGWON">강원</option>
-            <option value="GYEONBUK">대구, 경북</option>
-            <option value="GYEONGNAM">부산, 울산, 경남 </option>
-            <option value="JEONBUK">전북</option>
-            <option value="JEONNAM">광주, 전남</option>
-            <option value="CHUNGBUK">충북</option>
-            <option value="CHUNGNAM">충남</option>
-            <option value="JEJU">제주</option>
+            <option value="서울·경기·인천">서울·경기·인천</option>
+          <option value="강원">강원</option>
+          <option value="대구·경북">대구·경북</option>
+          <option value="부산·울산·경남">부산·울산·경남</option>
+          <option value="전북">전북</option>
+          <option value="광주·전남">광주·전남</option>
+          <option value="충북">충북</option>
+          <option value="충남">충남</option>
+          <option value="제주">제주</option>
           </select>
         </Element>
 
@@ -230,8 +233,8 @@ const PostCU = () => {
             type="text"
             placeholder="상세주소를 입력해 주세요"
             autoComplete="off"
-            {...register('address', {
-              required: true
+            {...register("address", {
+              required: true,
             })}
           />
         </Element>
@@ -239,115 +242,92 @@ const PostCU = () => {
         <Element>
           <label>주변 정보</label>
           <SelectAmenity>
-            <input
-              type="checkbox"
-              id="checkboxOne"
-              name="amenity"
-              value="airgun"
-              onChange={amenityCheck}
-            />{' '}
-            <label htmlFor="checkboxOne">에어건</label>
-            <input
-              type="checkbox"
-              id="checkboxTwo"
-              name="amenity"
-              value="shower"
-              onChange={amenityCheck}
-            />{' '}
-            <label htmlFor="checkboxTwo">샤워부스</label>
-            <input
-              type="checkbox"
-              id="checkboxThree"
-              name="amenity"
-              value="shop"
-              onChange={amenityCheck}
-            />{' '}
-            <label htmlFor="checkboxThree">서핑샵</label>
-            <input
-              type="checkbox"
-              id="checkboxFour"
-              name="amenity"
-              value="park"
-              onChange={amenityCheck}
-            />{' '}
-            <label htmlFor="checkboxFour">주차장</label>
+            {
+              amenityInfo.map((it, idx) => { return <div key={idx}>{it.map((el) => { return <AmenityButton type="button" active={check[el.value]} check={check[el.value]} className="amenityBtn" onClick={() => amenityCheck(el)} key={el.id}>{el.text}</AmenityButton> })}</div> })
+            }
           </SelectAmenity>
         </Element>
 
         <Toastdiv>
+          <label>본문</label>
           <Editor
             ref={editorRef}
             placeholder="내용을 입력해주세요."
             previewStyle="vertical" // 미리보기 스타일 지정
             height="300px" // 에디터 창 높이
             initialEditType="wysiwyg" // 초기 입력모드 설정(디폴트 markdown)
-            toolbarItems={[
-              // 툴바 옵션 설정
-              ['heading', 'bold', 'italic', 'strike'],
-              ['hr', 'quote'],
-              ['ul', 'ol', 'task', 'indent', 'outdent'],
-              ['table', 'image', 'link'],
-              ['code', 'codeblock']
-            ]}
             onChange={handleChangeInput}
             useCommandShortcut={true}
-            hooks={
-              {
-                // addImageBlobHook: onUploadImage
-              }
-            }
-            // {...register("content", {
-            //   required: false,
-            // })}
+            // colorSyntax 플러그인 적용
+            plugins={[
+              [
+                colorSyntax,
+                // 기본 색상 preset 적용
+                {
+                  preset: ['#1F2E3D', '#4c5864', '#ED7675']
+                }
+              ]
+            ]}
+            toolbarItems={[
+              // 툴바 옵션 설정
+              ["heading", "image", "bold", "italic", "strike"],
+              ["hr", "quote"],
+              ['ul', 'ol'],
+              ["link"],
+            ]}
+            //FIXME:DOMPURIFY
+            // customHTMLSanitizer={
+            //   html=>{return DOMPuri}
+            // }
+            previewHighlight={false}
+            hooks={{
+              addImageBlobHook: onUploadImage
+            }}
           ></Editor>
         </Toastdiv>
-        <button type="submit" disabled={!isValid}>
-          게시글 {postId ? '수정' : '등록'} 하기
-        </button>
+        <PostBtnDiv>
+          <button type="submit" disabled={!isValid}>
+            게시글 {postId ? "수정" : "등록"} 하기
+          </button>
+        </PostBtnDiv>
       </PostForm>
+
     </>
-  );
-};
+  )
+}
 
 export default PostCU;
 
-const BackDiv = styled.div`
-  display: flex;
-  height: 3.25rem;
-  width: 100vw;
-  font-size: 1.25rem;
-  line-height: 1.491875rem;
-  button {
-    background-color: transparent;
-    padding-top: 1rem;
-    border: 0;
-    padding-left: 0rem;
-  }
-  button:disabled {
-    height: 2.5625rem;
-    width: 100%;
-    border-radius: 0.3125rem;
-    border: none;
-    padding: 0.75rem, 0.625rem, 0.75rem, 0.625rem;
-    background-color: #e5e5ea;
-    color: #ffffff;
-  }
-`;
+
 
 const PostForm = styled.form`
   display: flex;
   flex-direction: column;
-  button {
-    height: 2.5625rem;
-    width: 100%;
-    border-radius: 0.3125rem;
-    border: none;
-    cursor: pointer;
-    padding: 0.75rem, 0.625rem, 0.75rem, 0.625rem;
-    background-color: #007aff;
-    color: #ffffff;
-  }
-`;
+`
+
+const PostBtnDiv = styled.div`
+    button{
+      height: 2.5625rem;
+      width: 100%;
+      border-radius: 0.3125rem;
+      border: none;
+      cursor: pointer;
+      padding: 0.75rem, 0.625rem, 0.75rem, 0.625rem;
+      background-color: #007AFF;
+      color: #FFFFFF;
+    }
+
+    button:disabled{
+      height: 2.5625rem;
+      width: 100%;
+      border-radius: 0.3125rem;
+      border: none;
+      padding: 0.75rem, 0.625rem, 0.75rem, 0.625rem;
+      background-color: #E5E5EA;
+      color: #FFFFFF;
+    }
+`
+
 
 const Element = styled.div`
   display: block;
@@ -362,26 +342,27 @@ const Element = styled.div`
     padding: 0.75rem 0.625rem;
     padding-left: 0.625rem;
     border-radius: 0.3125rem;
-    border: 0.0625rem solid #d1d1d6;
+    border: 0.0625rem solid #D1D1D6;
+
   }
-  select {
+  select{
     padding: 0.75rem 0.625rem;
     text-align: center;
     border-radius: 0.3125rem;
-    border: 0.0625rem solid #d1d1d6;
+    border: 0.0625rem solid #D1D1D6;
   }
   p {
-    color: #ff3b30;
+    color: #FF3B30;
     font-weight: 300;
     height: 1.25rem;
     width: 100%;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
   }
-  label {
+  label{
     margin-bottom: 0.5rem;
   }
-`;
+`
 
 const ImageLabel = styled.label`
   display: flex;
@@ -389,23 +370,54 @@ const ImageLabel = styled.label`
   align-items: center;
   border-radius: 1rem;
   cursor: pointer;
-  img {
+  img{
     width: 100%;
   }
   svg {
     margin: 1rem 3rem;
     font-size: 5rem;
   }
-`;
+
+`
 
 const SelectAmenity = styled.div`
-  display: flex;
-  flex-direction: column;
+    display:flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    div{
+      display: flex;
+      gap: 0.5rem;
+    }
+`
+
+const AmenityButton = styled.button`
   align-items: center;
-  justify-content: center;
-`;
+  padding: 0.625rem 0.875rem;
+  border-radius: 2.875rem;
+  border: 0.0625rem solid #000000;
+
+  font-size: 0.875rem;
+  font-weight: 600;
+${({ active }) => active && css`
+background-color:#007AFF;
+color:white;
+border:none;
+`}
+  &:hover{
+    color:${(props) => (props.check ? 'white' : 'black')};
+    background-color: ${(props) => (props.check ? '#007AFF' : 'transparent')};
+    border:${(props) => (props.check ? 'none' : '0.0625rem solid #000000')};
+  }
+`
 
 const Toastdiv = styled.div`
-  background-color: aliceblue;
-  width: 100%;
-`;
+  margin-top: 1.125rem;
+  margin-bottom: 1.875rem;
+  label{
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+`
+
+
+

@@ -69,6 +69,51 @@ userAxios.interceptors.response.use(
   }
 );
 
+api.interceptors.response.use(
+  (config) => {
+    return config;
+  },
+  async (err) => {
+    const {
+      config,
+      response: { status }
+    } = err;
+    // 토큰 만료됐을 때 status
+    if (status === 500) {
+      // userAxios를 쓰는 경우인데 리프레시 토큰 조차 없는 경우
+      const cookies = new Cookies();
+      if (cookies.get('refreshToken')) {
+        return err;
+      }
+
+      // 이전 작업에 대한 config저장
+      const originalReq = config;
+      // Bearer제거 작업
+      const getRefresh = cookies.get('refreshToken').split(' ')[1];
+      const getAccess = localStorage.getItem('accessToken').split(' ')[1];
+
+      // refresh요청
+      const response = await userAxios.post(
+        '/reissue',
+        {},
+        {
+          headers: {
+            AccessToken: getAccess,
+            RefreshToken: getRefresh
+          }
+        }
+      );
+      const newAccess = response.headers.authorization;
+      localStorage.setItem('accessToken', newAccess);
+      // 새로 발급 받은 토큰으로 config 변경
+      originalReq.headers.Authorization = newAccess;
+      return axios(originalReq);
+    }
+    return err;
+  }
+);
+
+
 export const meetsApi = {
   getPopularPosts: (area) => api.get(`/meets/hot?area=${area}`),
 
@@ -126,6 +171,10 @@ export const userAuth = {
 };
 
 export const postApi = {
+  uploadImages(file) {
+    return api.post('/posts/images', file);
+  },
+
   deleteImages(images) {
     return api.delete('/images', images);
   },
@@ -134,6 +183,9 @@ export const postApi = {
   },
   getPost(postId) {
     return api.get(`/posts/${postId}`);
+  },
+  getComments(pageParam, postId) {
+    return api.get(`comments/${postId}?page=${pageParam}&size=5`);
   },
 
   newPost(newPost) {
@@ -157,8 +209,8 @@ export const postApi = {
   newComments(postId, content) {
     return api.post(`/comments/${postId}`, content);
   },
-  updateComments(commentsId, updateContent) {
-    return api.put(`/comments/${commentsId}`, updateContent);
+  updateComments(commentId, updateContent) {
+    return api.put(`/comments/${commentId}`, updateContent);
   },
   deleteComments(commentId) {
     return api.delete(`/comments/${commentId}`);

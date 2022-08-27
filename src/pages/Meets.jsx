@@ -1,11 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { meetsApi } from '../shared/api';
-import { useInView } from 'react-intersection-observer';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from "react-router-dom";
 import Meet from '../components/Meet';
-import { thunderposts } from '../shared/data';
-import { queryKeys } from '../react-query/constants';
 import { useMeets } from '../react-query/hooks/useMeets';
 import { usePopularMeets } from '../react-query/hooks/usePopularMeets';
 import PopularMeets from '../components/PopularMeets';
@@ -25,6 +21,7 @@ const Meets = () => {
     <MeetsContainer>
       <CategoryContainer>
         <select id="area" onChange={onChangeArea} value={areaSelected}>
+        <option value="ALL">전체</option>
           <option value="서울·경기·인천">서울·경기·인천</option>
           <option value="강원">강원</option>
           <option value="대구·경북">대구·경북</option>
@@ -37,7 +34,9 @@ const Meets = () => {
         </select>
       </CategoryContainer>
       {/* TODO: Slider, 분기, CSS 수정 */}
+      <div className='scrollTest'>
       <PopularMeets popularPosts={popularPosts} />
+      </div>
       <MeetsPostsContainer>
         <div className="topBox">
           <h2>오픈 모임 리스트</h2>
@@ -62,32 +61,50 @@ const Meets = () => {
           return <Meet key={meet.thunderPostId} meet={meet} />;
         })}
       </MeetsPostsContainer>
-      <AddButton
-        onClick={() => {
-          navigate('/meetAdd');
-        }}
-      >
-        <svg
-          width="23"
-          height="22"
-          viewBox="0 0 23 22"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d="M16.6884 0.420842C16.9813 0.127949 17.4561 0.127949 17.749 0.420841L21.9917 4.66347C22.1323 4.80412 22.2113 4.99489 22.2113 5.1938C22.2113 5.39271 22.1323 5.58348 21.9917 5.72413L6.43533 21.2805C6.29467 21.4211 6.1039 21.5002 5.90498 21.5002L1.66247 21.5001C1.24827 21.5 0.912496 21.1643 0.912483 20.7501L0.912354 16.5075C0.912347 16.3086 0.991366 16.1178 1.13202 15.9772L16.6884 0.420842ZM17.2187 2.01183L2.41236 16.8182L2.41246 20.0001L5.59435 20.0001L20.4007 5.1938L17.2187 2.01183Z"
-            fill="white"
-          />
-        </svg>
-      </AddButton>
+      <PostBtn>
+        <Link to="/meetAdd">
+          <svg width="70" height="70" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g filter="url(#filter0_d_225_2066)">
+              <rect x="5" y="5" width="56" height="56" rx="28" fill="#007AFF" />
+              <path d="M23.6625 42.7501L27.905 42.7502L43.4613 27.1938L39.2187 22.9512L23.6624 38.5075L23.6625 42.7501Z" fill="white" />
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M38.6884 22.4208C38.9813 22.1279 39.4561 22.1279 39.749 22.4208L43.9917 26.6635C44.1323 26.8041 44.2113 26.9949 44.2113 27.1938C44.2113 27.3927 44.1323 27.5835 43.9917 27.7241L28.4353 43.2805C28.2947 43.4211 28.1039 43.5002 27.905 43.5002L23.6625 43.5001C23.2483 43.5 22.9125 43.1643 22.9125 42.7501L22.9124 38.5075C22.9123 38.3086 22.9914 38.1178 23.132 37.9772L38.6884 22.4208ZM39.2187 24.0118L24.4124 38.8182L24.4125 42.0001L27.5943 42.0001L42.4007 27.1938L39.2187 24.0118Z" fill="white" />
+              <path fill-rule="evenodd" clip-rule="evenodd" d="M34.4457 26.6635C34.7386 26.3706 35.2135 26.3706 35.5064 26.6635L39.749 30.9062C40.0419 31.1991 40.0419 31.6739 39.749 31.9668C39.4561 32.2597 38.9813 32.2597 38.6884 31.9668L34.4457 27.7242C34.1528 27.4313 34.1528 26.9564 34.4457 26.6635Z" fill="white" />
+            </g>
+            <defs>
+              <filter id="filter0_d_225_2066" x="0" y="0" width="70" height="70" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                <feOffset dx="2" dy="2" />
+                <feGaussianBlur stdDeviation="3.5" />
+                <feComposite in2="hardAlpha" operator="out" />
+                <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+                <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_225_2066" />
+                <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_225_2066" result="shape" />
+              </filter>
+            </defs>
+          </svg>
+        </Link>
+      </PostBtn>
     </MeetsContainer>
   );
 };
 
-const MeetsContainer = styled.div``;
-
+const MeetsContainer = styled.div`
+  div.scrollTest{
+    overflow: scroll;
+    &::-webkit-scrollbar{
+      width:0.5rem;
+      height: 0.5rem;
+      border-radius: 0.375rem;
+      background-color: rgba(255,255,255,3)
+    }
+    &::-webkit-scrollbar-thumb{
+      background-color: rgba(0,0,0,0.3);
+      border-radius: 0.375rem;
+    }
+}
+`;
+  
 const CategoryContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -140,6 +157,7 @@ const CategoryContainer = styled.div`
 
 const MeetsPostsContainer = styled.div`
   div.topBox {
+    margin-top: 1.5625rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -156,18 +174,11 @@ const MeetsPostsContainer = styled.div`
   }
 `;
 
-const AddButton = styled.button`
-  position: absolute;
-  width: 56px;
-  height: 56px;
-  right: 1rem;
+const PostBtn = styled.div` 
+  cursor: pointer;
+   position: fixed;
   bottom: 1rem;
-
-  background-color: #007aff;
-  /* fab */
-
-  box-shadow: 2px 2px 7px rgba(0, 0, 0, 0.25);
-  border-radius: 57px;
-`;
+  right: 1rem;
+  `
 
 export default Meets;
