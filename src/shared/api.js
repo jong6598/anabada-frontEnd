@@ -216,3 +216,13 @@ export const postApi = {
     return api.delete(`/comments/${commentId}`);
   }
 };
+
+export const myApi={
+  getMyPosts(filter,pageParam){
+    return api.get(`myposts?filter=${filter}&page=${pageParam}&size=6`)
+  },
+  getMyMeets(filter,pageParam){
+    return api.get(`mymeets?filter=${filter}&page=${pageParam}&size=6`)
+  }
+}
+

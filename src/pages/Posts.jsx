@@ -6,6 +6,7 @@ import Post from "../components/Post";
 import { postApi } from "../shared/api";
 import { useInView } from "react-intersection-observer";
 import { queryKeys } from "../react-query/constants";
+import Loading from '../layout/Loading';
 
 
 
@@ -19,7 +20,8 @@ const Posts = () => {
   const getPosts = async (pageParam) => {
     try {
       const res = await postApi.getPosts(pageParam, areaSelected)
-      
+      console.log(res);
+
       const data= res.data.content;
     
       const last = res.data.last;
@@ -55,7 +57,6 @@ const Posts = () => {
 
  useEffect(()=>{
   queryClient.invalidateQueries([queryKeys.postList])
-  refetch();
 },[data, areaSelected])
 
 
@@ -101,8 +102,8 @@ const Posts = () => {
               </React.Fragment>
             );
           })}
-        {isFetchingNextPage ? <p>스피너</p> : <div ref={ref} />}
-        </PostDiv>
+            {isFetchingNextPage ? <Loading/> : <div ref={ref}></div>}
+            </PostDiv>
       </MainDiv>
       <PostBtn>
           <Link to="/posts/upload">
