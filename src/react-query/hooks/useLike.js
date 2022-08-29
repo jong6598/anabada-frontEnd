@@ -39,7 +39,6 @@ export function useLike(isLiked) {
       // TODO: 커스텀 토스트 만들기
       // const title = '성공적으로 모임이 등록되었습니다';
       // toast({ title, status: 'success' });
-      navigate('/meets');
     },
     onError: () => {
       // const title = '모임 등록에 실패하였습니다';

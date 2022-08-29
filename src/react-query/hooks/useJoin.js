@@ -44,11 +44,8 @@ export function useJoin() {
       // TODO: 커스텀 토스트 만들기 alert 대신 출력
       // const title = '성공적으로 모임이 등록되었습니다';
       // toast({ title, status: 'success' });
-      alert('모임에 참여하였습니다');
-      navigate('/meets');
     },
     onError: () => {
-      alert('모임에 참여에 실패하였습니다');
       // const title = '모임 등록에 실패하였습니다';
       // toast({ title, status: 'error' });
     }
