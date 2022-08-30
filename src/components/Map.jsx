@@ -40,7 +40,7 @@ const KakaoMap = memo(() => {
       staleTime: 1000 * 60 * 30,
       refetchOnWindowFocus: false,
       onSuccess(data) {
-        console.log("Map Data를 성공적으로 fetch했습니다. ::: ", data.data);
+        console.log("Map Data를 성공적으로 fetch했습니다. ::: ");
       },
       onError(err) {
         console.log("에러가 발생했습니다!! ::: ", err);

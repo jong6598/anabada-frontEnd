@@ -5,6 +5,10 @@ import { userThunk } from "../redux/auth-slice";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { Cookies } from "react-cookie";
 import AlertToast from "./AlertToast";
+import { useNotification } from "../shared/hooks/notificationHook";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { api } from "../shared/api";
 
 const Header = memo(() => {
   const location = useLocation();
@@ -48,8 +52,17 @@ const Header = memo(() => {
       dispatch(userThunk(getAccess));
     }
   }, []);
+
   // 헤더에 넣을 유저정보 받아오기
   const userInfo = useSelector((state) => state.auth);
+
+  // 알림 소켓 연결하기
+  const { notifications, setNotifications } = useNotification(userInfo.userId);
+  // 알림 있는지 여부 확인하기
+  const { refresh } = useQuery(
+    ["notifications"],
+    api.get(`/api/notifications`)
+  );
 
   // scroll 이벤트 핸들러
   const handleScroll = () => {
