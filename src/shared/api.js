@@ -181,6 +181,10 @@ export const postApi = {
   getPosts(pageParam, areaSelected) {
     return api.get(`/posts?area=${areaSelected}&page=${pageParam}&size=6`);
   },
+  getSearchPosts(areaSelected, search, pageParam){
+    return api.get(`/posts/search?area=${areaSelected}&keyword=${search}&page=${pageParam}&size=6`)
+  }
+  ,
   getPost(postId) {
     return api.get(`/posts/${postId}`);
   },
@@ -223,6 +227,9 @@ export const myApi={
   },
   getMyMeets(filter,pageParam){
     return api.get(`mymeets?filter=${filter}&page=${pageParam}&size=6`)
+  },
+  uploadProfile(profileUrl){
+    return api.put('/profileimages',profileUrl)
   }
 }
 

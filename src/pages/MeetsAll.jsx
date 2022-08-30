@@ -140,7 +140,7 @@ const MeetAllContainer = styled.div`
 
 const CategoryContainer = styled.div`
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   flex-direction: row;
   align-items: center;
   padding: 0.875rem 0;
@@ -160,11 +160,12 @@ const CategoryContainer = styled.div`
   input {
     font-weight: 400;
     font-size: 0.875rem;
-    line-height: 1.125rem;
+    margin-left: 0.75rem;
+    width: 100%;
     /* identical to box height */
     padding: 0.625rem 1rem;
     background-color: #f2f2f7;
-    border-radius: 4px;
+    border-radius: 0.75rem;
   }
 `;
 
