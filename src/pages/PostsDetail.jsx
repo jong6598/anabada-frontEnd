@@ -103,7 +103,6 @@ const PostsDetail = () => {
 
   const { mutate: onDelete } = useMutation(postDelete, {
     onSuccess: () => {
-      // queryClient.invalidateQueries(["post"])
       queryClient.invalidateQueries([queryKeys.postList])
       alert('게시글이 삭제되었습니다')
     },
@@ -137,8 +136,11 @@ const PostsDetail = () => {
 
   const { mutate: onToggleLike } = useMutation(toggleLike, {
     onSuccess: () => {
-      queryClient.invalidateQueries([queryKeys.detailPost])
-      queryClient.invalidateQueries([queryKeys.postList])
+      return(
+        queryClient.invalidateQueries([queryKeys.detailPost]),
+        queryClient.invalidateQueries([queryKeys.postList])
+      )
+      
     },
     onError: (err) => {
       console.log(err.respose);

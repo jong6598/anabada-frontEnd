@@ -106,15 +106,13 @@ const PostCU = () => {
       try {
         const post =await  postApi.newPost(newPost);
         alert("게시글이 등록되었습니다!");
-        navigate("/posts");
       } catch (err) {
         alert(err);
       }
     } else {
       try {
-        const update =await postApi.updatePost(newPost);
+        const update =await postApi.updatePost(postId, newPost);
         alert("게시글이 수정되었습니다!")
-        navigate(`/posts`);
       } catch (err) {
         console.log(err);
         alert(err);
@@ -124,8 +122,8 @@ const PostCU = () => {
 
   const {mutate:onAdd} = useMutation(onSubmitPost, {
     onSuccess: () => {
-      console.log('호출확인ㄴㄴㄴ')
       queryClient.invalidateQueries([queryKeys.postList])
+      navigate(`/posts`);
     },
     onError: (err) => {
       console.log(err.respose);
