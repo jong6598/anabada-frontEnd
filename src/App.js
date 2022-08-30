@@ -19,6 +19,8 @@ import Welcome from './pages/Welcome';
 import Mypage from './pages/Mypage';
 import MyPosts from './pages/MyPosts';
 import MyMeets from './pages/MyMeets';
+import Chat from './pages/Chat/Chat';
+import ChatRoom from './pages/Chat/ChatRoom';
 
 function App() {
   return (
@@ -44,6 +46,8 @@ function App() {
             <Route path="/meetsAll" element={<MeetsAll />} />
           </Route>
           <Route path="/meets/:thunderPostId" element={<MeetDetail />} />
+          <Route path="/chat/:roomId" element={<Chat />} />
+          <Route path="/room/:roomId" element={<ChatRoom />} />
         </Routes>
       </ThemeProvider>
     </>

@@ -37,8 +37,6 @@ const MeetAdd = () => {
       const meetDate = state.meetDate.replaceAll('.', '-');
       const editedState = { ...state, startDate, endDate, meetDate };
 
-      console.log(editedState, 'eiditedState, 확인해보자');
-
       setIsInputValue(editedState);
       setIsEdit(true); // edit 체크
     }
@@ -152,7 +150,8 @@ const MeetAdd = () => {
           value={goalMember}
         />
       </div>
-      <div>
+
+      <div className="dateBox">
         <p>시작일</p>
         <input
           type="date"
@@ -161,10 +160,11 @@ const MeetAdd = () => {
           value={startDate}
         />
       </div>
-      <div>
+      <div className="dateBox">
         <p>종료일</p>
         <input type="date" name="endDate" onChange={onChange} value={endDate} />
       </div>
+
       <div>
         <p>모임일</p>
         <input

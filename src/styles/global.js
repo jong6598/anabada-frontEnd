@@ -4,13 +4,14 @@ const GlobalStyle = createGlobalStyle`
    
    *{
       box-sizing: border-box;
+     
       
    }
 
  body{
     margin: 0px;
     padding: 0px;
-    font-family: 'Pretendard';
+    font-family: 'Pretendard-Regular';
  }
 
  a, div {
@@ -24,6 +25,7 @@ const GlobalStyle = createGlobalStyle`
    outline: none;
    border: none;
    background-color: transparent;
+   font-family: 'Pretendard-Regular';
   }
   
   ul{
@@ -38,10 +40,13 @@ const GlobalStyle = createGlobalStyle`
   select{
    border: none;
    outline: none;
+   font-family: 'Pretendard-Regular';
   }
 
   input{
    border: none;
+   font-family: 'Pretendard-Regular';
+   
   }
   input:focus-visible {
       outline: 0.01rem solid #007aff;

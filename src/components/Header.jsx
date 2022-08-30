@@ -5,6 +5,7 @@ import { userThunk } from '../redux/auth-slice';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { Cookies } from 'react-cookie';
 import AlertToast from './AlertToast';
+import Navigate from '../layout/Navigate';
 
 const Header = memo(() => {
   const location = useLocation();
@@ -151,9 +152,7 @@ const Header = memo(() => {
             ) : (
               <>
                 <div className="header__user__info">
-                  <Link to="/mypage">
-                    {userInfo?.nickname} 님 :)
-                  </Link>
+                  <Link to="/mypage">{userInfo?.nickname} 님 :)</Link>
                 </div>
               </>
             )}
@@ -173,6 +172,7 @@ const Header = memo(() => {
           </NavElement>
         </MainNav>
       </HeaderWrapper>
+
       <Layout>
         {stateErrTimer && <AlertToast errorMsg={refErrorMessage.current} />}
         <Outlet context={{ alertHandler }} />

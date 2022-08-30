@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { meetsApi } from '../shared/api';
 import { useQuery } from '@tanstack/react-query';
 import { FiMoreHorizontal } from 'react-icons/fi';
+import { BsFillChatDotsFill } from 'react-icons/bs';
 import { FiEdit2 } from 'react-icons/fi';
 import { RiDeleteBin5Line } from 'react-icons/ri';
 // import { meet } from '../shared/data';
@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import { useAddMeet } from '../react-query/hooks/useDeleteMeet';
 import { useLike } from '../react-query/hooks/useLike';
 import { useJoin } from '../react-query/hooks/useJoin';
+import Navigate from '../layout/Navigate';
 
 const MeetDetail = () => {
   const [showModal, setShowModal] = useState(false);
@@ -39,8 +40,13 @@ const MeetDetail = () => {
     setShowModal((prev) => !prev);
   };
 
+  const onRequestChat = () => {
+    navigate(`/chat/${nickname}`);
+  };
+
   return (
     <Container>
+      <Navigate text={'포스트'} padding={true} />
       <div className="postTopInfo">
         <p className="title">{meet.title}</p>
         <div className="postUserInfoContainer">
@@ -81,6 +87,11 @@ const MeetDetail = () => {
           {nickname === meet.nickname && (
             <button className="moreBtn" onClick={onShowModal}>
               <FiMoreHorizontal />
+            </button>
+          )}
+          {nickname !== meet.nickname && (
+            <button className="chatBtn" onClick={onRequestChat}>
+              <BsFillChatDotsFill />
             </button>
           )}
           {showModal && (
@@ -339,14 +350,23 @@ const Container = styled.div`
   .postUserInfoContainer {
     position: relative;
     display: flex;
+
     align-items: center;
     justify-content: space-between;
     .moreBtn {
       display: flex;
       padding: 0;
+    }
+    .chatBtn {
+      display: flex;
+      align-items: center;
+      padding: 0;
       svg {
-        font-size: 1rem;
+        color: #007aff;
       }
+    }
+    svg {
+      font-size: 1rem;
     }
   }
 
@@ -377,15 +397,6 @@ const Container = styled.div`
       margin-right: 5px;
       margin-left: 0;
       color: #000000;
-    }
-    .moreBtn {
-      display: flex;
-
-      align-items: center;
-      padding: 0;
-    }
-    svg {
-      font-size: 1rem;
     }
   }
 `;
