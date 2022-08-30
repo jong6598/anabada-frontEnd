@@ -249,24 +249,26 @@ const MeetDetail = () => {
         </ButtonContainer>
       )}
 
-      {meet.member?.length > 0 && (
+      {meet.members?.length > 0 && (
         <MembersContainer>
           <Divider />
           <p>참여 인원 목록</p>
           {meet.members.map((member) => {
-            <ul className="memberLists">
-              <li>
-                <div>
-                  <img src={member.profileUrl} alt="profileImg" />
-                  <p>{member.nickname}</p>
-                </div>
-                {nickname === meet.nickname ? (
-                  <p className="host">주최자</p>
-                ) : (
-                  <p className="participant">참여자</p>
-                )}
-              </li>
-            </ul>;
+            return (
+              <ul className="memberLists">
+                <li>
+                  <div>
+                    <img src={member.profileUrl} alt="profileImg" />
+                    <p>{member.nickname}</p>
+                  </div>
+                  {nickname === meet.nickname ? (
+                    <p className="host">주최자</p>
+                  ) : (
+                    <p className="participant">참여자</p>
+                  )}
+                </li>
+              </ul>
+            );
           })}
         </MembersContainer>
       )}
@@ -478,7 +480,7 @@ const ButtonContainer = styled.div`
   }
   .likeBtn {
     /* background-color: ${(props) =>
-      props.isLiked ? '#EFF7FF' : '#007AFF'}; */
+    props.isLiked ? '#EFF7FF' : '#007AFF'}; */
     svg {
       margin-right: 5px;
     }

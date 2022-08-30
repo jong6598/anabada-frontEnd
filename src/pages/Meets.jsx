@@ -91,7 +91,8 @@ const Meets = () => {
 
 const MeetsContainer = styled.div`
   div.scrollTest{
-    overflow: scroll;
+    overflow-x: scroll;
+    overflow-y: hi;
     &::-webkit-scrollbar{
       width:0.5rem;
       height: 0.5rem;
