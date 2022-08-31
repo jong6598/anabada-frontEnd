@@ -5,10 +5,6 @@ import { userThunk } from "../redux/auth-slice";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { Cookies } from "react-cookie";
 import AlertToast from "./AlertToast";
-import { useNotification } from "../shared/hooks/notificationHook";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { api } from "../shared/api";
 
 const Header = memo(() => {
   const location = useLocation();
@@ -55,24 +51,6 @@ const Header = memo(() => {
 
   // 헤더에 넣을 유저정보 받아오기
   const userInfo = useSelector((state) => state.auth);
-
-  // 알림 소켓 연결하기
-  const { notifications, setNotifications } = useNotification(userInfo.userId);
-  // 알림 있는지 여부 확인하기(근데 isBadge만 확인 하는 건데 useQuery를 쓸 필요가 있을까?... isBadge를 언제 확인해야 할까...)
-
-  /* 
-  소켓 :::...::: 상시 연결 ::: isBadge ::: 왜 상시 연결인데 따로 IsBadge를 요청해야 할까..
-  isBadge는 로그인 처음 했을 때 받고,,
-  
-  그 다음부터는 어케 받아오지.. 소켓을 이용해서 새로운 게 있을 때 빨간색을 띄운다.. ㄹㅇㄹㅇ;; ㄹㅇㄹㅇ 레올레올 라울라울 리올리울 => 이건 notificationHook에서 처리해준다. => 그럼.. 또 드는 의문은, 이렇게 새로운 알림을 받아 오게 된다면 그때는.. 내가 해줘야 되겠지?..
-  setNotifications이 변경 될 때마다, 뱃지를 띄우면 되겠군!!
-
-  
-  */
-  const { refetch } = useQuery(["notifications"], api.get(`/notifications`));
-  useEffect(() => {
-    if (userInfo.userId) refetch();
-  }, [userInfo]);
 
   // scroll 이벤트 핸들러
   const handleScroll = () => {

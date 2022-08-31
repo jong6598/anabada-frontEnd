@@ -4,10 +4,11 @@ import { Stomp } from "@stomp/stompjs";
 
 const socketServerURL = `http://${process.env.REACT_APP_API_SERVER}/socket`;
 
-export const useNotification = (userId, callback) => {
+export const useNotification = (userId) => {
   const socketRef = useRef(null);
   const stompClientRef = useRef(null);
   const subscriptionRef = useRef(null);
+  // 알림 뱃지가 있는지?... state
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
@@ -27,9 +28,17 @@ export const useNotification = (userId, callback) => {
       subscriptionRef.current = stompClientRef.current?.subscribe(
         `/topic/notification/${userId}`,
         (message) => {
+          console.log(":: 소켓이 작동합니다 ::");
+          console.log(`:: message ::: ${message} ::`);
           const body = JSON.parse(message.body);
-          setNotifications((prev) => [body, ...prev]);
-          callback && callback(body);
+          console.log(`:: body ::: ${body} ::`);
+          setNotifications((prev) => {
+            // 실험해보고 false와 관련된 건 알아서 삭제하는 로직을 추가해보자! filter 메소드?
+            return {
+              ...prev,
+              ...body,
+            };
+          });
         }
       );
     });
@@ -45,5 +54,9 @@ export const useNotification = (userId, callback) => {
     stompClientRef.current?.disconnect();
   }, []);
 
-  return { notifications, setNotifications, unsubscribe };
+  return {
+    notifications,
+    setNotifications,
+    unsubscribe,
+  };
 };
