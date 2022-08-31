@@ -1,5 +1,5 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
 const Navigate = ({ text }) => {
   return (
@@ -27,6 +27,7 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   padding-top: 1rem;
+  padding-left: 0.84375rem;
   svg {
     margin-right: 1rem;
   }
