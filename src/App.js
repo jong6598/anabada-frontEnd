@@ -21,8 +21,7 @@ import MyPosts from "./pages/MyPosts";
 import MyMeets from "./pages/MyMeets";
 import { useSelector } from "react-redux";
 import { useNotification } from "./shared/hooks/notificationHook";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { api } from "./shared/api";
 import { Cookies } from "react-cookie";
 import Notification from "./pages/Notification";
@@ -68,7 +67,6 @@ function App() {
             <Route path="/posts/:postId/edit" element={<PostCU />} />
             <Route path="*" element={<NotFound />} />
             <Route path="/meets" element={<Meets />} />
-
             <Route path="/meetAdd" element={<AddMeet />} />
             <Route path="/mypage" element={<Mypage />} />
             <Route path="/mymeets" element={<MyMeets />} />

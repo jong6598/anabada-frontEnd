@@ -23,7 +23,7 @@ const MeetDetail = () => {
   );
   const onDelete = useAddMeet();
   const onLike = useLike();
-  const onJoin = useJoin(isJoined);
+  const onJoin = useJoin();
 
   // initial like, join state 값 설정
   useEffect(() => {
@@ -31,29 +31,9 @@ const MeetDetail = () => {
       setIsLiked(meet.liked);
       setIsJoined(meet.joined);
     }
-  }, [isLiked, isJoined]);
+  }, []);
 
   const nickname = useSelector((state) => state.auth.nickname);
-
-  console.log(meet);
-  // FIXME:
-  // const onLike = (thunderPostId) => {
-  //   if (isLiked) {
-  //     meetsApi.deleteLike(thunderPostId);
-  //   } else {
-  //     meetsApi.postLike(thunderPostId);
-  //   }
-  //   setIsLiked((prev) => !prev);
-  // };
-
-  // const onRequest = (thunderPostId) => {
-  //   if (isJoined) {
-  //     meetsApi.deleteRequest(thunderPostId);
-  //   } else {
-  //     meetsApi.postRequest(thunderPostId);
-  //   }
-  //   setIsJoined((prev) => !prev);
-  // };
 
   const onShowModal = () => {
     setShowModal((prev) => !prev);
@@ -237,7 +217,6 @@ const MeetDetail = () => {
         <ButtonContainer>
           <button
             className="likeBtn"
-            isLiked={isLiked}
             onClick={() => {
               const state = {
                 setIsLiked,
@@ -247,26 +226,29 @@ const MeetDetail = () => {
               onLike(state);
             }}
           >
-            {!isLiked && (
+            {isLiked ? (
               <svg
-                width="17"
-                height="15"
-                viewBox="0 0 17 15"
+                width="19"
+                height="18"
+                viewBox="0 0 19 18"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
+                  d="M6.375 3C4.09683 3 2.25 4.84684 2.25 7.125C2.25 11.25 7.125 15 9.75 15.8723C12.375 15 17.25 11.25 17.25 7.125C17.25 4.84684 15.4032 3 13.125 3C11.7299 3 10.4965 3.69259 9.75 4.75268C9.00349 3.69259 7.77011 3 6.375 3Z"
+                  fill="#FF2D55"
+                />
+                <path
                   fill-rule="evenodd"
                   clip-rule="evenodd"
-                  d="M0.4375 5.125C0.4375 2.53618 2.53617 0.4375 5.125 0.4375C6.45079 0.4375 7.64792 0.988282 8.5 1.87203C9.35208 0.988282 10.5492 0.4375 11.875 0.4375C14.4638 0.4375 16.5625 2.53618 16.5625 5.125C16.5625 7.40357 15.2251 9.50746 13.6341 11.1142C12.0376 12.7265 10.0893 13.9369 8.67739 14.4061C8.56223 14.4444 8.43777 14.4444 8.32261 14.4061C6.91068 13.9369 4.96241 12.7265 3.36593 11.1142C1.77492 9.50746 0.4375 7.40357 0.4375 5.125ZM5.125 1.5625C3.15749 1.5625 1.5625 3.1575 1.5625 5.125C1.5625 6.97144 2.66258 8.80503 4.16532 10.3226C5.59122 11.7626 7.29324 12.8295 8.5 13.2762C9.70676 12.8295 11.4088 11.7626 12.8347 10.3226C14.3374 8.80503 15.4375 6.97144 15.4375 5.125C15.4375 3.1575 13.8425 1.5625 11.875 1.5625C10.6706 1.5625 9.60558 2.15966 8.95991 3.07654C8.85455 3.22616 8.68299 3.31518 8.5 3.31518C8.31701 3.31518 8.14545 3.22616 8.04009 3.07654C7.39442 2.15966 6.32941 1.5625 5.125 1.5625Z"
+                  d="M1.6875 7.125C1.6875 4.53618 3.78617 2.4375 6.375 2.4375C7.70079 2.4375 8.89792 2.98828 9.75 3.87203C10.6021 2.98828 11.7992 2.4375 13.125 2.4375C15.7138 2.4375 17.8125 4.53618 17.8125 7.125C17.8125 9.40357 16.4751 11.5075 14.8841 13.1142C13.2876 14.7265 11.3393 15.9369 9.92739 16.4061C9.81223 16.4444 9.68777 16.4444 9.57261 16.4061C8.16068 15.9369 6.21241 14.7265 4.61593 13.1142C3.02492 11.5075 1.6875 9.40357 1.6875 7.125ZM6.375 3.5625C4.40749 3.5625 2.8125 5.1575 2.8125 7.125C2.8125 8.97144 3.91258 10.805 5.41532 12.3226C6.84122 13.7626 8.54324 14.8295 9.75 15.2762C10.9568 14.8295 12.6588 13.7626 14.0847 12.3226C15.5874 10.805 16.6875 8.97144 16.6875 7.125C16.6875 5.1575 15.0925 3.5625 13.125 3.5625C11.9206 3.5625 10.8556 4.15966 10.2099 5.07654C10.1045 5.22616 9.93299 5.31518 9.75 5.31518C9.56701 5.31518 9.39545 5.22616 9.29009 5.07654C8.64442 4.15966 7.57941 3.5625 6.375 3.5625Z"
                   fill="#FF2D55"
                 />
               </svg>
-            )}
-            {isLiked && (
+            ) : (
               <svg
-                width="current"
-                height="current"
+                width="19"
+                height="18"
                 viewBox="0 0 22 19"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -281,23 +263,37 @@ const MeetDetail = () => {
             )}
             좋아요
           </button>
-          <button
-            className="requestBtn"
-            isJoined={isJoined}
-            onClick={() => {
-              const result = window.confirm("모임에 참여하시겠습니까?");
-              if (result) {
+
+          {isJoined ? (
+            <button
+              className="requestedBtn"
+              style={{ backgroundColor: "#007AFF", color: "white" }}
+              onClick={() => {
                 const state = {
                   setIsJoined,
                   isJoined,
                   thunderPostId: meet.thunderPostId,
                 };
                 onJoin(state);
-              }
-            }}
-          >
-            참가할래요
-          </button>
+              }}
+            >
+              참가 취소
+            </button>
+          ) : (
+            <button
+              className="requestBtn"
+              onClick={() => {
+                const state = {
+                  setIsJoined,
+                  isJoined,
+                  thunderPostId: meet.thunderPostId,
+                };
+                onJoin(state);
+              }}
+            >
+              참가하기
+            </button>
+          )}
         </ButtonContainer>
       )}
 
@@ -306,19 +302,21 @@ const MeetDetail = () => {
           <Divider />
           <p>참여 인원 목록</p>
           {meet.members.map((member) => {
-            <ul className="memberLists">
-              <li>
-                <div>
-                  <img src={member.profileUrl} alt="profileImg" />
-                  <p>{member.nickname}</p>
-                </div>
-                {nickname === meet.nickname ? (
-                  <p className="host">주최자</p>
-                ) : (
-                  <p className="participant">참여자</p>
-                )}
-              </li>
-            </ul>;
+            return (
+              <ul className="memberLists">
+                <li>
+                  <div>
+                    <img src={member.profileUrl} alt="profileImg" />
+                    <p>{member.nickname}</p>
+                  </div>
+                  {nickname === meet.nickname ? (
+                    <p className="host">주최자</p>
+                  ) : (
+                    <p className="participant">참여자</p>
+                  )}
+                </li>
+              </ul>
+            );
           })}
         </MembersContainer>
       )}
@@ -507,14 +505,12 @@ const ButtonContainer = styled.div`
   button {
     display: flex;
     flex-direction: row;
+
     justify-content: center;
     align-items: center;
-    padding: 6px 10px;
+    padding: 0.375rem 0.625rem;
 
-    width: 167.5px;
-    height: 32px;
-
-    background: #eff7ff;
+    background-color: #eff7ff;
     border-radius: 4px;
 
     /* Inside auto layout */
@@ -529,8 +525,6 @@ const ButtonContainer = styled.div`
     line-height: 157.34%;
   }
   .likeBtn {
-    /* background-color: ${(props) =>
-      props.isLiked ? "#EFF7FF" : "#007AFF"}; */
     svg {
       margin-right: 5px;
     }

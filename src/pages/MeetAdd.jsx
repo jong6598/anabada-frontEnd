@@ -2,9 +2,9 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAddMeet } from '../react-query/hooks/useAddMeet';
-import { HiOutlinePhotograph } from "react-icons/hi";
-import { storage } from "../firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { HiOutlinePhotograph } from 'react-icons/hi';
+import { storage } from '../firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const MeetAdd = () => {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ const MeetAdd = () => {
 
   const { state } = useLocation(); // navgiation으로 전달받음
   const [isEdit, setIsEdit] = useState(false);
-  const [imgSrc, setImgSrc] = useState("");
+  const [imgSrc, setImgSrc] = useState('');
 
   const onAdd = useAddMeet();
 
@@ -57,9 +57,7 @@ const MeetAdd = () => {
     meetDate
   } = isInputValue;
 
-  
   const previewImage = async (e) => {
- 
     const image = e.target.files[0];
     const reader = new FileReader();
     reader.readAsDataURL(image);
@@ -68,10 +66,8 @@ const MeetAdd = () => {
       reader.onload = () => {
         setImgSrc(reader.result);
         resolve();
-     
       };
     });
-    
   };
 
   const onChange = (e) => {
@@ -81,47 +77,41 @@ const MeetAdd = () => {
     });
   };
 
- const onPostData = async() => {
-  console.log(fileInput.current.files[0], '체크체크')
-  let uploadUrl;
-  if(fileInput.current?.files.length>0){
-    
+  const onPostData = async () => {
+    let uploadUrl;
+    if (fileInput.current?.files.length > 0) {
       const uploaded_file = await uploadBytes(
-          ref(storage, `images/meet/${ 
-            fileInput.current?.files[0].name}`)
-         ,fileInput.current?.files[0]
-        )
-        uploadUrl = await getDownloadURL(uploaded_file.ref);
-      } else if (thunderPostId) {
-        uploadUrl = imgSrc;
-      } else {
-        uploadUrl = '';
-      }
+        ref(storage, `images/meet/${fileInput.current?.files[0].name}`),
+        fileInput.current?.files[0]
+      );
+      uploadUrl = await getDownloadURL(uploaded_file.ref);
+    } else if (thunderPostId) {
+      uploadUrl = imgSrc;
+    } else {
+      uploadUrl = '';
+    }
 
-      console.log(uploadUrl, 'uploadUrl')
+    console.log(uploadUrl, 'uploadUrl');
 
-  const post = {
-    title,
-    content,
-    area,
-    address,
-    goalMember,
-    thumbnailUrl : uploadUrl,
-    startDate,
-    endDate,
-    meetDate
+    const post = {
+      title,
+      content,
+      area,
+      address,
+      goalMember,
+      thumbnailUrl: uploadUrl,
+      startDate,
+      endDate,
+      meetDate
+    };
+
+    const result = window.confirm('등록하시겠습니까?');
+    if (result) {
+      console.log(post, 'post!!');
+      const state = { isEdit, post, thunderPostId };
+      onAdd(state);
+    }
   };
-
-  const result = window.confirm('등록하시겠습니까?');
-  if (result) {
-           
-        console.log(post,'post!!')
-    const state = { isEdit, post, thunderPostId };
-    onAdd(state);
-  }
-
- 
- }
 
   return (
     <Container>
@@ -192,10 +182,13 @@ const MeetAdd = () => {
           onChange={previewImage}
           ref={fileInput}
         />
-         <ImageLabel>
-                        {imgSrc ? <img src={imgSrc} alt="thumbnail" /> : <HiOutlinePhotograph />}
-                    </ImageLabel>
-  
+        <ImageLabel>
+          {imgSrc ? (
+            <img src={imgSrc} alt="thumbnail" />
+          ) : (
+            <HiOutlinePhotograph />
+          )}
+        </ImageLabel>
       </div>
       <div>
         <p>모임 상세 내용</p>
@@ -209,15 +202,7 @@ const MeetAdd = () => {
           value={content}
         />
       </div>
-      <button
-        onClick={
-       
-          onPostData
-        
-        }
-      >
-        게시하기
-      </button>
+      <button onClick={onPostData}>게시하기</button>
     </Container>
   );
 };
@@ -291,14 +276,13 @@ const ImageLabel = styled.label`
   align-items: center;
   border-radius: 1rem;
   cursor: pointer;
-  img{
+  img {
     width: 100%;
   }
   svg {
     margin: 1rem 3rem;
     font-size: 5rem;
   }
-
-`
+`;
 
 export default MeetAdd;
