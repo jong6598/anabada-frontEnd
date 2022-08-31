@@ -9,6 +9,7 @@ import store from './redux/store';
 import { createStandaloneToast } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Loading from './layout/Loading';
+import ScrollToTop from './layout/ScrollToTop';
 
 const toast = createStandaloneToast();
 
@@ -38,6 +39,7 @@ root.render(
     <Suspense fallback={<Loading />}>
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
+          <ScrollToTop />
           <App />
         </Provider>
       </QueryClientProvider>

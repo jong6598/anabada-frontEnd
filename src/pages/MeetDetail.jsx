@@ -40,7 +40,7 @@ const MeetDetail = () => {
     setShowModal((prev) => !prev);
   };
 
-  const onRequestChat = () => {
+  const onRequestChat = (nickname) => {
     navigate(`/chat/${nickname}`);
   };
 
@@ -90,7 +90,10 @@ const MeetDetail = () => {
             </button>
           )}
           {nickname !== meet.nickname && (
-            <button className="chatBtn" onClick={onRequestChat}>
+            <button
+              className="chatBtn"
+              onClick={() => onRequestChat(meet.nickname)}
+            >
               <BsFillChatDotsFill />
             </button>
           )}
@@ -306,8 +309,7 @@ const MeetDetail = () => {
           )}
         </ButtonContainer>
       )}
-
-      {meet.member?.length > 0 && (
+      {meet.members?.length > 0 && (
         <MembersContainer>
           <Divider />
           <p>참여 인원 목록</p>

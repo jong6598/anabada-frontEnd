@@ -11,7 +11,7 @@ const Header = memo(() => {
   const location = useLocation();
   const { pathname } = location;
   const timer = useRef(null);
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const cookies = new Cookies();
   const getCookies = cookies.get('refreshToken');
   const [valueY, setValueY] = useState(null);
@@ -39,16 +39,17 @@ const Header = memo(() => {
   );
 
   // 새로고침 시 유저정보 리덕스에 재설정
-  useEffect(() => {
-    // 로그인 한 유저가 아니면 유저정보를 요청하지 않음
-    if (getCookies === undefined) {
-      return;
-    } else {
-      // 로그인 한 유저가 유저이면 새로고침 시 유저정보를 요청함
-      const getAccess = localStorage.getItem('accessToken');
-      dispatch(userThunk(getAccess));
-    }
-  }, []);
+  // useEffect(() => {
+  //   // 로그인 한 유저가 아니면 유저정보를 요청하지 않음
+  //   if (getCookies === undefined) {
+  //     return;
+  //   } else {
+  //     // 로그인 한 유저가 유저이면 새로고침 시 유저정보를 요청함
+  //     const getAccess = localStorage.getItem('accessToken');
+  //     dispatch(userThunk(getAccess));
+  //   }
+  // }, []);
+
   // 헤더에 넣을 유저정보 받아오기
   const userInfo = useSelector((state) => state.auth);
 

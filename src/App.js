@@ -21,8 +21,28 @@ import MyPosts from './pages/MyPosts';
 import MyMeets from './pages/MyMeets';
 import Chat from './pages/Chat/Chat';
 import ChatRoom from './pages/Chat/ChatRoom';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { Cookies } from 'react-cookie';
+import { userThunk } from './redux/auth-slice';
 
 function App() {
+  const cookies = new Cookies();
+  const getCookies = cookies.get('refreshToken');
+  const dispatch = useDispatch();
+
+  // 새로고침 시 유저정보 리덕스에 재설정
+  useEffect(() => {
+    // 로그인 한 유저가 아니면 유저정보를 요청하지 않음
+    if (getCookies === undefined) {
+      return;
+    } else {
+      // 로그인 한 유저가 유저이면 새로고침 시 유저정보를 요청함
+      const getAccess = localStorage.getItem('accessToken');
+      dispatch(userThunk(getAccess));
+    }
+  }, []);
+
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -46,7 +66,7 @@ function App() {
             <Route path="/meetsAll" element={<MeetsAll />} />
           </Route>
           <Route path="/meets/:thunderPostId" element={<MeetDetail />} />
-          <Route path="/chat/:roomId" element={<Chat />} />
+          <Route path="/chat/:nickname" element={<Chat />} />
           <Route path="/room/:roomId" element={<ChatRoom />} />
         </Routes>
       </ThemeProvider>

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import * as StompJs from '@stomp/stompjs';
-import * as SockJS from 'sockjs-client';
+import SockJS from 'sockjs-client';
+import { Stomp, Client } from '@stomp/stompjs';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Navigate from '../../layout/Navigate';
@@ -12,57 +12,39 @@ import { chatApi } from '../../shared/api';
 const Chat = () => {
   const params = useParams();
 
+  const clientRef = useRef(null);
+
   const nickname = useSelector((state) => state.auth.nickname);
   const [roomId, setRoomId] = useState(null);
 
-  // endpoint : /socket
-
-  // 메세지 받기 infinite scroll? /api/messages/{roomId}
-
-  // 버튼 누르면 메세지 보내기 /pub/messages/{roomId}
-
-  const client = useRef({}); // instance 한번만
   const [chatMessages, setChatMessages] = useState([]);
   const [message, setMessage] = useState('');
 
   const token = localStorage.getItem('accessToken');
+  const headers = { accessToken: token };
 
-  useEffect(() => {
-    try {
-      const res = chatApi.createChat(params.nickname);
-      setRoomId(res.data.roomId);
-    } catch (error) {
-      // error가 나면 roomId를 받는다.
-      setRoomId(error.roomId);
-    }
-    if (roomId) {
-      // 페이지가 로딩 되었을때 클라이언트 활성화 & 구독
-      connect();
-    }
-    // unmount 될때 클라이언트 비활성화
-    return () => disconnect();
-  }, []);
+  // const sock = new SockJs('http://43.200.6.110/socket');
+  //client 객체 생성 및 서버주소 입력
 
-  useEffect(() => {
-    // 페이지가 로딩 되었을때 클라이언트 활성화 & 구독
-    connect();
-    // unmount 될때 클라이언트 비활성화
-    return () => disconnect();
-  }, []);
+  // const client = StompJs.over(sock);
+  // stomp로 감싸기
 
   const connect = () => {
-    client.current = new StompJs.Client({
-      brokerURL: 'ws://http://43.200.6.110/socket', // 웹소켓 서버로 직접 접속
-      // webSocketFactory: () => new SockJS('/ws-stomp'), // proxy를 통한 접속
+    console.log('웹소켓 연결');
+    // client객체를 만들기
+    clientRef.current = new Client({
+      brokerURL: 'ws://43.200.6.110/socket', // 웹소켓 서버로 직접 접속
+      webSocketFactory: () => new SockJS('http://43.200.6.110/socket'), // proxy를 통한 접속
       connectHeaders: {
-        'auth-token': token // 토큰 전달
+        headers // 토큰 전달
       },
       debug: function (str) {
         console.log(str);
       },
-      reconnectDelay: 5000,
+      reconnectDelay: 5000, //자동 재 연결
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
+
       onConnect: () => {
         // 구독
         subscribe();
@@ -73,33 +55,81 @@ const Chat = () => {
       }
     });
 
-    client.current.activate();
+    // 클라이언트 활성화
+    clientRef.current.activate();
   };
 
   const disconnect = () => {
-    client.current.deactivate();
+    console.log('클라이언트 비활성화시킬거임');
+    clientRef.current.deactivate();
   };
 
   const subscribe = () => {
     //  대상에 대해 메세지를 받기 위해 subscribe 메서드를 사용
-    client.current.subscribe(`/sub/rooms/${{ roomId }}`, ({ body }) => {
-      setChatMessages((_chatMessages) => [..._chatMessages, JSON.parse(body)]);
+    clientRef.current.subscribe(`/sub/rooms/${roomId}`, (message) => {
+      const getMessage = JSON.parse(message.body).content;
+      // const getNickname = JSON.parse(message.body).nickname; // 닉네임
+      console.log(
+        getMessage,
+        JSON.parse(message.body),
+        '받은 메세지와 닉네임 '
+      );
+      setChatMessages((_chatMessages) => [..._chatMessages, getMessage]);
     });
+
+    console.log(`/sub/rooms/${roomId}`, '구독 열로함');
   };
+
+  console.log(clientRef.current, 'clientcheck');
 
   const publish = (message) => {
     // 연결 끊어져 있으면 바로 종료
-    if (!client.current.connected) {
+
+    if (!clientRef.current.connected) {
+      console.log('종료');
       return;
     }
 
-    client.current.publish({
+    clientRef.current.publish({
       destination: `/pub/messages/${roomId}`,
-      body: JSON.stringify({ nickname, message })
+      headers: {
+        accessToken: token || ''
+      },
+      body: JSON.stringify({ content: message })
     });
 
-    setMessage('');
+    console.log(`/pub/messages/${roomId}`, '여기로 보냄');
+
+    setMessage(''); // 메세지 초기화
   };
+
+  console.log(chatMessages, '받은 메세지목록 체크해보자!!!!!!!!');
+
+  useEffect(() => {
+    async function getRoomId() {
+      try {
+        // 방생성 요청
+        const res = await chatApi.createChat(params.nickname);
+        const getRoomId = res.response.data.roomId;
+        setRoomId(getRoomId);
+      } catch (error) {
+        // error가 나면 roomId를 받는다.
+        console.log(error, 'error');
+      }
+    }
+    getRoomId();
+
+    // unmount 될때 클라이언트 비활성화
+    return () => disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (roomId) {
+      console.log(roomId, 'roomId');
+      // 페이지가 로딩 되고 roomId가 있을때 클라이언트 활성화 & 구독
+      connect();
+    }
+  }, [roomId]);
 
   return (
     <Container>
@@ -121,8 +151,8 @@ const Chat = () => {
         </MessageContainer>
         {chatMessages && chatMessages.length > 0 && (
           <ul>
-            {chatMessages.map((_chatMessage, index) => (
-              <li key={index}>{_chatMessage.message}</li>
+            {chatMessages.map((msg, index) => (
+              <li key={index}>{msg}</li>
             ))}
           </ul>
         )}
