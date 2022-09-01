@@ -1,44 +1,64 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import Divider from '../../layout/Divider';
 import Navigate from '../../layout/Navigate';
+import { useRooms } from '../../react-query/hooks/chat/useRooms';
+import { useInView } from 'react-intersection-observer';
+import Loading from '../../layout/Loading';
 
 const ChatRoom = () => {
   const navigate = useNavigate();
-  const roomId = '';
+
+  const { data, isFetchingNextPage, fetchNextPage } = useRooms();
+  const { ref, inView } = useInView();
+
+  useEffect(() => {
+    if (inView) {
+      fetchNextPage();
+    }
+  }, [inView]);
+
   return (
     <>
       <Navigate text={'채팅'} padding={true} />
+      <Divider />
       <Container>
-        <ul>
-          <li onClick={navigate(`/chat/${roomId}`)}>
-            <ChatContainer>
-              <img
-                src="/assets/ocean.png"
-                alt=""
-                style={{ width: '36px', height: '36px' }}
-              />
-              <div className="leftBox">
-                <p className="nickname">nickname</p>
-                <p className="lastMessage">안녕하세요. 반가워요</p>
-              </div>
-            </ChatContainer>
-            <p className="messageLength">12</p>
-          </li>
-        </ul>
+        {data.pages.map((page) => {
+          return page.data.map((room) => (
+            <div
+              className="chatContainer"
+              onClick={navigate(`/chat/${room.roomId}`)}
+            >
+              <LeftBox>
+                <img
+                  src={room.senderProfileImg}
+                  alt=""
+                  style={{ width: '36px', height: '36px' }}
+                />
+                <div className="leftBox">
+                  <p className="nickname">{room.senderNickname}</p>
+                  <p className="lastMessage">마지막메세지로 바꺼야함</p>
+                </div>
+              </LeftBox>
+              <p className="messageLength">12</p>
+            </div>
+          ));
+        })}
+        {isFetchingNextPage ? <Loading /> : <div ref={ref}></div>}
       </Container>
     </>
   );
 };
 
 const Container = styled.div`
-  padding: 0 1rem;
+  /* padding: 0 1rem; */
 
-  li {
+  div.chatContainer {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 0;
+    padding: 1rem;
     border-bottom: 1px solid #ececec;
   }
 
@@ -61,7 +81,7 @@ const Container = styled.div`
   }
 `;
 
-const ChatContainer = styled.div`
+const LeftBox = styled.div`
   display: flex;
   .nickname {
     font-weight: 500;

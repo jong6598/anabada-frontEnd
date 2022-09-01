@@ -228,5 +228,8 @@ export const chatApi = {
   },
   getMessages(roomId) {
     return api.get(`messages/${roomId}`);
+  },
+  getAllRooms(pageParam) {
+    return api.get(`/rooms?page=${pageParam}&size=10`);
   }
 };

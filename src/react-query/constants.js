@@ -12,5 +12,6 @@ export const queryKeys = {
   detailPost: 'detailPost',
 
   // 채팅
+  rooms: 'rooms',
   messages: 'messages'
 };

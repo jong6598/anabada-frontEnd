@@ -6,6 +6,9 @@ import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { Cookies } from 'react-cookie';
 import AlertToast from './AlertToast';
 import Navigate from '../layout/Navigate';
+import { MdOutlineNotificationsNone } from 'react-icons/md';
+import { GrNotification } from 'react-icons/gr';
+import { BsFillChatDotsFill } from 'react-icons/bs';
 
 const Header = memo(() => {
   const location = useLocation();
@@ -37,18 +40,6 @@ const Header = memo(() => {
     },
     [refErrorTimer]
   );
-
-  // 새로고침 시 유저정보 리덕스에 재설정
-  // useEffect(() => {
-  //   // 로그인 한 유저가 아니면 유저정보를 요청하지 않음
-  //   if (getCookies === undefined) {
-  //     return;
-  //   } else {
-  //     // 로그인 한 유저가 유저이면 새로고침 시 유저정보를 요청함
-  //     const getAccess = localStorage.getItem('accessToken');
-  //     dispatch(userThunk(getAccess));
-  //   }
-  // }, []);
 
   // 헤더에 넣을 유저정보 받아오기
   const userInfo = useSelector((state) => state.auth);
@@ -153,7 +144,15 @@ const Header = memo(() => {
             ) : (
               <>
                 <div className="header__user__info">
-                  <Link to="/mypage">{userInfo?.nickname} 님 :)</Link>
+                  <Link to="/notification">
+                    <GrNotification />
+                  </Link>
+                  <Link to="/room">
+                    <BsFillChatDotsFill />
+                  </Link>
+                  <Link to="/mypage">
+                    <img src={userInfo.profileImg} alt="" />
+                  </Link>
                 </div>
               </>
             )}
@@ -213,6 +212,23 @@ const MainHeader = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+
+    a {
+      margin-left: 1rem;
+    }
+
+    svg {
+      width: auto;
+      width: 20px;
+      height: 20px;
+      color: #363636;
+    }
+
+    img {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+    }
   }
   .header__user__login,
   .header__user__signup,

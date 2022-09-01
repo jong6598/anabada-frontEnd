@@ -67,7 +67,7 @@ function App() {
           </Route>
           <Route path="/meets/:thunderPostId" element={<MeetDetail />} />
           <Route path="/chat/:nickname" element={<Chat />} />
-          <Route path="/room/:roomId" element={<ChatRoom />} />
+          <Route path="/room" element={<ChatRoom />} />
         </Routes>
       </ThemeProvider>
     </>
