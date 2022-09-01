@@ -22,17 +22,17 @@ import MyMeets from "./pages/MyMeets";
 import { useSelector } from "react-redux";
 import { useNotification } from "./shared/hooks/notificationHook";
 import { useEffect } from "react";
-import { api } from "./shared/api";
 import { Cookies } from "react-cookie";
 import Notification from "./pages/Notification";
+import { api } from "./shared/api";
 
 function App() {
   /* ::: notification 연결 관련 로직 ::: */
   // 헤더에 넣을 유저정보 받아오기
   const userInfo = useSelector((state) => state.auth);
+
   // 커스텀 훅 사용해서 알림 소켓 연결하기
   const { notifications, setNotifications } = useNotification(userInfo.userId);
-  console.log("::: notifications :::", notifications);
 
   const cookies = new Cookies();
   const getCookies = cookies.get("refreshToken");
@@ -40,17 +40,25 @@ function App() {
   useEffect(() => {
     // 로그인을 했을 때 최초 쌓인 뱃지 요청하기(이후는 소캣 이용해서 업데이트 된다)
     if (getCookies !== undefined) {
-      api.get(`/notifications`).then((res) =>
-        setNotifications((prev) => {
-          return {
-            ...prev,
-            ...res.data.isBadge,
-          };
+      const accessToken = localStorage.getItem("accessToken");
+      api
+        .get(`/notifications`, {
+          headers: {
+            Authorization: accessToken,
+          },
         })
-      );
+        .then((res) => {
+          return setNotifications((prev) => {
+            return {
+              ...prev,
+              isBadge: res.data?.badge,
+            };
+          });
+        });
     }
   }, [getCookies]);
 
+  console.log("::: notifications :::", notifications);
   return (
     <>
       <ThemeProvider theme={theme}>

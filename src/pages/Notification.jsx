@@ -1,59 +1,97 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { useCallback, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { api } from "../shared/api";
-import Navigate from "../layout/Navigate";
 import NotificationCompo from "../components/NotificationCompo";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { queryKeys } from "../react-query/constants";
 
 const Notification = () => {
+  const lastNotiRef = useRef();
+  const navigate = useNavigate();
+  // const { alertHandler } = useOutletContext();
   // fetcher
   const getNotifications = async (pageParam) => {
     console.log("::: pagenation 요청 :::");
-    // const res = await api.put(`/notifications?page=${pageParam}&size=10`);
-    // console.log(`::: pagenation 요청결과 : ${res} :::`);
-    // return {
-    // data: res.data,
-    // nextPage: pageParam + 1,
-    // lastPage: res.data.last,
-    // };
+    const res = await api.patch(`/notifications?page=${pageParam}&size=10`);
+    return {
+      data: res.data,
+      nextPage: pageParam + 1,
+      lastPage: res.data.last,
+    };
   };
 
   // useInfiniteQuery
   const { isSuccess, data, fetchNextPage, hasNextPage } = useInfiniteQuery(
-    ["notifications"],
+    [queryKeys.notifications],
     ({ pageParam = 0 }) => getNotifications(pageParam),
     {
       getNextPageParam(currPage, allPages) {
-        // if (!currPage.lastPage) {
-        //   console.log("not last page");
-        //   return currPage.nextPage;
-        // }
-        // return undefined;
+        if (!currPage.lastPage) {
+          console.log("not last page");
+          return currPage.nextPage;
+        }
+        return undefined;
       },
       onSuccess(data) {
-        console.log("데이터를 성공적으로 fetch했습니다.");
+        return console.log("데이터를 성공적으로 fetch했습니다.");
       },
       onError(err) {
-        console.log("데이터를 fetch에 실패했습니다.", err);
+        // alertHandler("데이터를 불러오지 못했습니다. 다시 시도해주세요.");
+        return console.log("데이터를 fetch에 실패했습니다.", err);
       },
       suspense: true,
     }
   );
 
-  const handleIntersect = () => {};
+  const handleIntersect = useCallback(
+    ([entry]) => {
+      if (entry.isIntersecting && hasNextPage) {
+        fetchNextPage();
+      }
+    },
+    [fetchNextPage, hasNextPage]
+  );
 
   useEffect(() => {
     const observer = new IntersectionObserver(handleIntersect, {
       threshold: 0.8,
       root: null,
     });
+    lastNotiRef.current && observer.observe(lastNotiRef.current);
     return () => {
       observer.disconnect();
     };
-  }, []);
+  }, [handleIntersect, data]);
 
-  const navigate = useNavigate();
+  // 전체 삭제 버튼 눌렀을 때 mutation
+  const queryClient = new useQueryClient();
+
+  const handleAllDeleteMutation = async () => {
+    try {
+      return await api.delete(`/notifications`);
+    } catch (err) {
+      // alertHandler("서버와 통신이 불안정 합니다. 다시 시도해주세요.");
+      return console.log(err);
+    }
+  };
+
+  const mutation = new useMutation(handleAllDeleteMutation, {
+    onSuccess() {
+      return queryClient.invalidateQueries([queryKeys.notifications]);
+    },
+  });
+
+  const handleAllDelete = () => {
+    const res = window.confirm("전체 알림을 삭제하시겠습니까?");
+    if (res) {
+      return mutation.mutate();
+    }
+  };
 
   return (
     <>
@@ -76,10 +114,36 @@ const Notification = () => {
           <div>알림</div>
         </Navi>
         <NotificationContainer>
+          {isSuccess &&
+            data.pages.map((page, pageIndex) => {
+              const content = page.data.content;
+              return content?.map((noti, notiIndex) => {
+                if (
+                  notiIndex === content.length - 1 &&
+                  pageIndex === data.pages.length - 1 &&
+                  hasNextPage
+                ) {
+                  return (
+                    <NotificationCompo
+                      key={noti.notificationId}
+                      refValue={lastNotiRef}
+                      {...noti}
+                    />
+                  );
+                } else {
+                  return (
+                    <NotificationCompo key={noti.notificationId} {...noti} />
+                  );
+                }
+              });
+            })}
+          {/* <NotificationCompo />
           <NotificationCompo />
-          <NotificationCompo />
-          <NotificationCompo />
+          <NotificationCompo /> */}
         </NotificationContainer>
+        <NotiAllDelete onClick={handleAllDelete}>
+          <span className="material-symbols-outlined">delete</span>
+        </NotiAllDelete>
       </NotificationWrapper>
     </>
   );
@@ -107,10 +171,35 @@ const Navi = styled.div`
   div {
     margin-left: 1rem;
   }
+
+  position: fixed;
+  z-index: 999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: white;
 `;
 
 const NotificationContainer = styled.div`
   box-sizing: border-box;
   margin: 1.25rem 1rem 2.5rem 1rem;
-  background-color: antiquewhite;
+  padding-top: 3.5rem;
+`;
+
+const NotiAllDelete = styled.div`
+  position: fixed;
+  z-index: 300;
+  bottom: 8rem;
+  right: 3rem;
+
+  width: 3rem;
+  height: 3rem;
+
+  background-color: #007aff;
+  opacity: 0.9;
+  border-radius: 100rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
