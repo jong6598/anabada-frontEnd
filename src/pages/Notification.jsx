@@ -137,9 +137,6 @@ const Notification = () => {
                 }
               });
             })}
-          {/* <NotificationCompo />
-          <NotificationCompo />
-          <NotificationCompo /> */}
         </NotificationContainer>
         <NotiAllDelete onClick={handleAllDelete}>
           <span className="material-symbols-outlined">delete</span>
