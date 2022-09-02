@@ -1,7 +1,6 @@
 import styled from "styled-components";
-import { thunderposts } from "../shared/data";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Meet from '../components/Meet';
 import { InView, useInView } from "react-intersection-observer";
 import { useState, useEffect } from "react";
@@ -14,17 +13,18 @@ const MyMeets=()=>{
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { ref, inView } = useInView();
-    const [filter, setFilter] = useState("myHostMeet");
+    const location = useLocation();
+    const [filter, setFilter] = useState(location.state);
 
-
-    const getMyMeets = async (pageParam) => {
+    
+    const getMyMeets = async (pageParam=1, filter) => {
+        console.log(filter, "함수 안 필터")
         try {
             const res = await myApi.getMyMeets(filter, pageParam)
             console.log(res);
-            //FIXME: data 값과 last 값 콘솔 값 보고 고쳐서 할당하기
-            const data = res
-            const last = res
-            // return {data, nextPage: pageParam + 1, last};
+            const data = res.data.thunderposts.content
+            const last = res.data.thunderposts.last
+            return {data, nextPage: pageParam + 1, last};
         } catch (err) {
             console.log(err);
             alert(err)
@@ -32,25 +32,25 @@ const MyMeets=()=>{
     }
 
     const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
-        [queryKeys.myMeetsList],
-        ({ pageParam = 0 }) => getMyMeets(pageParam),
+        [queryKeys.myMeetsList,filter],
+        ({ pageParam = 1 }) => getMyMeets(pageParam, filter),
         {
             getNextPageParam: (lastPage) =>
                 !lastPage.last ? lastPage.nextPage : undefined,
         }
     );
 
-
-
+    console.log(filter, "필터 확인하기")
 
     useEffect(() => {
-        queryClient.invalidateQueries([queryKeys.myMeetsList])
-    }, [filter]);
+        if (inView) {
+            fetchNextPage();
+        }
+    }, [inView]);
 
-
+    
     const onClickFilter = (data) => {
         setFilter(data);
-        console.log(data);
       };
 
     return (

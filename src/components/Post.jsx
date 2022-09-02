@@ -84,7 +84,7 @@ const ImageBox = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 0.8125rem;
     margin-bottom: 0.875rem;
     width: 100%;

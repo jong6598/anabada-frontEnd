@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { refType } from "@mui/utils";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { InView, useInView } from "react-intersection-observer";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { myApi } from "../shared/api";
 import { queryKeys } from "../react-query/constants";
@@ -12,28 +11,27 @@ import Post from "../components/Post";
 
 const MyPosts = () => {
     const navigate = useNavigate();
-    const queryClient = useQueryClient();
     const { ref, inView } = useInView();
-    const [filter, setFilter] = useState("myWritePost");
+    const location = useLocation();
+    const [filter, setFilter] = useState(location.state);
+    
 
-
-    const getMyPosts = async (pageParam) => {
+    const getMyPosts = async (pageParam=1, filter) => {
         try {
+            console.log(filter, "필터 확인하기")
             const res = await myApi.getMyPosts(filter, pageParam)
-            console.log(res);
-            //FIXME: data 값과 last 값 콘솔 값 보고 고쳐서 할당하기
-            const data = res
-            const last = res
-            // return {data, nextPage: pageParam + 1, last};
+            const data = res.data.posts.content
+            const last = res.data.posts.last
+            return { data, nextPage: pageParam + 1, last };
         } catch (err) {
             console.log(err);
             alert(err)
         }
-    }
+    };
 
     const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
-        [queryKeys.myPostsList],
-        ({ pageParam = 0 }) => getMyPosts(pageParam),
+        [queryKeys.myPostsList, filter],
+        ({ pageParam = 1 }) => getMyPosts(pageParam, filter),
         {
             getNextPageParam: (lastPage) =>
                 !lastPage.last ? lastPage.nextPage : undefined,
@@ -46,57 +44,51 @@ const MyPosts = () => {
         }
     }, [inView]);
 
-
-    useEffect(() => {
-        queryClient.invalidateQueries([queryKeys.myPostsList])
-    }, [filter]);
-
     
 
     const onClickFilter = (data) => {
         setFilter(data);
-        console.log(data);
-      };
+    };
 
 
     return (
         <>
             <BtnDiv>
                 <Btn
-                onClick={()=>{
-                    onClickFilter("myWritePost");
-                }}
+                    onClick={() => {
+                        onClickFilter("myWritePost");
+                    }}
                 >
                     <label>작성 피드</label>
                 </Btn>
                 <Btn
-                onClick={()=>{
-                    onClickFilter("myLikePost");
-                }}
+                    onClick={() => {
+                        onClickFilter("myLikePost");
+                    }}
                 >
                     <label>좋아요 피드</label>
                 </Btn>
             </BtnDiv>
 
             <PostsDiv>
-                {data&&
-                data.pages.map((page,idx)=>{
-                    return(
-                        <React.Fragment key={idx}>
-                        {page.data.map((post)=>(
-                            <div
-                            key={post.postId}
-                            style={{cursor:"poiner"}}
-                            onClick={()=>{
-                                navigate(`posts/${post.postId}`)
-                            }}>
-                                <Post data={post}/>
-                            </div>
-                        ))}
-                        </React.Fragment>
-                    )
-                })}
-                {isFetchingNextPage ? <Loading/> : <div ref={ref}></div>}
+                {data &&
+                    data.pages.map((page, idx) => {
+                        return (
+                            <React.Fragment key={idx}>
+                                {page.data.map((post) => (
+                                    <div
+                                        key={post.postId}
+                                        style={{ cursor: "poiner" }}
+                                        onClick={() => {
+                                            navigate(`posts/${post.postId}`)
+                                        }}>
+                                        <Post data={post} />
+                                    </div>
+                                ))}
+                            </React.Fragment>
+                        )
+                    })}
+                {isFetchingNextPage ? <Loading /> : <div ref={ref}></div>}
             </PostsDiv>
 
         </>
@@ -109,10 +101,12 @@ export default MyPosts;
 
 
 const BtnDiv = styled.div`
-    display: grid;
-    grid-template-columns: 1fr 1.1fr;
-    column-gap: 0.5rem;
-    margin-bottom: 0.625rem;
+display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 0.5rem;
+  margin: 0.625rem auto;
+  flex-wrap: wrap;
+  ;
 `
 
 const Btn = styled.button`
@@ -120,7 +114,8 @@ const Btn = styled.button`
     font-size: 0.875rem;
     font-weight: 600;
     border: 0.0625rem solid #000000;
-    padding: 0.625rem 3.171875rem ;
+    padding: 0.325rem 2.9rem ;
+    
     &:hover{
         color: white;
         background-color: black;
@@ -129,7 +124,8 @@ const Btn = styled.button`
 
 const PostsDiv = styled.div`
     margin-top: 0.625rem;
-    display: grid;
+    columns: 2;
+    column-gap: 1rem;    
     /* display: flex; */
     flex-wrap: wrap;
     grid-template-columns: 1fr 1fr;
