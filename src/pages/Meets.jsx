@@ -5,6 +5,7 @@ import Meet from '../components/Meet';
 import { useMeets } from '../react-query/hooks/useMeets';
 import { usePopularMeets } from '../react-query/hooks/usePopularMeets';
 import PopularMeets from '../components/PopularMeets';
+import NoData from '../layout/NoData';
 
 const Meets = () => {
   const navigate = useNavigate();
@@ -57,6 +58,9 @@ const Meets = () => {
             </svg>
           </button>
         </div>
+        {meetsPosts.content.length === 0 && (
+          <NoData text={'모임'} content={'모임'} />
+        )}
         {meetsPosts.content.map((meet) => {
           return <Meet key={meet.thunderPostId} meet={meet} />;
         })}

@@ -15,6 +15,7 @@ const GlobalStyle = createGlobalStyle`
  }
 
  a, div {
+   font-family: 'Pretendard-Regular';
     text-decoration: none;
     color:inherit;
     -webkit-tap-highlight-color: rgba(0,0,0,.1);
@@ -52,7 +53,9 @@ const GlobalStyle = createGlobalStyle`
       outline: 0.01rem solid #007aff;
      
     }
- 
+    span{
+      font-family: 'Pretendard-Regular';
+    } 
 `;
 
 export default GlobalStyle;

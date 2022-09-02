@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import NoData from '../layout/NoData';
 
 const PopularMeets = ({ popularPosts }) => {
   return (

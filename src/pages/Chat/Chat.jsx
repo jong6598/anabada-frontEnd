@@ -11,13 +11,13 @@ import { chatApi } from '../../shared/api';
 
 const Chat = () => {
   const params = useParams();
+  const senderNickname = params.nickname; // 상대 닉네임
+  const nickname = useSelector((state) => state.auth.nickname); // 본인 닉네임
 
   const clientRef = useRef(null);
-
-  const nickname = useSelector((state) => state.auth.nickname);
   const [roomId, setRoomId] = useState(null);
-
   const [chatMessages, setChatMessages] = useState([]);
+  const [chatNickname, setChatNickname] = useState('');
   const [message, setMessage] = useState('');
 
   const token = localStorage.getItem('accessToken');
@@ -67,17 +67,15 @@ const Chat = () => {
   const subscribe = () => {
     //  대상에 대해 메세지를 받기 위해 subscribe 메서드를 사용
     clientRef.current.subscribe(`/sub/rooms/${roomId}`, (message) => {
+      console.log('hi');
       const getMessage = JSON.parse(message.body).content;
-      // const getNickname = JSON.parse(message.body).nickname; // 닉네임
-      console.log(
-        getMessage,
-        JSON.parse(message.body),
-        '받은 메세지와 닉네임 '
-      );
+      const getNickname = JSON.parse(message.body).nickname; // 닉네임
+      console.log(getMessage, getNickname, '닉네임 메시지 체크');
+      setChatNickname((prev) => (prev = getNickname));
       setChatMessages((_chatMessages) => [..._chatMessages, getMessage]);
     });
 
-    console.log(`/sub/rooms/${roomId}`, '구독 열로함');
+    // console.log(`/sub/rooms/${roomId}`, '구독 열로함');
   };
 
   console.log(clientRef.current, 'clientcheck');
@@ -93,17 +91,13 @@ const Chat = () => {
     clientRef.current.publish({
       destination: `/pub/messages/${roomId}`,
       headers: {
-        accessToken: token || ''
+        accessToken: token
       },
       body: JSON.stringify({ content: message })
     });
 
-    console.log(`/pub/messages/${roomId}`, '여기로 보냄');
-
     setMessage(''); // 메세지 초기화
   };
-
-  console.log(chatMessages, '받은 메세지목록 체크해보자!!!!!!!!');
 
   useEffect(() => {
     async function getRoomId() {
@@ -131,31 +125,44 @@ const Chat = () => {
     }
   }, [roomId]);
 
+  console.log(chatNickname, 'chatNickname');
+  console.log(senderNickname, 'senderNickname');
+  console.log(nickname, 'nickname');
+
   return (
     <Container>
-      <Navigate text={nickname} padding={true} />
+      <Navigate text={senderNickname} padding={true} />
+      <Divider />
       <ChatContainer>
         <Time>오후 12:34</Time>
-        <MessageContainer>
-          <img
-            src="/assets/ocean.png"
-            alt="profileImage"
-            style={{ width: '32px', height: '32px', borderRadius: '50%' }}
-          />
-          <div className="messageBox">
-            <span>
-              안녕하세요 여기는 채팅창입니다. 누구에게 메시지를 보내실 건가요?
-              누구에게 보낼건가요누구에게
-            </span>
-          </div>
-        </MessageContainer>
-        {chatMessages && chatMessages.length > 0 && (
-          <ul>
-            {chatMessages.map((msg, index) => (
-              <li key={index}>{msg}</li>
-            ))}
-          </ul>
-        )}
+        {chatMessages &&
+          chatMessages.length > 0 &&
+          chatMessages.map((msg, index) => (
+            <>
+              {senderNickname === chatNickname ? (
+                <SenderContainer>
+                  <img
+                    src="/assets/ocean.png"
+                    alt="profileImage"
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '50%'
+                    }}
+                  />
+                  <div className="messageBox">
+                    <span>{msg}</span>
+                  </div>
+                </SenderContainer>
+              ) : (
+                <ReceiverContainer>
+                  <div className="messageBox">
+                    <span>{msg}</span>
+                  </div>
+                </ReceiverContainer>
+              )}
+            </>
+          ))}
       </ChatContainer>
       <Footer>
         <Divider />
@@ -199,14 +206,36 @@ const Time = styled.p`
   line-height: 16px;
 
   color: #8e8e93;
+  margin-bottom: 0.5rem;
 `;
 
-const MessageContainer = styled.div`
+const SenderContainer = styled.div`
   display: flex;
+  margin: 0.3rem 0;
   img {
     margin-top: 0.2rem;
     margin-right: 0.313rem;
   }
+  .messageBox {
+    padding: 0.625rem;
+    gap: 0.625rem;
+
+    max-width: 80%;
+
+    background: #ffffff;
+    border: 1px solid #e5e5ea;
+    border-radius: 0.813rem;
+    span {
+      font-size: 15px;
+      line-height: 18px;
+    }
+  }
+`;
+const ReceiverContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin: 0.3rem 0;
+
   .messageBox {
     padding: 0.625rem;
     gap: 0.625rem;

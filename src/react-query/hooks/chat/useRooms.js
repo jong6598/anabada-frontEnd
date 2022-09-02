@@ -22,7 +22,8 @@ export function useRooms() {
     ({ pageParam = 0 }) => getRooms(pageParam),
     {
       getNextPageParam: (lastPage) =>
-        !lastPage.last ? lastPage.nextPage : undefined
+        !lastPage.last ? lastPage.nextPage : undefined,
+      onSuccess: console.log('채팅방 목록 입장')
     }
   );
   return {
