@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import styled from 'styled-components';
-import { meetsApi } from '../shared/api';
-import { useQuery } from '@tanstack/react-query';
-import { FiMoreHorizontal } from 'react-icons/fi';
-import { FiEdit2 } from 'react-icons/fi';
-import { RiDeleteBin5Line } from 'react-icons/ri';
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import styled from "styled-components";
+import { meetsApi } from "../shared/api";
+import { useQuery } from "@tanstack/react-query";
+import { FiMoreHorizontal } from "react-icons/fi";
+import { FiEdit2 } from "react-icons/fi";
+import { RiDeleteBin5Line } from "react-icons/ri";
 // import { meet } from '../shared/data';
-import { useDetailMeet } from '../react-query/hooks/useDetailMeet';
-import { useSelector } from 'react-redux';
-import { useAddMeet } from '../react-query/hooks/useDeleteMeet';
-import { useLike } from '../react-query/hooks/useLike';
-import { useJoin } from '../react-query/hooks/useJoin';
+import { useDetailMeet } from "../react-query/hooks/useDetailMeet";
+import { useSelector } from "react-redux";
+import { useAddMeet } from "../react-query/hooks/useDeleteMeet";
+import { useLike } from "../react-query/hooks/useLike";
+import { useJoin } from "../react-query/hooks/useJoin";
 
 const MeetDetail = () => {
   const [showModal, setShowModal] = useState(false);
@@ -78,7 +78,7 @@ const MeetDetail = () => {
             </svg>
             <p>조회 {meet.viewCount}</p>
           </div>
-          {nickname === meet.nickname && (
+          {nickname !== meet.nickname && (
             <button className="moreBtn" onClick={onShowModal}>
               <FiMoreHorizontal />
             </button>
@@ -97,7 +97,7 @@ const MeetDetail = () => {
               <div
                 className="deleteBtn"
                 onClick={() => {
-                  const result = window.confirm('정말 삭제하시겠습니까?');
+                  const result = window.confirm("정말 삭제하시겠습니까?");
                   if (result) {
                     onDelete(meet.thunderPostId);
                   }
@@ -221,7 +221,7 @@ const MeetDetail = () => {
               const state = {
                 setIsLiked,
                 isLiked,
-                thunderPostId: meet.thunderPostId
+                thunderPostId: meet.thunderPostId,
               };
               onLike(state);
             }}
@@ -263,15 +263,16 @@ const MeetDetail = () => {
             )}
             좋아요
           </button>
+
           {isJoined ? (
             <button
               className="requestedBtn"
-              style={{ backgroundColor: '#007AFF', color: 'white' }}
+              style={{ backgroundColor: "#007AFF", color: "white" }}
               onClick={() => {
                 const state = {
                   setIsJoined,
                   isJoined,
-                  thunderPostId: meet.thunderPostId
+                  thunderPostId: meet.thunderPostId,
                 };
                 onJoin(state);
               }}
@@ -285,7 +286,7 @@ const MeetDetail = () => {
                 const state = {
                   setIsJoined,
                   isJoined,
-                  thunderPostId: meet.thunderPostId
+                  thunderPostId: meet.thunderPostId,
                 };
                 onJoin(state);
               }}
