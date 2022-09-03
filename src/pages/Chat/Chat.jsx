@@ -13,12 +13,14 @@ const Chat = () => {
   const params = useParams();
   const senderNickname = params.nickname; // 상대 닉네임
   const nickname = useSelector((state) => state.auth.nickname); // 본인 닉네임
+  const profileImg = useSelector((state) => state.auth.profileImg);
 
   const clientRef = useRef(null);
   const [roomId, setRoomId] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
-  const [chatNickname, setChatNickname] = useState('');
+  const [senderProfileImg, setSenderProfileImg] = useState('');
   const [message, setMessage] = useState('');
+  const isMessage = message !== '';
 
   const token = localStorage.getItem('accessToken');
   const headers = { accessToken: token };
@@ -70,12 +72,12 @@ const Chat = () => {
       console.log('hi');
       const getMessage = JSON.parse(message.body).content;
       const getNickname = JSON.parse(message.body).nickname; // 닉네임
-      console.log(getMessage, getNickname, '닉네임 메시지 체크');
-      setChatNickname((prev) => (prev = getNickname));
-      setChatMessages((_chatMessages) => [..._chatMessages, getMessage]);
-    });
 
-    // console.log(`/sub/rooms/${roomId}`, '구독 열로함');
+      setChatMessages((_chatMessages) => [
+        ..._chatMessages,
+        { nickname: getNickname, message: getMessage }
+      ]);
+    });
   };
 
   console.log(clientRef.current, 'clientcheck');
@@ -104,7 +106,10 @@ const Chat = () => {
       try {
         // 방생성 요청
         const res = await chatApi.createChat(params.nickname);
+
         const getRoomId = res.response.data.roomId;
+        const getSenderProfileImg = res.response.data.senderProfileImg;
+        setSenderProfileImg(getSenderProfileImg);
         setRoomId(getRoomId);
       } catch (error) {
         // error가 나면 roomId를 받는다.
@@ -125,10 +130,6 @@ const Chat = () => {
     }
   }, [roomId]);
 
-  console.log(chatNickname, 'chatNickname');
-  console.log(senderNickname, 'senderNickname');
-  console.log(nickname, 'nickname');
-
   return (
     <Container>
       <Navigate text={senderNickname} padding={true} />
@@ -138,39 +139,62 @@ const Chat = () => {
         {chatMessages &&
           chatMessages.length > 0 &&
           chatMessages.map((msg, index) => (
-            <>
-              {senderNickname === chatNickname ? (
+            <div key={index}>
+              {msg.nickname !== nickname ? (
                 <SenderContainer>
-                  <img
-                    src="/assets/ocean.png"
-                    alt="profileImage"
-                    style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '50%'
-                    }}
-                  />
-                  <div className="messageBox">
-                    <span>{msg}</span>
-                  </div>
+                  {index === 0 ||
+                  (index >= 1 &&
+                    chatMessages[index - 1].nickname !==
+                      chatMessages[index].nickname) ? (
+                    <>
+                      <img
+                        src={senderProfileImg}
+                        alt="profileImage"
+                        style={{
+                          width: '2rem',
+                          height: '2rem',
+                          borderRadius: '50%'
+                        }}
+                      />
+                      <div className="firstMessageBox">
+                        <span>{msg.message}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <img
+                        src={senderProfileImg}
+                        alt="profileImage"
+                        style={{
+                          width: '2rem',
+                          height: '2rem',
+                          borderRadius: '50%',
+                          visibility: 'hidden'
+                        }}
+                      />
+                      <div className="messageBox">
+                        <span>{msg.message}</span>
+                      </div>
+                    </>
+                  )}
                 </SenderContainer>
               ) : (
                 <ReceiverContainer>
                   <div className="messageBox">
-                    <span>{msg}</span>
+                    <span>{msg.message}</span>
                   </div>
                 </ReceiverContainer>
               )}
-            </>
+            </div>
           ))}
       </ChatContainer>
       <Footer>
         <Divider />
         <InputMessageContainer>
           <img
-            src="/assets/ocean.png"
+            src={profileImg}
             alt="profileImage"
-            style={{ width: '32px', height: '32px', borderRadius: '50%' }}
+            style={{ width: '2rem', height: '2rem', borderRadius: '50%' }}
           />
           <InputBox>
             <input
@@ -180,7 +204,13 @@ const Chat = () => {
               onChange={(e) => setMessage(e.target.value)}
               onKeyPress={(e) => e.which === 13 && publish(message)}
             />
-            <button onClick={() => publish(message)}>Send</button>
+            <MessageButton
+              disabled={!isMessage}
+              isMessage={isMessage}
+              onClick={() => publish(message)}
+            >
+              Send
+            </MessageButton>
           </InputBox>
         </InputMessageContainer>
       </Footer>
@@ -216,6 +246,23 @@ const SenderContainer = styled.div`
     margin-top: 0.2rem;
     margin-right: 0.313rem;
   }
+  .firstMessageBox {
+    position: relative;
+    padding: 0.625rem;
+    gap: 0.625rem;
+
+    max-width: 80%;
+
+    background: #ffffff;
+    border: 1px solid #e5e5ea;
+    border-radius: 0.813rem;
+
+    span {
+      font-size: 15px;
+      line-height: 18px;
+    }
+  }
+
   .messageBox {
     padding: 0.625rem;
     gap: 0.625rem;
@@ -285,18 +332,18 @@ const InputBox = styled.div`
     background-color: transparent;
     outline: none;
   }
-  button {
-    /* border-radius: 0 32px 32px 0; */
-    /* border-radius: 32px; */
-    font-weight: 400;
-    font-size: 0.8rem;
-    line-height: 14px;
-    padding: 0 0.625rem;
-    color: #007aff;
-    /* background-color: #007aff;
+`;
+const MessageButton = styled.button`
+  /* border-radius: 0 32px 32px 0; */
+  /* border-radius: 32px; */
+  font-weight: 400;
+  font-size: 0.8rem;
+  line-height: 14px;
+  padding: 0 0.625rem;
+  color: ${(props) => (props.isMessage ? '#007aff' : 'gray')};
+  /* background-color: #007aff;
     svg {
       color: white;
       font-size: 1rem;
     } */
-  }
 `;

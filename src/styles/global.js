@@ -56,6 +56,9 @@ const GlobalStyle = createGlobalStyle`
     span{
       font-family: 'Pretendard-Regular';
     } 
+    textarea{
+      font-family: 'Pretendard-Regular';
+    }
 `;
 
 export default GlobalStyle;
