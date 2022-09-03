@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Divider from '../../layout/Divider';
 import Navigate from '../../layout/Navigate';
@@ -10,6 +11,7 @@ import NoData from '../../layout/NoData';
 
 const ChatRoom = () => {
   const navigate = useNavigate();
+  const nickname = useSelector((state) => state.auth.nickname);
 
   const { data, isFetchingNextPage, fetchNextPage } = useRooms();
   const { ref, inView } = useInView();
@@ -31,28 +33,28 @@ const ChatRoom = () => {
       <Container>
         {data.pages[0].data.length !== 0 &&
           data.pages.map((page) => {
-            return page.data.map((room) => (
-              <div
-                key={room.roomId}
-                className="chatContainer"
-                onClick={() => {
-                  navigate(`/chat/${room.receiverNickname}`);
-                }}
-              >
-                <LeftBox>
-                  <img
-                    src={room.receiverProfileImg}
-                    alt=""
-                    style={{ width: '36px', height: '36px' }}
-                  />
-                  <div className="leftBox">
-                    <p className="nickname">{room.receiverNickname}</p>
-                    <p className="lastMessage">마지막메세지로 바꺼야함</p>
-                  </div>
-                </LeftBox>
-                <p className="messageLength">12</p>
-              </div>
-            ));
+            return page.data.map((room) => {
+              return (
+                <div
+                  key={room.roomId}
+                  className="chatContainer"
+                  onClick={() => navigate(`/chat/${room.receiverNickname}`)}
+                >
+                  <LeftBox>
+                    <img
+                      src={room.receiverProfileImg}
+                      alt=""
+                      style={{ width: '36px', height: '36px' }}
+                    />
+                    <div className="leftBox">
+                      <p className="nickname">{room.receiverNickname}</p>
+                      <p className="lastMessage">마지막메세지로 바꺼야함</p>
+                    </div>
+                  </LeftBox>
+                  <p className="messageLength">12</p>
+                </div>
+              );
+            });
           })}
         {isFetchingNextPage ? <Loading /> : <div ref={ref}></div>}
       </Container>

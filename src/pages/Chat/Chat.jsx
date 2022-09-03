@@ -8,6 +8,7 @@ import Navigate from '../../layout/Navigate';
 import { borderRadius } from '@mui/system';
 import { MdSend } from 'react-icons/md';
 import { chatApi } from '../../shared/api';
+import { useMessages } from '../../react-query/hooks/chat/useMessages';
 
 const Chat = () => {
   const params = useParams();
@@ -24,6 +25,10 @@ const Chat = () => {
 
   const token = localStorage.getItem('accessToken');
   const headers = { accessToken: token };
+
+  //roomId가 있을때만 요청을 하고싶은데??
+  const { messages, __setRoomId } = useMessages();
+  console.log(messages, 'messages');
 
   // const sock = new SockJs('http://43.200.6.110/socket');
   //client 객체 생성 및 서버주소 입력
@@ -106,11 +111,20 @@ const Chat = () => {
       try {
         // 방생성 요청
         const res = await chatApi.createChat(params.nickname);
+        console.log(res, 'res check');
+        let getRoomId, getSenderProfileImg;
+        if (res.status === 200) {
+          getRoomId = res.data.roomId;
+          getSenderProfileImg = res.data.senderProfileImg;
+        } else {
+          getRoomId = res.response.data.roomId;
+          getSenderProfileImg = res.response.data.senderProfileImg;
+        }
 
-        const getRoomId = res.response.data.roomId;
-        const getSenderProfileImg = res.response.data.senderProfileImg;
         setSenderProfileImg(getSenderProfileImg);
         setRoomId(getRoomId);
+
+        __setRoomId(getRoomId);
       } catch (error) {
         // error가 나면 roomId를 받는다.
         console.log(error, 'error');
@@ -132,7 +146,11 @@ const Chat = () => {
 
   return (
     <Container>
-      <Navigate text={senderNickname} padding={true} />
+      <Navigate
+        text={senderNickname}
+        padding={true}
+        profileImg={senderProfileImg}
+      />
       <Divider />
       <ChatContainer>
         <Time>오후 12:34</Time>

@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-const Navigate = ({ text, padding }) => {
+const Navigate = ({ text, padding, profileImg }) => {
   const navigate = useNavigate();
   return (
     <>
@@ -23,7 +23,7 @@ const Navigate = ({ text, padding }) => {
             />
           </svg>
         </button>
-
+        {profileImg && <img src={profileImg} alt="" />}
         <Title>{text}</Title>
       </Container>
       {/* <Divider /> */}
@@ -38,7 +38,13 @@ const Container = styled.div`
 
   button {
     padding: 0;
-    margin-right: 1rem;
+    margin-right: 0.5rem;
+  }
+  img {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    margin-right: 0.5rem;
   }
 `;
 const Title = styled.h2`
