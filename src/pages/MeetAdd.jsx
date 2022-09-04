@@ -2,9 +2,8 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import styled from 'styled-components';
 import { useAddMeet } from '../react-query/hooks/useAddMeet';
-import { storage } from "../firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-
+import { storage } from '../firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useForm } from "react-hook-form";
 import { meetsApi } from "../shared/api";
 import { useSelector } from "react-redux";
@@ -219,7 +218,6 @@ const MeetAdd = () => {
           })}
         />
       </div>
-
       <div>
         <p>모임 상세 내용</p>
         <textarea
@@ -346,6 +344,7 @@ const ImageLabel = styled.div`
     display: flex;
     flex-direction: column;
     margin-left: 0.5rem;
+
     width: 100%;
     input{
       width: 100%;

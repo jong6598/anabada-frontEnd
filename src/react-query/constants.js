@@ -1,9 +1,9 @@
 export const queryKeys = {
-  meets: 'meets',
-  popularMeets: 'popularMeets',
-  allMeets: 'allMeets',
-  detailMeet: 'detailMeet',
-  searchMeets: 'searchMeets',
+  meets: "meets",
+  popularMeets: "popularMeets",
+  allMeets: "allMeets",
+  detailMeet: "detailMeet",
+  searchMeets: "searchMeets",
 
   postList: 'postList',
   commentList: 'commentList',
@@ -12,4 +12,5 @@ export const queryKeys = {
   myPostsList:'myPostsList',
   myMeetsList:'myMeetsList',
 
+  notifications: "notifications",
 };

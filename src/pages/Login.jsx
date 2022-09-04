@@ -65,9 +65,9 @@ const Login = () => {
     <>
       <FormWrapper>
         <LoginWelcome>
-          <h1>환영합니다!</h1>
-          <br />
-          <h1>로그인을 해주세요.</h1>
+          <div>
+            <img src="/assets/logo_big.svg"></img>
+          </div>
         </LoginWelcome>
         <FormDiv>
           <form
@@ -120,15 +120,12 @@ export const FormWrapper = styled.div`
 `;
 
 export const LoginWelcome = styled.section`
-  text-align: center;
-  h1 {
-    margin: 0 auto;
-    font-weight: 400;
-    font-size: 1.5625rem;
-    color: #000000;
-  }
-  h1:last-child {
-    margin-top: -0.9rem;
+  div {
+    padding: 0 4.6875rem;
+    img {
+      height: 4.93875rem;
+      width: 13rem;
+    }
   }
 `;
 

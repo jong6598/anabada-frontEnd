@@ -9,6 +9,7 @@ import Loading from '../layout/Loading';
 import { useAllMeets } from '../react-query/hooks/useAllMeets';
 import { useSearchMeets } from '../react-query/hooks/useSearchMeets';
 import { queryKeys } from '../react-query/constants';
+import Navigate from '../layout/Navigate';
 
 const MeetsAll = () => {
   const [search, setSearch] = useState(null);
@@ -93,6 +94,7 @@ const MeetsAll = () => {
 
   return (
     <MeetAllContainer>
+      <Navigate text={'오픈 모임 리스트'} />
       <CategoryContainer>
         <select id="area" onChange={onChangeArea} value={areaSelected}>
           <option value="ALL">전체</option>
@@ -134,9 +136,7 @@ const MeetsAll = () => {
   );
 };
 
-const MeetAllContainer = styled.div`
-  padding: 10px 0;
-`;
+const MeetAllContainer = styled.div``;
 
 const CategoryContainer = styled.div`
   display: flex;
