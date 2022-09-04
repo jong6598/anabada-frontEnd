@@ -78,7 +78,7 @@ const MeetDetail = () => {
             </svg>
             <p>조회 {meet.viewCount}</p>
           </div>
-          {nickname !== meet.nickname && (
+          {nickname === meet.nickname && (
             <button className="moreBtn" onClick={onShowModal}>
               <FiMoreHorizontal />
             </button>
