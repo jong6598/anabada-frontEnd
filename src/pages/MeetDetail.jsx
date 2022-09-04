@@ -105,7 +105,7 @@ const MeetDetail = () => {
               <div
                 className="editBtn"
                 onClick={() => {
-                  navigate(`/meets/${params.thunderPostId}/edit`);
+                  navigate(`/meetAdd/${params.thunderPostId}/edit`);
                 }}
               >
                 수정하기

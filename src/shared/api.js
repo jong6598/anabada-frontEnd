@@ -127,7 +127,7 @@ export const meetsApi = {
 
   postMeetPost: (post) => api.post('/meets', post),
 
-  editMeetPost: (post, thunderPostId) =>
+  editMeetPost: (thunderPostId, post) =>
     api.put(`/meets/${thunderPostId}`, post),
 
   deleteMeetPost: (thunderPostId) => api.delete(`/meets/${thunderPostId}`),

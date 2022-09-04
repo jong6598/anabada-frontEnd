@@ -5,7 +5,6 @@ import { css } from "styled-components";
 import styled from "styled-components";
 import { postApi } from "../shared/api";
 import { useSelector } from "react-redux";
-import { HiOutlinePhotograph } from "react-icons/hi";
 import { storage } from "../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import '@toast-ui/editor/dist/toastui-editor.css';

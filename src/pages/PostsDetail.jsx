@@ -118,9 +118,7 @@ const PostsDetail = () => {
     if (postInfo.liked === false) {
       try {
        const res =  await postApi.postLike(postId);
-        
         setLiked(true);
-   
       } catch (err) {
         console.log(err);
       }
@@ -168,8 +166,6 @@ const PostsDetail = () => {
       console.log(err.respose);
     }
   })
-
-    console.log(postInfo, 'postInfo')
 
 
   return (
