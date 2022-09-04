@@ -16,6 +16,8 @@ const Chat = () => {
   const nickname = useSelector((state) => state.auth.nickname); // 본인 닉네임
   const profileImg = useSelector((state) => state.auth.profileImg);
 
+  const scrollRef = useRef();
+
   const clientRef = useRef(null);
   const [roomId, setRoomId] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
@@ -74,7 +76,6 @@ const Chat = () => {
   const subscribe = () => {
     //  대상에 대해 메세지를 받기 위해 subscribe 메서드를 사용
     clientRef.current.subscribe(`/sub/rooms/${roomId}`, (message) => {
-      console.log('hi');
       const getMessage = JSON.parse(message.body).content;
       const getNickname = JSON.parse(message.body).nickname; // 닉네임
 
@@ -84,8 +85,6 @@ const Chat = () => {
       ]);
     });
   };
-
-  console.log(clientRef.current, 'clientcheck');
 
   const publish = (message) => {
     // 연결 끊어져 있으면 바로 종료
@@ -105,6 +104,14 @@ const Chat = () => {
 
     setMessage(''); // 메세지 초기화
   };
+
+  const scrollToBottom = () => {
+    scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatMessages]);
 
   useEffect(() => {
     async function getRoomId() {
@@ -152,59 +159,57 @@ const Chat = () => {
         profileImg={senderProfileImg}
       />
       <Divider />
-      <ChatContainer>
+      <ChatContainer ref={scrollRef}>
         <Time>오후 12:34</Time>
         {chatMessages &&
           chatMessages.length > 0 &&
-          chatMessages.map((msg, index) => (
-            <div key={index}>
-              {msg.nickname !== nickname ? (
-                <SenderContainer>
-                  {index === 0 ||
-                  (index >= 1 &&
-                    chatMessages[index - 1].nickname !==
-                      chatMessages[index].nickname) ? (
-                    <>
-                      <img
-                        src={senderProfileImg}
-                        alt="profileImage"
-                        style={{
-                          width: '2rem',
-                          height: '2rem',
-                          borderRadius: '50%'
-                        }}
-                      />
-                      <div className="firstMessageBox">
-                        <span>{msg.message}</span>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <img
-                        src={senderProfileImg}
-                        alt="profileImage"
-                        style={{
-                          width: '2rem',
-                          height: '2rem',
-                          borderRadius: '50%',
-                          visibility: 'hidden'
-                        }}
-                      />
-                      <div className="messageBox">
-                        <span>{msg.message}</span>
-                      </div>
-                    </>
-                  )}
-                </SenderContainer>
-              ) : (
-                <ReceiverContainer>
-                  <div className="messageBox">
-                    <span>{msg.message}</span>
-                  </div>
-                </ReceiverContainer>
-              )}
-            </div>
-          ))}
+          chatMessages.map((msg, index) =>
+            msg.nickname !== nickname ? (
+              <SenderContainer key={index}>
+                {index === 0 ||
+                (index >= 1 &&
+                  chatMessages[index - 1].nickname !==
+                    chatMessages[index].nickname) ? (
+                  <>
+                    <img
+                      src={senderProfileImg}
+                      alt="profileImage"
+                      style={{
+                        width: '2rem',
+                        height: '2rem',
+                        borderRadius: '50%'
+                      }}
+                    />
+                    <div className="firstMessageBox">
+                      <span>{msg.message}</span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <img
+                      src={senderProfileImg}
+                      alt="profileImage"
+                      style={{
+                        width: '2rem',
+                        height: '2rem',
+                        borderRadius: '50%',
+                        visibility: 'hidden'
+                      }}
+                    />
+                    <div className="messageBox">
+                      <span>{msg.message}</span>
+                    </div>
+                  </>
+                )}
+              </SenderContainer>
+            ) : (
+              <ReceiverContainer key={index}>
+                <div className="messageBox">
+                  <span>{msg.message}</span>
+                </div>
+              </ReceiverContainer>
+            )
+          )}
       </ChatContainer>
       <Footer>
         <Divider />
@@ -220,7 +225,9 @@ const Chat = () => {
               placeholder="메세지를 입력해주세요"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              onKeyPress={(e) => e.which === 13 && publish(message)}
+              onKeyPress={(e) =>
+                e.target.value !== '' && e.which === 13 && publish(message)
+              }
             />
             <MessageButton
               disabled={!isMessage}
@@ -239,11 +246,18 @@ const Chat = () => {
 export default Chat;
 
 const Container = styled.div`
-  position: relative;
+  /* position: relative; */
+
+  display: flex;
+  flex-direction: column;
   height: 100vh;
 `;
 const ChatContainer = styled.div`
   padding: 1rem;
+
+  flex: 1;
+
+  overflow-y: scroll;
 `;
 
 const Time = styled.p`
@@ -318,9 +332,9 @@ const ReceiverContainer = styled.div`
 `;
 
 const Footer = styled.div`
-  position: absolute;
+  /* position: absolute;
+  bottom: 0; */
   width: 100%;
-  bottom: 0;
 `;
 
 const InputMessageContainer = styled.div`

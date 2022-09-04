@@ -5,7 +5,7 @@ import { chatApi, meetsApi } from '../../../shared/api';
 import { queryKeys } from '../../constants';
 
 // 모임 전체 게시글
-const fetchMessages = async (__roomId) => {
+const fetchMessages = async (pageParam, __roomId) => {
   console.log(__roomId, 'roomId 들어오는지 체크');
   try {
     const res = await chatApi.getMessages(__roomId);
@@ -18,14 +18,20 @@ const fetchMessages = async (__roomId) => {
 export function useMessages() {
   const [__roomId, __setRoomId] = useState(null);
   console.log(__roomId, 'roomId 값 체크해보자');
-  const { data: messages } = useQuery(
+  const {
+    data: messages,
+    fetchNextPage,
+    isFetchingNextPage
+  } = useInfiniteQuery(
     [queryKeys.messages, __roomId],
-    () => fetchMessages(__roomId),
+    ({ pageParam = 0 }) => fetchMessages(pageParam, __roomId),
     {
+      getNextPageParam: (lastPage) =>
+        !lastPage.last ? lastPage.nextPage : undefined,
       enabled: !!__roomId
     }
   );
-  return { messages, __setRoomId };
+  return { messages, __setRoomId, isFetchingNextPage, fetchNextPage };
 }
 
 // export function useMessages(roomId) {

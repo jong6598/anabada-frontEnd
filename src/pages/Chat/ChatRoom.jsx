@@ -12,6 +12,7 @@ import NoData from '../../layout/NoData';
 const ChatRoom = () => {
   const navigate = useNavigate();
   const nickname = useSelector((state) => state.auth.nickname);
+  const profileImg = useSelector((state) => state.auth.profileImg);
 
   const { data, isFetchingNextPage, fetchNextPage } = useRooms();
   const { ref, inView } = useInView();
@@ -34,20 +35,33 @@ const ChatRoom = () => {
         {data.pages[0].data.length !== 0 &&
           data.pages.map((page) => {
             return page.data.map((room) => {
+              console.log(room, 'roomCheck');
+              let roomName;
+              roomName =
+                nickname === room.receiverNickname
+                  ? room.senderNickname
+                  : room.receiverNickname;
+
+              let roomProfileImg;
+              roomProfileImg =
+                profileImg === room.receiverProfileImg
+                  ? room.senderProfileImg
+                  : room.receiverProfileImg;
+
               return (
                 <div
                   key={room.roomId}
                   className="chatContainer"
-                  onClick={() => navigate(`/chat/${room.receiverNickname}`)}
+                  onClick={() => navigate(`/chat/${roomName}`)}
                 >
                   <LeftBox>
                     <img
-                      src={room.receiverProfileImg}
+                      src={roomProfileImg}
                       alt=""
                       style={{ width: '36px', height: '36px' }}
                     />
                     <div className="leftBox">
-                      <p className="nickname">{room.receiverNickname}</p>
+                      <p className="nickname">{roomName}</p>
                       <p className="lastMessage">마지막메세지로 바꺼야함</p>
                     </div>
                   </LeftBox>
