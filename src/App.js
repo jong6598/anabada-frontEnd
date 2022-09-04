@@ -75,6 +75,7 @@ function App() {
             <Route path="/posts/:postId/edit" element={<PostCU />} />
             <Route path="*" element={<NotFound />} />
             <Route path="/meets" element={<Meets />} />
+            <Route path="/meetAdd/:thunderPostId/edit" element={<AddMeet />} />
             <Route path="/meetAdd" element={<AddMeet />} />
             <Route path="/mypage" element={<Mypage />} />
             <Route path="/mymeets" element={<MyMeets />} />

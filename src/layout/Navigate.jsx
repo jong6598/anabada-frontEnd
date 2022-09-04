@@ -26,16 +26,28 @@ const Navigate = ({ text }) => {
 const Container = styled.div`
   display: flex;
   align-items: center;
-  padding-top: 1rem;
-  padding-left: 0.84375rem;
+  padding: 0.7rem ${(props) => (props.padding ? '1rem' : '0')};
+
+  button {
+    padding: 0;
+    padding-top: 1rem;
+    padding-left: 0.84375rem;
   svg {
     margin-right: 1rem;
   }
+}
 `;
+
 const Title = styled.h2`
   font-weight: 700;
   font-size: 1.25rem;
   line-height: 1.5rem;
 `;
 
+const Divider = styled.div`
+  background-color: #ececec;
+  height: 1px;
+`;
+
 export default Navigate;
+

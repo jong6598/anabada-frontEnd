@@ -12,7 +12,8 @@ import { FiMoreHorizontal } from 'react-icons/fi';
 import { FiEdit2 } from 'react-icons/fi';
 import { RiDeleteBin5Line } from 'react-icons/ri';
 import { queryKeys } from "../react-query/constants";
-
+import {BiCommentX} from 'react-icons/bi'
+import Nodata from "../layout/NoData";
 
 const PostsDetail = () => {
   const navigate = useNavigate();
@@ -103,7 +104,6 @@ const PostsDetail = () => {
 
   const { mutate: onDelete } = useMutation(postDelete, {
     onSuccess: () => {
-      // queryClient.invalidateQueries(["post"])
       queryClient.invalidateQueries([queryKeys.postList])
       alert('게시글이 삭제되었습니다')
     },
@@ -118,9 +118,7 @@ const PostsDetail = () => {
     if (postInfo.liked === false) {
       try {
        const res =  await postApi.postLike(postId);
-        
         setLiked(true);
-   
       } catch (err) {
         console.log(err);
       }
@@ -137,8 +135,11 @@ const PostsDetail = () => {
 
   const { mutate: onToggleLike } = useMutation(toggleLike, {
     onSuccess: () => {
-      queryClient.invalidateQueries([queryKeys.detailPost])
-      queryClient.invalidateQueries([queryKeys.postList])
+      return(
+        queryClient.invalidateQueries([queryKeys.detailPost]),
+        queryClient.invalidateQueries([queryKeys.postList])
+      )
+      
     },
     onError: (err) => {
       console.log(err.respose);
@@ -165,8 +166,6 @@ const PostsDetail = () => {
       console.log(err.respose);
     }
   })
-
-    console.log(postInfo, 'postInfo')
 
 
   return (
@@ -321,8 +320,17 @@ const PostsDetail = () => {
         {comments.pages.map((page) => page.data.map((comment) => { return <Comment comment={comment} key={comment.commentId} /> }))
 
         }
+        
         {isFetchingNextPage ? <p>스피너</p> : <div ref={ref} />}
-
+        {comments.pages.data == null && 
+        <NoDataDiv>
+        <BiCommentX/>
+        <div>
+          <p>아직 댓글이 없습니다.</p>
+          <p>첫 댓글을 작성해 보세요.</p>
+        </div>
+      </NoDataDiv> }
+        
       </CommentBox>
     </>
   )
@@ -572,3 +580,23 @@ const SelectContainer = styled.div`
     }
   }
 `;
+
+
+const NoDataDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2rem;
+  svg{
+    font-size: 4rem;
+    color: #8E8E93;
+  }
+  div{
+    text-align:center;
+    color: #8E8E93;
+    p{
+      font-weight: 400;
+      font-size: 0.8rem;
+    }
+  }
+`

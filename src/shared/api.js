@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Cookies } from "react-cookie";
 
+
 export const api = axios.create({
   baseURL: `http://${process.env.REACT_APP_API_SERVER}/api`,
   headers: {
@@ -126,7 +127,7 @@ export const meetsApi = {
 
   postMeetPost: (post) => api.post("/meets", post),
 
-  editMeetPost: (post, thunderPostId) =>
+  editMeetPost: (thunderPostId, post) =>
     api.put(`/meets/${thunderPostId}`, post),
 
   deleteMeetPost: (thunderPostId) => api.delete(`/meets/${thunderPostId}`),
@@ -180,6 +181,10 @@ export const postApi = {
   getPosts(pageParam, areaSelected) {
     return api.get(`/posts?area=${areaSelected}&page=${pageParam}&size=6`);
   },
+  getSearchPosts(areaSelected, search, pageParam){
+    return api.get(`/posts/search?area=${areaSelected}&keyword=${search}&page=${pageParam}&size=6`)
+  }
+  ,
   getPost(postId) {
     return api.get(`/posts/${postId}`);
   },
@@ -215,3 +220,16 @@ export const postApi = {
     return api.delete(`/comments/${commentId}`);
   },
 };
+
+export const myApi={
+  getMyPosts(filter,pageParam){
+    return api.get(`myposts?filter=${filter}&page=${pageParam}&size=6`)
+  },
+  getMyMeets(filter,pageParam){
+    return api.get(`mymeets?filter=${filter}&page=${pageParam}&size=6`)
+  },
+  uploadProfile(profileImg){
+    return api.put('/profileimages',profileImg)
+  }
+}
+

@@ -5,9 +5,12 @@ export const queryKeys = {
   detailMeet: "detailMeet",
   searchMeets: "searchMeets",
 
-  postList: "postList",
-  commentList: "commentList",
-  detailPost: "detailPost",
+  postList: 'postList',
+  commentList: 'commentList',
+  detailPost: 'detailPost',
+
+  myPostsList:'myPostsList',
+  myMeetsList:'myMeetsList',
 
   notifications: "notifications",
 };
