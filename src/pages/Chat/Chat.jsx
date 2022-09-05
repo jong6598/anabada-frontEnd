@@ -9,6 +9,8 @@ import { borderRadius } from '@mui/system';
 import { MdSend } from 'react-icons/md';
 import { chatApi } from '../../shared/api';
 import { useMessages } from '../../react-query/hooks/chat/useMessages';
+import { useInView } from 'react-intersection-observer';
+import { useCallback } from 'react';
 
 const Chat = () => {
   const params = useParams();
@@ -18,19 +20,24 @@ const Chat = () => {
 
   const scrollRef = useRef();
 
+  const { ref, inView } = useInView();
+
   const clientRef = useRef(null);
   const [roomId, setRoomId] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
   const [senderProfileImg, setSenderProfileImg] = useState('');
   const [message, setMessage] = useState('');
+
   const isMessage = message !== '';
+
+  const [prevScrollHeight, setPrevScrollHeight] = useState('');
 
   const token = localStorage.getItem('accessToken');
   const headers = { accessToken: token };
 
   //roomId가 있을때만 요청을 하고싶은데??
-  const { messages, __setRoomId } = useMessages();
-  console.log(messages, 'messages');
+  const { messages, fetchNextPage, isFetchingNextPage, __setRoomId } =
+    useMessages();
 
   // const sock = new SockJs('http://43.200.6.110/socket');
   //client 객체 생성 및 서버주소 입력
@@ -38,8 +45,11 @@ const Chat = () => {
   // const client = StompJs.over(sock);
   // stomp로 감싸기
 
+  const onChange = useCallback((e) => {
+    setMessage(e.target.value);
+  }, []);
+
   const connect = () => {
-    console.log('웹소켓 연결');
     // client객체를 만들기
     clientRef.current = new Client({
       brokerURL: 'ws://43.200.6.110/socket', // 웹소켓 서버로 직접 접속
@@ -109,16 +119,25 @@ const Chat = () => {
     scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [chatMessages]);
+  // TODO: 역방향 스크롤
+  const onFetchMessages = useCallback(() => {
+    // 1. 스크롤이 최상단에 닿여서 데이터를 불러오기전에 현재 scrollHeight를 저장한다
+    // 2. 새로운 데이터를 불러왔을때 scrollHeight에서 저장해둔 scrollHeight를 뺀값이 현재 스크롤 위치
+    setPrevScrollHeight(scrollRef.current?.scrollHeight);
+
+    fetchNextPage();
+  }, []);
+
+  const onScrollTo = (y) => {
+    scrollRef.current.scrollTop = y;
+  };
 
   useEffect(() => {
     async function getRoomId() {
       try {
         // 방생성 요청
         const res = await chatApi.createChat(params.nickname);
-        console.log(res, 'res check');
+
         let getRoomId, getSenderProfileImg;
         if (res.status === 200) {
           getRoomId = res.data.roomId;
@@ -145,11 +164,38 @@ const Chat = () => {
 
   useEffect(() => {
     if (roomId) {
-      console.log(roomId, 'roomId');
       // 페이지가 로딩 되고 roomId가 있을때 클라이언트 활성화 & 구독
       connect();
     }
   }, [roomId]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [chatMessages]);
+
+  useEffect(() => {
+    // 화면에 노출되면, 데이터를 불러오는 함수를 실행
+    if (inView && messages) {
+      onFetchMessages();
+    }
+  }, [inView]);
+
+  useEffect(() => {
+    //  useEffect를 이용해 messages의 변화를 관찰 page가 변화했다는 것은 메세지가 더 요청이 되었다.
+    if (prevScrollHeight) {
+      // (무한스크롤을 통해 새로운 데이터를 가져오는 경우)
+      // 스크롤 위치를 현재 scrollHeight - 과거 scrollHeight(prevScrollHeight)로 유지하고
+      // 없을경우(새로운 채팅을 보내거나 첫 렌더링시)에는 에는 스크롤을 맨아래로 이동.
+      // 새로운 데이터를 불러오기 전 마지막 채팅이 있던 곳에 스크롤 위치를 유지
+      onScrollTo(scrollRef.current?.scrollHeight - prevScrollHeight);
+      // 스크롤 위치 이동 후 과거 스크롤 위치는 null로 바꿔줍니다
+      return setPrevScrollHeight(null);
+    }
+
+    onScrollTo(
+      scrollRef.current?.scrollHeight - scrollRef.current?.clientHeight
+    );
+  }, [messages?.pages]);
 
   return (
     <Container>
@@ -160,6 +206,57 @@ const Chat = () => {
       />
       <Divider />
       <ChatContainer ref={scrollRef}>
+        {isFetchingNextPage ? <div /> : <div ref={ref}></div>}
+
+        {messages?.pages?.map((page) => {
+          return page.data.map((msg, idx) =>
+            msg.nickname !== nickname ? (
+              <SenderContainer key={idx}>
+                {idx === 0 ||
+                (idx >= 1 &&
+                  page.data[idx - 1].nickname !== page.data[idx].nickname) ? (
+                  <>
+                    <img
+                      src={senderProfileImg}
+                      alt="profileImage"
+                      style={{
+                        width: '2rem',
+                        height: '2rem',
+                        borderRadius: '50%'
+                      }}
+                    />
+                    <div className="firstMessageBox">
+                      <span>{msg.content}</span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <img
+                      src={senderProfileImg}
+                      alt="profileImage"
+                      style={{
+                        width: '2rem',
+                        height: '2rem',
+                        borderRadius: '50%',
+                        visibility: 'hidden'
+                      }}
+                    />
+                    <div className="messageBox">
+                      <span>{msg.content}</span>
+                    </div>
+                  </>
+                )}
+              </SenderContainer>
+            ) : (
+              <ReceiverContainer key={idx}>
+                <div className="messageBox">
+                  <span>{msg.content}</span>
+                </div>
+              </ReceiverContainer>
+            )
+          );
+        })}
+
         <Time>오후 12:34</Time>
         {chatMessages &&
           chatMessages.length > 0 &&
@@ -224,7 +321,7 @@ const Chat = () => {
               type="text"
               placeholder="메세지를 입력해주세요"
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={onChange}
               onKeyPress={(e) =>
                 e.target.value !== '' && e.which === 13 && publish(message)
               }
@@ -257,7 +354,7 @@ const ChatContainer = styled.div`
 
   flex: 1;
 
-  overflow-y: scroll;
+  overflow-y: auto;
 `;
 
 const Time = styled.p`
@@ -273,6 +370,7 @@ const Time = styled.p`
 
 const SenderContainer = styled.div`
   display: flex;
+
   margin: 0.3rem 0;
   img {
     margin-top: 0.2rem;

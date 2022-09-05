@@ -7,6 +7,7 @@ import { queryKeys } from '../../constants';
 const getRooms = async (pageParam) => {
   try {
     const res = await chatApi.getAllRooms(pageParam);
+    console.log(res.data, 'res.data');
     const data = res.data.content;
     const last = res.data.last;
     return { data, nextPage: pageParam + 1, last };
@@ -17,17 +18,20 @@ const getRooms = async (pageParam) => {
 
 export function useRooms() {
   // 모임 전체 게시글 useQuery
-  const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
+  const {
+    data: rooms,
+    fetchNextPage,
+    isFetchingNextPage
+  } = useInfiniteQuery(
     [queryKeys.rooms],
     ({ pageParam = 0 }) => getRooms(pageParam),
     {
       getNextPageParam: (lastPage) =>
-        !lastPage.last ? lastPage.nextPage : undefined,
-      onSuccess: console.log('채팅방 목록 입장')
+        !lastPage.last ? lastPage.nextPage : undefined
     }
   );
   return {
-    data,
+    rooms,
     isFetchingNextPage,
     fetchNextPage
   };

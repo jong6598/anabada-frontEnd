@@ -6,10 +6,13 @@ import { queryKeys } from '../../constants';
 
 // 모임 전체 게시글
 const fetchMessages = async (pageParam, __roomId) => {
-  console.log(__roomId, 'roomId 들어오는지 체크');
   try {
-    const res = await chatApi.getMessages(__roomId);
-    return res.data;
+    const res = await chatApi.getMessages(pageParam, __roomId);
+    const data = res.data.content;
+    const last = res.data.last;
+    const first = res.data.fist;
+
+    return { data, nextPage: pageParam + 1, last };
   } catch (error) {
     console.log('error.response');
   }
@@ -17,15 +20,22 @@ const fetchMessages = async (pageParam, __roomId) => {
 
 export function useMessages() {
   const [__roomId, __setRoomId] = useState(null);
-  console.log(__roomId, 'roomId 값 체크해보자');
+
   const {
     data: messages,
     fetchNextPage,
+    // fetchPreviousPage,
+    // isFetchingPreviousPage,
     isFetchingNextPage
   } = useInfiniteQuery(
     [queryKeys.messages, __roomId],
     ({ pageParam = 0 }) => fetchMessages(pageParam, __roomId),
     {
+      select: (data) => ({
+        pages: [...data.pages].reverse()
+      }),
+      // getPreviousPageParam: (firstPage) =>
+      //   !firstPage.first ? firstPage.prevPage : undefined,
       getNextPageParam: (lastPage) =>
         !lastPage.last ? lastPage.nextPage : undefined,
       enabled: !!__roomId
@@ -33,25 +43,3 @@ export function useMessages() {
   );
   return { messages, __setRoomId, isFetchingNextPage, fetchNextPage };
 }
-
-// export function useMessages(roomId) {
-//   // 모임 전체 게시글 useQuery
-//   const {
-//     data: messages,
-//     fetchNextPage,
-//     isFetchingNextPage
-//   } = useInfiniteQuery(
-//     [queryKeys.messages],
-//     ({ pageParam = 0 }) => fetchMeetsList(pageParam, roomId),
-//     {
-//       getNextPageParam: (lastPage) =>
-//         !lastPage.last ? lastPage.nextPage : undefined,
-//       suspense: true
-//     }
-//   );
-//   return {
-//     messages,
-//     isFetchingNextPage,
-//     fetchNextPage
-//   };
-// }

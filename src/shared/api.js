@@ -226,8 +226,8 @@ export const chatApi = {
   deleteChat(roomId) {
     return api.delete(`/rooms/${roomId}`);
   },
-  getMessages(roomId) {
-    return api.get(`messages/${roomId}`);
+  getMessages(pageParam, roomId) {
+    return api.get(`messages/${roomId}?page=${pageParam}&size=20`);
   },
   getAllRooms(pageParam) {
     return api.get(`/rooms?page=${pageParam}&size=10`);

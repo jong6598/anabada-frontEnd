@@ -14,9 +14,9 @@ const ChatRoom = () => {
   const nickname = useSelector((state) => state.auth.nickname);
   const profileImg = useSelector((state) => state.auth.profileImg);
 
-  const { data, isFetchingNextPage, fetchNextPage } = useRooms();
+  const { rooms, isFetchingNextPage, fetchNextPage } = useRooms();
   const { ref, inView } = useInView();
-  console.log(data);
+  console.log(rooms, 'rooms');
 
   useEffect(() => {
     if (inView) {
@@ -28,48 +28,47 @@ const ChatRoom = () => {
     <>
       <Navigate text={'채팅'} padding={true} />
       <Divider />
-      {data.pages[0].data.length === 0 && (
+      {rooms.pages[0].data.length === 0 && (
         <NoData text={'받은 메세지'} chat={true} />
       )}
+      {/* rooms.pages[0].data.length !== 0 && */}
       <Container>
-        {data.pages[0].data.length !== 0 &&
-          data.pages.map((page) => {
-            return page.data.map((room) => {
-              console.log(room, 'roomCheck');
-              let roomName;
-              roomName =
-                nickname === room.receiverNickname
-                  ? room.senderNickname
-                  : room.receiverNickname;
+        {rooms.pages.map((page) => {
+          return page.data.map((room) => {
+            let roomName;
+            roomName =
+              nickname === room.receiverNickname
+                ? room.senderNickname
+                : room.receiverNickname;
 
-              let roomProfileImg;
-              roomProfileImg =
-                profileImg === room.receiverProfileImg
-                  ? room.senderProfileImg
-                  : room.receiverProfileImg;
+            let roomProfileImg;
+            roomProfileImg =
+              profileImg === room.receiverProfileImg
+                ? room.senderProfileImg
+                : room.receiverProfileImg;
 
-              return (
-                <div
-                  key={room.roomId}
-                  className="chatContainer"
-                  onClick={() => navigate(`/chat/${roomName}`)}
-                >
-                  <LeftBox>
-                    <img
-                      src={roomProfileImg}
-                      alt=""
-                      style={{ width: '36px', height: '36px' }}
-                    />
-                    <div className="leftBox">
-                      <p className="nickname">{roomName}</p>
-                      <p className="lastMessage">마지막메세지로 바꺼야함</p>
-                    </div>
-                  </LeftBox>
-                  <p className="messageLength">12</p>
-                </div>
-              );
-            });
-          })}
+            return (
+              <div
+                key={room.roomId}
+                className="chatContainer"
+                onClick={() => navigate(`/chat/${roomName}`)}
+              >
+                <LeftBox>
+                  <img
+                    src={roomProfileImg}
+                    alt=""
+                    style={{ width: '36px', height: '36px' }}
+                  />
+                  <div className="leftBox">
+                    <p className="nickname">{roomName}</p>
+                    <p className="lastMessage">{room.lastMsg}</p>
+                  </div>
+                </LeftBox>
+                <p className="messageLength">12</p>
+              </div>
+            );
+          });
+        })}
         {isFetchingNextPage ? <Loading /> : <div ref={ref}></div>}
       </Container>
     </>
