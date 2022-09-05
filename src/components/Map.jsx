@@ -40,7 +40,7 @@ const KakaoMap = memo(() => {
       staleTime: 1000 * 60 * 30,
       refetchOnWindowFocus: false,
       onSuccess(data) {
-        console.log('Map Data를 성공적으로 fetch했습니다. ::: ', data.data);
+        console.log('Map Data를 성공적으로 fetch했습니다. ::: ');
       },
       onError(err) {
         console.log('에러가 발생했습니다!! ::: ', err);
@@ -50,7 +50,7 @@ const KakaoMap = memo(() => {
 
   return (
     <>
-      <MapWrapper center={{ lat: 36.350701, lng: 127.870667 }} level={13}>
+      <MapWrapper center={{ lat: 36.350701, lng: 127.870667 }} level={12}>
         <MarkerClusterer
           averageCenter={true} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
           minLevel={10} // 클러스터 할 최소 지도 레벨

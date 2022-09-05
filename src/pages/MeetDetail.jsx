@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import { meetsApi } from '../shared/api';
 import { useQuery } from '@tanstack/react-query';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import { BsFillChatDotsFill } from 'react-icons/bs';
@@ -102,7 +103,7 @@ const MeetDetail = () => {
               <div
                 className="editBtn"
                 onClick={() => {
-                  navigate(`/meets/${params.thunderPostId}/edit`);
+                  navigate(`/meetAdd/${params.thunderPostId}/edit`);
                 }}
               >
                 수정하기
@@ -219,14 +220,11 @@ const MeetDetail = () => {
             </svg>
 
             <p>모집 기간</p>
-            <p>
-              {meet.startDate} ~ {meet.endDate}
-            </p>
+            <p>~ {meet.endDate}</p>
           </div>
         </div>
       </PostDetailInfo>
       <PostDescription>{meet.content}</PostDescription>
-      {/* FIXME: !===으로 바꿔야함 */}
       {nickname !== meet.nickname && (
         <ButtonContainer>
           <button
@@ -277,6 +275,7 @@ const MeetDetail = () => {
             )}
             좋아요
           </button>
+
           {isJoined ? (
             <button
               className="requestedBtn"
@@ -312,22 +311,25 @@ const MeetDetail = () => {
       {meet.members?.length > 0 && (
         <MembersContainer>
           <Divider />
-          <p>참여 인원 목록</p>
+          <p className="title">참여 인원 목록</p>
+          <div className="memberLists">
+            <img src={meet.profileImg} alt="profileImg" />
+            <div>
+              <p>{meet.nickname}</p>
+              <p className="host">주최자</p>
+            </div>
+          </div>
           {meet.members.map((member) => {
             return (
-              <ul className="memberLists">
-                <li>
-                  <div>
-                    <img src={member.profileUrl} alt="profileImg" />
-                    <p>{member.nickname}</p>
-                  </div>
-                  {nickname === meet.nickname ? (
-                    <p className="host">주최자</p>
-                  ) : (
+              <div className="memberLists">
+                <img src={member.profileImg} alt="profileImg" />
+                <div>
+                  <p>{member.nickname}</p>
+                  {nickname !== member.nickname && (
                     <p className="participant">참여자</p>
                   )}
-                </li>
-              </ul>
+                </div>
+              </div>
             );
           })}
         </MembersContainer>
@@ -550,5 +552,36 @@ const Divider = styled.div`
 
 const MembersContainer = styled.div`
   padding: 1rem;
+  p.title {
+    font-size: 1rem;
+    padding-top: 0.75rem;
+  }
+  div.memberLists {
+    display: flex;
+    flex-direction: row;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 0.1rem solid #ececec;
+  }
+  img {
+    width: 2rem;
+    height: 2rem;
+    margin-right: 0.5rem;
+    border-radius: 50%;
+  }
+  p {
+    font-size: 0.9rem;
+    font-weight: 400;
+    text-align: left;
+  }
+  p.host {
+    font-size: 0.7rem;
+    font-weight: 300;
+    color: #007aff;
+  }
+  p.participant {
+    font-weight: 300;
+    font-size: 0.7rem;
+  }
 `;
 export default MeetDetail;

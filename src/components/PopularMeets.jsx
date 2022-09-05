@@ -1,8 +1,31 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import NoData from '../layout/NoData';
 
 const PopularMeets = ({ popularPosts }) => {
+
+  const difference = useCallback((date1, date2)=> {
+    const date1utc = Date.UTC(
+      date1.getFullYear(),
+      date1.getMonth(),
+      date1.getDate()
+    )
+    const date2utc = Date.UTC(
+      date2.getFullYear(),
+      date2.getMonth(),
+      date2.getDate()
+    )
+    const day = 1000 * 60 * 60 * 24;
+    return (date2utc-date1utc)/day;
+  },[])
+
+  let time = new Date().toISOString();
+  const date1 = new Date(time.slice(0, 10));
+  
+  
+
+
+
   return (
     <PopularPostsContainer>
       <h2>인기모임🔥</h2>
@@ -14,7 +37,10 @@ const PopularMeets = ({ popularPosts }) => {
             </div>
             <div className="infoBox">
               <div className="dateBox">
-                <p className="dDay">D-{'12'}</p>
+                {difference(date1, new Date(meet.endDate))>0?
+                  <p className="dDay">D-{difference(date1, new Date(meet.endDate))}</p>
+                  :<p className="dayClosing">마감</p>
+                }
                 <p className="endDate">~{meet.endDate}</p>
               </div>
               <div>
@@ -163,13 +189,41 @@ const PopularPostsContainer = styled.div`
     flex-direction: row;
     align-items: flex-start;
     padding: 0.125rem 0.25rem;
-    gap: 10px;
+    gap: 0.625rem;
     margin-right: 0.75rem;
 
     /* width: 35px; */
     /* height: 21px; */
 
     background: #ff3b30;
+    border-radius: 4px;
+
+    /* Inside auto layout */
+
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+
+    font-style: normal;
+    font-weight: 600;
+    font-size: 0.75rem;
+    line-height: 143.84%;
+    /* or 17px */
+
+    color: #ffffff;
+  }
+  .dayClosing {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0.125rem 0.25rem;
+    gap: 0.625rem;
+    margin-right: 0.75rem;
+
+    /* width: 35px; */
+    /* height: 21px; */
+
+    background: black;
     border-radius: 4px;
 
     /* Inside auto layout */

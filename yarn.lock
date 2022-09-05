@@ -10032,7 +10032,7 @@ sockjs-client@^1.6.1:
 
 sockjs@^0.3.24:
   version "0.3.24"
-  resolved "https://registry.npmjs.org/sockjs/-/sockjs-0.3.24.tgz"
+  resolved "https://registry.yarnpkg.com/sockjs/-/sockjs-0.3.24.tgz#c9bc8995f33a111bea0395ec30aa3206bdb5ccce"
   integrity sha512-GJgLTZ7vYb/JtPSSZ10hsOYIvEYsjbNU+zPdIHcUaWVNUEPivzxku31865sSSud0Da0W4lEeOPlmw93zLQchuQ==
   dependencies:
     faye-websocket "^0.11.3"

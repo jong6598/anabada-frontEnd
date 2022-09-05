@@ -46,7 +46,9 @@ const Container = styled.div`
     border-radius: 50%;
     margin-right: 0.5rem;
   }
+
 `;
+
 const Title = styled.h2`
   font-weight: 700;
   font-size: 1.25rem;
@@ -59,3 +61,4 @@ const Divider = styled.div`
 `;
 
 export default Navigate;
+

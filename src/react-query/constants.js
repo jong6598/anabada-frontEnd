@@ -1,5 +1,4 @@
 export const queryKeys = {
-  // 모임
   meets: 'meets',
   popularMeets: 'popularMeets',
   allMeets: 'allMeets',
@@ -13,5 +12,8 @@ export const queryKeys = {
 
   // 채팅
   rooms: 'rooms',
-  messages: 'messages'
+  messages: 'messages',
+  myMeetsList: 'myMeetsList',
+
+  notifications: 'notifications'
 };
