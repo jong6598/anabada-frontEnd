@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import styled from "styled-components";
-import { meetsApi } from "../shared/api";
-import { useQuery } from "@tanstack/react-query";
-import { FiMoreHorizontal } from "react-icons/fi";
-import { FiEdit2 } from "react-icons/fi";
-import { RiDeleteBin5Line } from "react-icons/ri";
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import styled from 'styled-components';
+import { meetsApi } from '../shared/api';
+import { useQuery } from '@tanstack/react-query';
+import { FiMoreHorizontal } from 'react-icons/fi';
+import { BsFillChatDotsFill } from 'react-icons/bs';
+import { FiEdit2 } from 'react-icons/fi';
+import { RiDeleteBin5Line } from 'react-icons/ri';
 // import { meet } from '../shared/data';
-import { useDetailMeet } from "../react-query/hooks/useDetailMeet";
-import { useSelector } from "react-redux";
-import { useAddMeet } from "../react-query/hooks/useDeleteMeet";
-import { useLike } from "../react-query/hooks/useLike";
-import { useJoin } from "../react-query/hooks/useJoin";
+import { useDetailMeet } from '../react-query/hooks/useDetailMeet';
+import { useSelector } from 'react-redux';
+import { useAddMeet } from '../react-query/hooks/useDeleteMeet';
+import { useLike } from '../react-query/hooks/useLike';
+import { useJoin } from '../react-query/hooks/useJoin';
+import Navigate from '../layout/Navigate';
 
 const MeetDetail = () => {
   const [showModal, setShowModal] = useState(false);
@@ -39,8 +41,13 @@ const MeetDetail = () => {
     setShowModal((prev) => !prev);
   };
 
+  const onRequestChat = (nickname) => {
+    navigate(`/chat/${nickname}`);
+  };
+
   return (
     <Container>
+      <Navigate text={'포스트'} padding={true} />
       <div className="postTopInfo">
         <p className="title">{meet.title}</p>
         <div className="postUserInfoContainer">
@@ -83,6 +90,14 @@ const MeetDetail = () => {
               <FiMoreHorizontal />
             </button>
           )}
+          {nickname !== meet.nickname && (
+            <button
+              className="chatBtn"
+              onClick={() => onRequestChat(meet.nickname)}
+            >
+              <BsFillChatDotsFill />
+            </button>
+          )}
           {showModal && (
             <SelectContainer>
               <div
@@ -97,7 +112,7 @@ const MeetDetail = () => {
               <div
                 className="deleteBtn"
                 onClick={() => {
-                  const result = window.confirm("정말 삭제하시겠습니까?");
+                  const result = window.confirm('정말 삭제하시겠습니까?');
                   if (result) {
                     onDelete(meet.thunderPostId);
                   }
@@ -205,9 +220,7 @@ const MeetDetail = () => {
             </svg>
 
             <p>모집 기간</p>
-            <p>
-              ~ {meet.endDate}
-            </p>
+            <p>~ {meet.endDate}</p>
           </div>
         </div>
       </PostDetailInfo>
@@ -220,7 +233,7 @@ const MeetDetail = () => {
               const state = {
                 setIsLiked,
                 isLiked,
-                thunderPostId: meet.thunderPostId,
+                thunderPostId: meet.thunderPostId
               };
               onLike(state);
             }}
@@ -266,12 +279,12 @@ const MeetDetail = () => {
           {isJoined ? (
             <button
               className="requestedBtn"
-              style={{ backgroundColor: "#007AFF", color: "white" }}
+              style={{ backgroundColor: '#007AFF', color: 'white' }}
               onClick={() => {
                 const state = {
                   setIsJoined,
                   isJoined,
-                  thunderPostId: meet.thunderPostId,
+                  thunderPostId: meet.thunderPostId
                 };
                 onJoin(state);
               }}
@@ -285,7 +298,7 @@ const MeetDetail = () => {
                 const state = {
                   setIsJoined,
                   isJoined,
-                  thunderPostId: meet.thunderPostId,
+                  thunderPostId: meet.thunderPostId
                 };
                 onJoin(state);
               }}
@@ -295,30 +308,28 @@ const MeetDetail = () => {
           )}
         </ButtonContainer>
       )}
-
       {meet.members?.length > 0 && (
         <MembersContainer>
           <Divider />
           <p className="title">참여 인원 목록</p>
           <div className="memberLists">
-              <img src={meet.profileImg} alt="profileImg" />
-              <div>
-                <p>{meet.nickname}</p>
-                <p className="host">주최자</p>
-              </div> 
+            <img src={meet.profileImg} alt="profileImg" />
+            <div>
+              <p>{meet.nickname}</p>
+              <p className="host">주최자</p>
             </div>
+          </div>
           {meet.members.map((member) => {
             return (
               <div className="memberLists">
-                    <img src={member.profileImg} alt="profileImg" />
-                    <div>
-                    <p>{member.nickname}</p>
-                  {nickname !== member.nickname && 
+                <img src={member.profileImg} alt="profileImg" />
+                <div>
+                  <p>{member.nickname}</p>
+                  {nickname !== member.nickname && (
                     <p className="participant">참여자</p>
-                  }
-                 </div> 
+                  )}
+                </div>
               </div>
-
             );
           })}
         </MembersContainer>
@@ -343,14 +354,23 @@ const Container = styled.div`
   .postUserInfoContainer {
     position: relative;
     display: flex;
+
     align-items: center;
     justify-content: space-between;
     .moreBtn {
       display: flex;
       padding: 0;
+    }
+    .chatBtn {
+      display: flex;
+      align-items: center;
+      padding: 0;
       svg {
-        font-size: 1rem;
+        color: #007aff;
       }
+    }
+    svg {
+      font-size: 1rem;
     }
   }
 
@@ -381,15 +401,6 @@ const Container = styled.div`
       margin-right: 5px;
       margin-left: 0;
       color: #000000;
-    }
-    .moreBtn {
-      display: flex;
-
-      align-items: center;
-      padding: 0;
-    }
-    svg {
-      font-size: 1rem;
     }
   }
 `;
@@ -540,37 +551,35 @@ const Divider = styled.div`
 `;
 
 const MembersContainer = styled.div`
-  
   padding: 1rem;
-  p.title{
+  p.title {
     font-size: 1rem;
     padding-top: 0.75rem;
   }
-  div.memberLists{
+  div.memberLists {
     display: flex;
     flex-direction: row;
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
     border-bottom: 0.1rem solid #ececec;
-;
   }
-  img{
+  img {
     width: 2rem;
     height: 2rem;
     margin-right: 0.5rem;
     border-radius: 50%;
   }
-  p{
+  p {
     font-size: 0.9rem;
     font-weight: 400;
     text-align: left;
   }
-  p.host{
+  p.host {
     font-size: 0.7rem;
     font-weight: 300;
-    color: #007AFF;
+    color: #007aff;
   }
-  p.participant{
+  p.participant {
     font-weight: 300;
     font-size: 0.7rem;
   }

@@ -198,7 +198,7 @@ const MeetAdd = () => {
           })}
         />
       </div>
-      <div>
+      <div className="dateBox">
         <p>종료일</p>
         <input 
           type="date" name="endDate" 
@@ -207,6 +207,7 @@ const MeetAdd = () => {
             required: "종료일을 입력해주세요"
           })}/>
       </div>
+
       <div>
         <p>모임일</p>
         <input

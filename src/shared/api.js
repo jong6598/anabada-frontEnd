@@ -114,6 +114,33 @@ api.interceptors.response.use(
   }
 );
 
+// 로그인/회원가입 요청 객체
+export const userAuth = {
+  login(loginData) {
+    return userAxios.post('/login', loginData);
+  },
+  signup(signupData) {
+    return userAxios.post('/signup', signupData);
+  },
+  emailValidation(email) {
+    return userAxios.post(`/validation/email`, {
+      email
+    });
+  },
+  nicknameValidation(nickname) {
+    return userAxios.post(`/validation/nickname/${nickname}`);
+  },
+  useAccess(token) {
+    // 유저정보 받아오기
+    return userAxios.get(`/info`, {
+      headers: {
+        Authorization: token
+      }
+    });
+  }
+};
+
+// 모임
 export const meetsApi = {
   getPopularPosts: (area) => api.get(`/meets/hot?area=${area}`),
 
@@ -144,32 +171,7 @@ export const meetsApi = {
   deleteRequest: (thunderPostId) => api.delete(`/requests/${thunderPostId}`),
 };
 
-// 로그인/회원가입 요청 객체
-export const userAuth = {
-  login(loginData) {
-    return userAxios.post("/login", loginData);
-  },
-  signup(signupData) {
-    return userAxios.post("/signup", signupData);
-  },
-  emailValidation(email) {
-    return userAxios.post(`/validation/email`, {
-      email,
-    });
-  },
-  nicknameValidation(nickname) {
-    return userAxios.post(`/validation/nickname/${nickname}`);
-  },
-  useAccess(token) {
-    // 유저정보 받아오기
-    return userAxios.get(`/info`, {
-      headers: {
-        Authorization: token,
-      },
-    });
-  },
-};
-
+// 게시글
 export const postApi = {
   uploadImages(file) {
     return api.post("/posts/images", file);
@@ -221,6 +223,23 @@ export const postApi = {
   },
 };
 
+// 채팅
+export const chatApi = {
+  createChat(receiver) {
+    return api.post(`/rooms?receiver=${receiver}`);
+  },
+  deleteChat(roomId) {
+    return api.delete(`/rooms/${roomId}`);
+  },
+  getMessages(pageParam, roomId) {
+    return api.get(`messages/${roomId}?page=${pageParam}&size=20`);
+  },
+  getAllRooms(pageParam) {
+    return api.get(`/rooms?page=${pageParam}&size=10`);
+  }
+};
+
+// 마이페이지
 export const myApi={
   getMyPosts(filter,pageParam){
     return api.get(`myposts?filter=${filter}&page=${pageParam}&size=6`)

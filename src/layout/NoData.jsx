@@ -1,13 +1,19 @@
 import styled from 'styled-components';
 import { FiInbox } from 'react-icons/fi';
 
-const NoData = ({ text, content }) => {
+const NoData = ({ text, content, chat }) => {
   return (
     <NoDataDiv>
       <div>
         <FiInbox />
-        <p>{`${text}이 없습니다.`}</p>
-        <p>{`첫 ${content}을 작성해 보세요.`}</p>
+        {chat ? (
+          <p>{`${text}가 없습니다.`}</p>
+        ) : (
+          <>
+            <p>{`${text}이 없습니다.`}</p>
+            <p>{`첫 ${content}을 작성해 보세요.`}</p>
+          </>
+        )}
       </div>
     </NoDataDiv>
   );

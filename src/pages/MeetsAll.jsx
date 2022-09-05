@@ -50,24 +50,6 @@ const MeetsAll = () => {
     }
   );
 
-  // FIXME: CUSTOM QUERY ?
-  // const {
-  //   data,
-  //   areaSelected,
-  //   setAreaSelected,
-  //   isFetchingNextPage,
-  //   setIsSearch,
-  //   fetchNextPage
-  // } = useAllMeets();
-
-  // const {
-  //   searchPosts,
-  //   setAreaSelectedSearch,
-  //   setKeyword,
-  //   isFetchingNextPageSearch,
-  //   fetchNextPageSearch
-  // } = useSearchMeets();
-
   const searchRef = useRef();
   const { ref, inView } = useInView();
 
@@ -115,17 +97,7 @@ const MeetsAll = () => {
           onKeyPress={onKeyPress}
         />
       </CategoryContainer>
-      {/* {searchPosts &&
-        searchPosts.pages?.map((page) => {
-          return page.data?.map((meet) => (
-            <Meet key={meet.thunderPostId} meet={meet} />
-          ));
-        })}
-      {data.pages.map((page) => {
-        return page.data.map((meet) => (
-          <Meet key={meet.thunderPostId} meet={meet} />
-        ));
-      })} */}
+
       {data.pages.map((page) => {
         return page.data.map((meet) => (
           <Meet key={meet.thunderPostId} meet={meet} />

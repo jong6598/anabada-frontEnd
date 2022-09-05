@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from 'react-router-dom';
 import Meet from '../components/Meet';
 import { useMeets } from '../react-query/hooks/useMeets';
 import { usePopularMeets } from '../react-query/hooks/usePopularMeets';
 import PopularMeets from '../components/PopularMeets';
+import NoData from '../layout/NoData';
 
 const Meets = () => {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ const Meets = () => {
     <MeetsContainer>
       <CategoryContainer>
         <select id="area" onChange={onChangeArea} value={areaSelected}>
-        <option value="ALL">전체</option>
+          <option value="ALL">전체</option>
           <option value="서울·경기·인천">서울·경기·인천</option>
           <option value="강원">강원</option>
           <option value="대구·경북">대구·경북</option>
@@ -36,8 +37,8 @@ const Meets = () => {
         </select>
       </CategoryContainer>
       {/* TODO: Slider, 분기, CSS 수정 */}
-      <div className='scrollTest'>
-      <PopularMeets popularPosts={popularPosts} />
+      <div className="scrollTest">
+        <PopularMeets popularPosts={popularPosts} />
       </div>
       <MeetsPostsContainer>
         <div className="topBox">
@@ -59,6 +60,9 @@ const Meets = () => {
             </svg>
           </button>
         </div>
+        {meetsPosts.content.length === 0 && (
+          <NoData text={'모임'} content={'모임'} />
+        )}
         {meetsPosts.content.map((meet) => {
           return <Meet key={meet.thunderPostId} meet={meet} />;
         })}
@@ -102,15 +106,37 @@ const MeetsContainer = styled.div`
       width:0.5rem;
       height: 0.5rem;
       border-radius: 0.375rem;
-      background-color: rgba(255,255,255,3)
+      background-color: rgba(255, 255, 255, 3);
     }
-    &::-webkit-scrollbar-thumb{
-      background-color: rgba(0,0,0,0.3);
+
+    ::-webkit-scrollbar-track {
+      background-color: #ececec;
+      border-radius: 100px;
+    }
+
+    /* & ::-webkit-scrollbar-track {
+      background-color: #e4e4e4;
+      border-radius: 100px;
+    } */
+
+    /* &::-webkit-scrollbar-thumb {
+      background-color: #217af4;
       border-radius: 0.375rem;
+    } */
+
+    /* &::-webkit-scrollbar-thumb {
+      background-color: #d4aa70;
+      border-radius: 100px;
+    } */
+
+    &::-webkit-scrollbar-thumb {
+      background-image: linear-gradient(180deg, #d7e7ee 5%, #217af4 100%);
+      box-shadow: inset 2px 2px 5px 0 rgba(#fff, 0.5);
+      border-radius: 100px;
     }
-}
+  }
 `;
-  
+
 const CategoryContainer = styled.div`
   display: flex;
   flex-direction: row;
@@ -180,11 +206,11 @@ const MeetsPostsContainer = styled.div`
   }
 `;
 
-const PostBtn = styled.div` 
+const PostBtn = styled.div`
   cursor: pointer;
-   position: fixed;
+  position: fixed;
   bottom: 1rem;
   right: 1rem;
-  `
+`;
 
 export default Meets;
