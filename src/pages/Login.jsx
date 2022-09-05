@@ -121,7 +121,9 @@ export const FormWrapper = styled.div`
 
 export const LoginWelcome = styled.section`
   div {
-    padding: 0 4.6875rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     img {
       height: 4.93875rem;
       width: 13rem;
