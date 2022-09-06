@@ -1,65 +1,62 @@
 import React, { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+
+import { useInfiniteQuery } from '@tanstack/react-query';
 import Post from "../components/Post";
 import { postApi } from "../shared/api";
 import { useInView } from "react-intersection-observer";
 import { queryKeys } from "../react-query/constants";
+
 import Loading from '../layout/Loading';
-import Nodata from "../layout/NoData";
-
-
+import NoData from '../layout/NoData';
 
 const Posts = () => {
   const navigate = useNavigate();
-  const area_ref = useRef();
-  const [areaSelected, setAreaSelected] = useState("ALL");
+
   const { ref, inView } = useInView();
-  const [search, setSearch] = useState(null);
   const searchRef = useRef();
   const accesstoken=localStorage.getItem("accessToken")
 
+  const [areaSelected, setAreaSelected] = useState('ALL');
+  const [search, setSearch] = useState(null);
 
-  const getPosts = async (pageParam = 0) => {
-    if (search) {
-      try {
-        const res = await postApi.getSearchPosts(areaSelected, search, pageParam);
-        const data = res.data.content;
-        const last = res.data.last;
-        return { data, nextPage: pageParam + 1, last };
-      } catch (err) {
-        console.log(err);
-      }
-    } else {
-      try {
-        const res = await postApi.getPosts(pageParam, areaSelected)
-        console.log(res.data);
-        const data = res.data.content;
-        const last = res.data.last;
-        return { data, nextPage: pageParam + 1, last };
-      } catch (err) {
-        console.log(err);
-        alert(err);
-      }
+
+const fetchPosts = async (pageParam,areaSelected, search) => {
+  console.log(search,'🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈')
+  if (search) {
+    try {
+      console.log(search,'search 들어와잇냐?')
+      const res = await postApi.getSearchPosts(areaSelected, search, pageParam);
+      const data = res.data.content;
+      const last = res.data.last;
+      return { data, nextPage: pageParam + 1, last };
+    } catch (err) {
+      console.log(err);
+    }
+  } else {
+    try {
+      console.log('search 없이 요청')
+      const res = await postApi.getPosts(pageParam, areaSelected)
+      const data = res.data.content;
+      const last = res.data.last;
+      return { data, nextPage: pageParam + 1, last };
+    } catch (err) {
+      console.log(err);
+      alert(err);
     }
   }
+}
 
+const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
+  [queryKeys.postList, areaSelected,search],
+  ({ pageParam = 0 }) => fetchPosts(pageParam,areaSelected,search),
+  {
+    getNextPageParam: (lastPage) =>
+      !lastPage.last ? lastPage.nextPage : undefined,
 
-
-
-  const { data, fetchNextPage, isFetchingNextPage, refetch } = useInfiniteQuery(
-    [queryKeys.postList, areaSelected, search],
-    ({ pageParam = 0 }) => getPosts(pageParam, areaSelected, search),
-    {
-      getNextPageParam: (lastPage) =>
-        !lastPage.last ? lastPage.nextPage : undefined,
-
-    }
-  );
-
-
-
+  }
+);
 
   useEffect(() => {
     if (inView) {
@@ -80,26 +77,29 @@ const Posts = () => {
   };
 
 
-  const handleArea = (e) => {
+  const onChangeArea = (e) => {
     setAreaSelected(e.target.value);
   };
+
+  console.log(data,'data')
 
   return (
     <>
       <MainDiv>
+
         <TopDiv>
           <Areabar>
-            <select onChange={handleArea} ref={area_ref}>
-              <option value="ALL">전국</option>
-              <option value="서울·경기·인천">서울·경기·인천</option>
-              <option value="강원">강원</option>
-              <option value="대구·경북">대구·경북</option>
-              <option value="부산·울산·경남">부산·울산·경남</option>
-              <option value="전북">전북</option>
-              <option value="광주·전남">광주·전남</option>
-              <option value="충북">충북</option>
-              <option value="충남">충남</option>
-              <option value="제주">제주</option>
+        <select onChange={onChangeArea} value={areaSelected}>
+            <option value="ALL">전국</option>
+          <option value="서울·경기·인천">서울·경기·인천</option>
+          <option value="강원">강원</option>
+          <option value="대구·경북">대구·경북</option>
+          <option value="부산·울산·경남">부산·울산·경남</option>
+          <option value="전북">전북</option>
+          <option value="광주·전남">광주·전남</option>
+          <option value="충북">충북</option>
+          <option value="충남">충남</option>
+          <option value="제주">제주</option>
             </select>
           </Areabar>
           <input
@@ -110,7 +110,10 @@ const Posts = () => {
           />
         </TopDiv>
         <PostDiv>
-          {data&&
+          {data.pages[0].data.length === 0 &&(
+            <NoData text={'게시물'} content={'게시물'}/>
+          )}
+          {
             (data.pages.map((page, idx) => {
               return (
                 <React.Fragment key={idx}>
@@ -131,7 +134,6 @@ const Posts = () => {
           {isFetchingNextPage ? <Loading /> : <div ref={ref}></div>}
           
         </PostDiv>
-        
 
       </MainDiv>
       {accesstoken&&
@@ -159,22 +161,18 @@ const Posts = () => {
         </svg>
       </Link>
     </PostBtn>
-    }
-      
+    }   
     </>
   )
-
 }
 
 
 export default Posts;
 
-
 const MainDiv = styled.div`
   width: 100%;
  
 `
-
 
 const PostDiv = styled.div`
   margin: 0.625rem auto;

@@ -13,18 +13,20 @@ import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-sy
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
 import "../App.css";
 import { Editor } from '@toast-ui/react-editor';
-import { useQueryClient, useMutation } from "@tanstack/react-query";
+
 import { amenityInfo } from "../shared/data";
-import { queryKeys } from "../react-query/constants";
+
+import { useAddPost } from "../react-query/hooks/post/useAddPost";
 
 const PostCU = () => {
+  const onAdd = useAddPost()
+
   const navigate = useNavigate();
   const postId = useParams().postId;
   const nickname = useSelector((state) => state.auth.nickname)
   const [imgSrc, setImgSrc] = useState("");
   const [check, setCheck] = useState({ airgun: false, shower: false, shop: false, cafe: false, park: false, sleep: false });
 
-  const queryClient = useQueryClient();
 
   const [content, setContent] = useState("");
   const editorRef = useRef();
@@ -68,7 +70,6 @@ const PostCU = () => {
     }
   }, []);
 
-  //usemutation을 사용해서 수정, 작성 해야함
   //useRef를 사용해서 이미지(랜더링 되도 값이 초기화되지 않음.)
 
   const previewImage = async (e) => {
@@ -94,38 +95,6 @@ const PostCU = () => {
     });
   }
 
-
-
-
-
-  const onSubmitPost = async (newPost) => {
-    if (!postId) {
-      try {
-        const post =await  postApi.newPost(newPost);
-        alert("게시글이 등록되었습니다!");
-      } catch (err) {
-        alert(err);
-      }
-    } else {
-      try {
-        const update =await postApi.updatePost(postId, newPost);
-        alert("게시글이 수정되었습니다!")
-      } catch (err) {
-        console.log(err);
-        alert(err);
-      }
-    }
-  };
-
-  const {mutate:onAdd} = useMutation(onSubmitPost, {
-    onSuccess: () => {
-      navigate(`/posts`);
-      return queryClient.invalidateQueries([queryKeys.postList])
-    },
-    onError: (err) => {
-      console.log(err.respose);
-    }
-  })
 
   const onSubmit = async(formData) => {
    
@@ -153,7 +122,7 @@ const PostCU = () => {
       thumbnailUrl: thumbnailUrl,
     };
 
-    onAdd(newPost)
+    onAdd({newPost, postId})
   }
 
 //toast ui 

@@ -6,8 +6,8 @@ import { useInView } from 'react-intersection-observer';
 import { meetsApi } from '../shared/api';
 import { thunderposts } from '../shared/data';
 import Loading from '../layout/Loading';
-import { useAllMeets } from '../react-query/hooks/useAllMeets';
-import { useSearchMeets } from '../react-query/hooks/useSearchMeets';
+
+
 import { queryKeys } from '../react-query/constants';
 import Navigate from '../layout/Navigate';
 
@@ -15,7 +15,8 @@ const MeetsAll = () => {
   const [search, setSearch] = useState(null);
   const [areaSelected, setAreaSelected] = useState('ALL');
 
-  const getPosts = async (pageParam = 0) => {
+  const fetchPosts = async (pageParam, areaSelected, search) => {
+  
     if (search) {
       try {
         const res = await meetsApi.getSearchPosts(
@@ -43,7 +44,7 @@ const MeetsAll = () => {
 
   const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
     [queryKeys.allMeets, areaSelected, search],
-    ({ pageParam = 0 }) => getPosts(pageParam),
+    ({ pageParam = 0 }) => fetchPosts(pageParam, areaSelected, search),
     {
       getNextPageParam: (lastPage) =>
         !lastPage.last ? lastPage.nextPage : undefined
@@ -79,13 +80,13 @@ const MeetsAll = () => {
       <Navigate text={'오픈 모임 리스트'} />
       <CategoryContainer>
         <select id="area" onChange={onChangeArea} value={areaSelected}>
-          <option value="ALL">전체</option>
-          <option value="서울·경기·인천">서울, 경기, 인천</option>
+        <option value="ALL">전국</option>
+          <option value="서울·경기·인천">서울·경기·인천</option>
           <option value="강원">강원</option>
-          <option value="대구·경북">대구, 경북</option>
-          <option value="부산·울산·경남">부산, 울산, 경남</option>
+          <option value="대구·경북">대구·경북</option>
+          <option value="부산·울산·경남">부산·울산·경남</option>
           <option value="전북">전북</option>
-          <option value="광주·전남">광주, 전남</option>
+          <option value="광주·전남">광주·전남</option>
           <option value="충북">충북</option>
           <option value="충남">충남</option>
           <option value="제주">제주</option>

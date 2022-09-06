@@ -24,7 +24,7 @@ const Meets = () => {
     <MeetsContainer>
       <CategoryContainer>
         <select id="area" onChange={onChangeArea} value={areaSelected}>
-          <option value="ALL">전체</option>
+          <option value="ALL">전국</option>
           <option value="서울·경기·인천">서울·경기·인천</option>
           <option value="강원">강원</option>
           <option value="대구·경북">대구·경북</option>
@@ -66,6 +66,7 @@ const Meets = () => {
         {meetsPosts.content.map((meet) => {
           return <Meet key={meet.thunderPostId} meet={meet} />;
         })}
+        
       </MeetsPostsContainer>
       {accesstoken&&
       <PostBtn>
@@ -100,8 +101,8 @@ const Meets = () => {
 
 const MeetsContainer = styled.div`
   div.scrollTest{
-    overflow-x: scroll;
-    overflow-y: hi;
+    overflow-x: auto;
+    
     &::-webkit-scrollbar{
       width:0.5rem;
       height: 0.5rem;

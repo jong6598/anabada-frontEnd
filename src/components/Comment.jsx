@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
 import { postApi } from "../shared/api";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
@@ -8,6 +7,7 @@ import { useSelector } from "react-redux";
 import { FiMoreHorizontal } from 'react-icons/fi';
 import { FiEdit2 } from 'react-icons/fi';
 import { RiDeleteBin5Line } from 'react-icons/ri';
+import { queryKeys } from "../react-query/constants";
 
 const Comment = ({ comment }) => {
   const [updateContent, setUpdateContent] = useState(comment.content);
@@ -41,7 +41,7 @@ const Comment = ({ comment }) => {
 
   const editCommentMutation = useMutation(editcomments, {
     onSuccess: () => {
-      queryClient.invalidateQueries(["commentList"])
+      queryClient.invalidateQueries([queryKeys.commentList])
       setEditing((prev) => !prev)
     },
     onError: (err) => {
@@ -66,7 +66,8 @@ const Comment = ({ comment }) => {
 
   const commentDeleteMutation = useMutation(deletecomments, {
     onSuccess: () => {
-      queryClient.invalidateQueries(["commentList"])
+      return (queryClient.invalidateQueries([queryKeys.commentList]),
+      queryClient.invalidateQueries([queryKeys.detailPost]))
     },
     onError: (err) => {
       console.log(err.respose);
