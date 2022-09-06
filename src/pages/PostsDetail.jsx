@@ -17,8 +17,9 @@ import { FiMoreHorizontal } from 'react-icons/fi';
 import { FiEdit2 } from 'react-icons/fi';
 import { RiDeleteBin5Line } from 'react-icons/ri';
 import { queryKeys } from "../react-query/constants";
-import {BiCommentX} from 'react-icons/bi'
+import { FiInbox } from 'react-icons/fi';
 import { BsFillChatDotsFill } from 'react-icons/bs';
+import Navigate from '../layout/Navigate';
 
 const PostsDetail = () => {
   const navigate = useNavigate();
@@ -146,7 +147,6 @@ const PostsDetail = () => {
   const submitComments = async (newComment) => {
     try {
       await postApi.newComments(`${params.postId}`, newComment);
-      alert('댓글을 등록하였습니다');
     } catch (err) {
       alert(err);
     }
@@ -154,28 +154,29 @@ const PostsDetail = () => {
 
   const submitCommentsMutation = useMutation(submitComments, {
     onSuccess: () => {
-      queryClient.invalidateQueries([queryKeys.detailPost]);
       write_ref.current.value = '';
+      queryClient.invalidateQueries([queryKeys.commentList]);
     },
     onError: (err) => {
       console.log(err.respose);
     }
   })
 
-    const onRequestChat = (nickname) => {
+  const onRequestChat = (nickname) => {
     navigate(`/chat/${nickname}`);
   };
 
 
   return (
-    <>
-      <TitleDiv>
+    <Container>
+    <Navigate text={'포스트'} padding={true}/>
+      <TitleDiv >
         <span>{postInfo.title}</span>
       </TitleDiv>
       <Box>
         <UserBox>
           <img src={postInfo.profileImg} alt="" />
-          <span>{postInfo.nickname}</span>
+          <span className='nickname'>{postInfo.nickname}</span>
           <svg
             width="2"
             height="10"
@@ -298,7 +299,7 @@ const PostsDetail = () => {
       <PostBox>
         <Viewer initialValue={postInfo.content} />
       </PostBox>
-
+      <ButtonContainer>
       {postInfo.nickname !== nickname ? (
         <HeartBtn
           onClick={() => {
@@ -348,6 +349,7 @@ const PostsDetail = () => {
           )}
         </HeartBtn>
       ) : null}
+      </ButtonContainer>
 
       <CommentBox>
         <CountBox>
@@ -389,7 +391,7 @@ const PostsDetail = () => {
         {isFetchingNextPage ? <p>스피너</p> : <div ref={ref} />}
         {comments.pages[0].data.length === 0 && 
         <NoDataDiv>
-        <BiCommentX/>
+        <FiInbox />
         <div>
           <p>아직 댓글이 없습니다.</p>
           <p>첫 댓글을 작성해 보세요.</p>
@@ -397,18 +399,26 @@ const PostsDetail = () => {
       </NoDataDiv> }
         
       </CommentBox>
-    </>
+    </Container>
   );
 };
 
 export default PostsDetail;
 
+const Container = styled.div`
+  
+`
+
 const Box = styled.div`
   display: flex;
   position: relative;
   justify-content: space-between;
+  padding: 0 1rem;
   .moreBtn {
     padding: 0;
+  }
+  .chatBtn{
+    color: #007AFF
   }
 `;
 
@@ -417,6 +427,7 @@ const TitleDiv = styled.div`
   font-size: 1.3rem;
   font-weight: 600;
   margin-bottom: 1rem;
+  padding: 0 1rem;
 `;
 
 const UserBox = styled.div`
@@ -424,18 +435,32 @@ const UserBox = styled.div`
   align-items: center;
   font-size: 0.9375rem;
   font-weight: 400;
+
   img {
     height: 1.5rem;
     width: 1.5rem;
     border-radius: 1rem;
+    margin-right: 0.5rem;
   }
   span {
-    padding-left: 0.3125rem;
-    padding-right: 0.3125rem;
+    font-style: normal;
+    font-weight: 300;
+    font-size: 0.8125rem;
+    margin: 0 0.33rem;
   }
   button {
     margin: 0;
   }
+  .nickname {
+      font-style: normal;
+      font-weight: 600;
+      font-size: 0.938rem;
+      line-height: 1.125rem;
+      /* identical to box height */
+      margin-right: 0.3125rem;
+      margin-left: 0;
+      color: #000000;
+    }
 `;
 
 const ThumbnailDiv = styled.div`
@@ -457,7 +482,8 @@ const AddressBox = styled.div`
   align-items: center;
   height: 2.875rem;
   width: 100%;
-  padding: 0.9375rem, 1rem, 0.9375rem, 1rem;
+  padding: 0 1rem;
+  /* padding: 0.9375rem, 1rem, 0.9375rem, 1rem; */
 
   span {
     font-size: 0.875rem;
@@ -475,6 +501,7 @@ const AddressBox = styled.div`
 const Amenity = styled.div`
   display: flex;
   flex-direction: column;
+  padding: 0 1rem;
 
   label {
     height: 2.375rem;
@@ -503,7 +530,8 @@ const PostBox = styled.div`
   margin-top: 0.5rem;
   width: 100%;
   top: 55.625rem;
-  padding: 1rem, 1rem, 1, 5rem, 1rem;
+  padding: 0.5rem 1rem;
+  /* padding: 1rem, 1rem, 1, 5rem, 1rem; */
   font-size: 0.9375rem;
   font-weight: 400;
 `;
@@ -511,17 +539,19 @@ const PostBox = styled.div`
 const CommentBox = styled.div`
   display: flex;
   flex-direction: column;
+  padding: 0 1rem;
 `;
 
 const CountBox = styled.div`
   display: flex;
   align-items: center;
-  height: 2.5rem;
+  /* height: 2.5rem; */
   width: 100%;
   left: 0rem;
   top: 114.8125rem;
   border-radius: 0rem;
-  padding: 0.625rem, 1rem, 0.625rem, 1rem;
+  padding: 0.5rem 0;
+  /* padding: 0.625rem, 1rem, 0.625rem, 1rem; */
   span {
     font-size: 0.8125rem;
     line-height: 1.25rem;
@@ -534,10 +564,10 @@ const WriteComment = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-top: 0.5625rem;
+  /* margin-top: 0.5625rem; */
   height: 3.125rem;
   width: 100%;
-  padding: 0.5rem, 1rem, 0.5rem, 1rem;
+  /* padding: 0.5rem, 1rem, 0.5rem, 1rem; */
   div {
     display: flex;
     align-items: center;
@@ -577,6 +607,10 @@ const WriteComment = styled.div`
   }
 `;
 
+const ButtonContainer = styled.div`
+padding: 0 1rem;
+`
+
 const HeartBtn = styled.button`
   display: flex;
   align-items: center;
@@ -584,7 +618,8 @@ const HeartBtn = styled.button`
   justify-content: center;
   height: 2rem;
   width: 100%;
-  border-radius: 0.25rem;
+  
+  border-radius: 0.8rem;
   background-color: #eff7ff;
   padding: 0.0625rem, 0.625rem, 0.0625rem, 0.625rem;
   label {

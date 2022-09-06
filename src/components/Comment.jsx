@@ -8,6 +8,9 @@ import { FiMoreHorizontal } from 'react-icons/fi';
 import { FiEdit2 } from 'react-icons/fi';
 import { RiDeleteBin5Line } from 'react-icons/ri';
 import { queryKeys } from "../react-query/constants";
+import { BsFillChatDotsFill } from 'react-icons/bs';
+import { useNavigate } from "react-router-dom";
+
 
 const Comment = ({ comment }) => {
   const [updateContent, setUpdateContent] = useState(comment.content);
@@ -16,7 +19,7 @@ const Comment = ({ comment }) => {
   const nickname = useSelector((state) => state.auth.nickname)
 
   const [showModal, setShowModal] = useState(false);
-
+  const navigate = useNavigate();
 
   //댓글 수정 
   const startEditing = () => {
@@ -49,7 +52,9 @@ const Comment = ({ comment }) => {
     }
   })
 
-
+  const onRequestChat = (nickname) => {
+    navigate(`/chat/${nickname}`);
+  };
 
   //댓글 삭제
   const deletecomments = async () => {
@@ -103,8 +108,14 @@ const Comment = ({ comment }) => {
             <CommentsCreateAt>{comment.createdAt}</CommentsCreateAt>
             <CommentsContent>{comment.content}</CommentsContent>
           </Comments>
-          {comment.nickname === nickname && (
-              <button className="moreBtn" onClick={onShowModal}>
+          {comment.nickname !== nickname ? 
+            <button
+            className="chatBtn"
+            onClick={() => onRequestChat(comment.nickname)}
+          >
+            <BsFillChatDotsFill />
+          </button>
+         :(<button className="moreBtn" onClick={onShowModal}>
                 <FiMoreHorizontal />
               </button>
                )}
@@ -170,6 +181,12 @@ const ViewComments = styled.div`
       width: 2rem;
       border-radius: 1rem;
       margin-right: 0.5rem;
+    }
+
+    .chatBtn{
+      svg{
+        color: #007AFF;
+      }
     }
     
 `

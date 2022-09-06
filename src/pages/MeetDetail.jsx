@@ -381,14 +381,13 @@ const Container = styled.div`
     p {
       font-style: normal;
       font-weight: 300;
-      font-size: 13px;
-      line-height: 143.84%;
-      margin: 0 5px;
+      font-size: 0.8125rem;
+      margin: 0 0.33rem;
     }
     img {
       width: 1.5rem;
       height: 1.5rem;
-      margin-right: 6px;
+      margin-right: 0.33rem;
       border-radius: 50%;
       border: 1px solid #ececee;
     }
@@ -398,7 +397,7 @@ const Container = styled.div`
       font-size: 0.938rem;
       line-height: 1.125rem;
       /* identical to box height */
-      margin-right: 5px;
+      margin-right: 0.3125rem;
       margin-left: 0;
       color: #000000;
     }
@@ -411,7 +410,7 @@ const SelectContainer = styled.div`
   background: rgb(255, 255, 255);
   border: 1px solid rgb(230, 230, 230);
   box-shadow: rgb(0 0 0 / 15%) 0px 2px 4px 0px;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   /* padding: 4px 0px; */
   color: rgb(61, 61, 61);
   bottom: auto;

@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
-import NoData from '../layout/NoData';
 
 const PopularMeets = ({ popularPosts }) => {
 
@@ -37,8 +36,8 @@ const PopularMeets = ({ popularPosts }) => {
             </div>
             <div className="infoBox">
               <div className="dateBox">
-                {difference(date1, new Date(meet.endDate))>0?
-                  <p className="dDay">D-{difference(date1, new Date(meet.endDate))}</p>
+                {difference(date1, new Date(meet.endDate))>=0?
+                  <p className="dDay">D-{difference(date1, new Date(meet.endDate))===0?'Day' : difference(date1, new Date(meet.endDate)) }</p>
                   :<p className="dayClosing">마감</p>
                 }
                 <p className="endDate">~{meet.endDate}</p>
