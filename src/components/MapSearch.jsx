@@ -83,7 +83,7 @@ const MapSearch = () => {
 
   const searchBeach = (searchValue) => {
     const length = searchBeach.length;
-    const test = beachname.find(el=>);
+    // const test = beachname.find(el=>);
     console.log(test);
     return (debounceRef.current = null);
   };
