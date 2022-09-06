@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import styled from 'styled-components';
-import { useAddMeet } from '../react-query/hooks/useAddMeet';
+
 import { storage } from '../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useForm } from "react-hook-form";
@@ -23,6 +23,7 @@ const MeetAdd = () => {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { isValid },
   } = useForm({
     mode: "onBlur",
@@ -95,7 +96,7 @@ const MeetAdd = () => {
   const {mutate:onAdd} = useMutation(onSubmitMeet, {
     onSuccess: () => {
       navigate(`/meets`);
-      return queryClient.invalidateQueries([queryKeys.postList])
+      return queryClient.invalidateQueries([queryKeys.meets])
     },
     onError: (err) => {
       console.log(err.respose);
@@ -130,6 +131,7 @@ const MeetAdd = () => {
   };
   
   
+  console.log(watch(),"문제 확인")
 
   console.log(isValid);
 

@@ -18,7 +18,7 @@ import { FiEdit2 } from 'react-icons/fi';
 import { RiDeleteBin5Line } from 'react-icons/ri';
 import { queryKeys } from "../react-query/constants";
 import {BiCommentX} from 'react-icons/bi'
-import Nodata from "../layout/NoData";
+import { BsFillChatDotsFill } from 'react-icons/bs';
 
 const PostsDetail = () => {
   const navigate = useNavigate();
@@ -95,7 +95,6 @@ const PostsDetail = () => {
   const postDelete = async (postId) => {
     try {
       const res = await postApi.deletePost(postId);
-      navigate('/posts');
     } catch (err) {
       console.log(err);
       alert(err);
@@ -105,7 +104,9 @@ const PostsDetail = () => {
   const { mutate: onDelete } = useMutation(postDelete, {
     onSuccess: () => {
       queryClient.invalidateQueries([queryKeys.postList])
+      navigate('/posts');
       alert('게시글이 삭제되었습니다')
+      
     },
     onError: (err) => {
       console.log(err.respose);
@@ -134,11 +135,7 @@ const PostsDetail = () => {
 
   const { mutate: onToggleLike } = useMutation(toggleLike, {
     onSuccess: () => {
-      return(
-        queryClient.invalidateQueries([queryKeys.detailPost]),
-        queryClient.invalidateQueries([queryKeys.postList])
-      )
-      
+      return queryClient.invalidateQueries([queryKeys.postList])
     },
     onError: (err) => {
       console.log(err.respose);
@@ -164,6 +161,10 @@ const PostsDetail = () => {
       console.log(err.respose);
     }
   })
+
+    const onRequestChat = (nickname) => {
+    navigate(`/chat/${nickname}`);
+  };
 
 
   return (
@@ -213,9 +214,12 @@ const PostsDetail = () => {
             <FiMoreHorizontal />
           </button>
         ) : (
-          <button className="moreBtn" onClick={() => navigate('/')}>
-            📨
-          </button>
+          <button
+          className="chatBtn"
+          onClick={() => onRequestChat(postInfo.nickname)}
+        >
+          <BsFillChatDotsFill />
+        </button>
         )}
         {showModal && (
           <SelectContainer>
@@ -383,7 +387,7 @@ const PostsDetail = () => {
         }
         
         {isFetchingNextPage ? <p>스피너</p> : <div ref={ref} />}
-        {comments.pages.data == null && 
+        {comments.pages[0].data.length === 0 && 
         <NoDataDiv>
         <BiCommentX/>
         <div>

@@ -24,8 +24,7 @@ export function useAddMeet() {
       queryClient.invalidateQueries([queryKeys.meets]);
       queryClient.invalidateQueries([queryKeys.allMeets]);
       alert('모임이 삭제되었습니다');
-      // const title = '모임이 삭제되었습니다';
-      // toast({ title, status: 'success' });
+ 
       navigate('/meets');
     },
     onError: () => {
