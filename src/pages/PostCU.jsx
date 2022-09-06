@@ -1,4 +1,3 @@
-import { upload } from "@testing-library/user-event/dist/upload";
 import React, { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
@@ -6,7 +5,6 @@ import { css } from "styled-components";
 import styled from "styled-components";
 import { postApi } from "../shared/api";
 import { useSelector } from "react-redux";
-import { HiOutlinePhotograph } from "react-icons/hi";
 import { storage } from "../firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import '@toast-ui/editor/dist/toastui-editor.css';
@@ -30,7 +28,6 @@ const PostCU = () => {
 
   const [content, setContent] = useState("");
   const editorRef = useRef();
-
 
   const {
     register,
@@ -106,15 +103,13 @@ const PostCU = () => {
       try {
         const post =await  postApi.newPost(newPost);
         alert("게시글이 등록되었습니다!");
-        navigate("/posts");
       } catch (err) {
         alert(err);
       }
     } else {
       try {
-        const update =await postApi.updatePost(newPost);
+        const update =await postApi.updatePost(postId, newPost);
         alert("게시글이 수정되었습니다!")
-        navigate(`/posts`);
       } catch (err) {
         console.log(err);
         alert(err);
@@ -124,8 +119,8 @@ const PostCU = () => {
 
   const {mutate:onAdd} = useMutation(onSubmitPost, {
     onSuccess: () => {
-      console.log('호출확인ㄴㄴㄴ')
-      queryClient.invalidateQueries([queryKeys.postList])
+      navigate(`/posts`);
+      return queryClient.invalidateQueries([queryKeys.postList])
     },
     onError: (err) => {
       console.log(err.respose);
@@ -193,22 +188,27 @@ const PostCU = () => {
 
         <Element>
           <label>대표 이미지 등록</label>
-          <input
-            type="file"
-            accept="image/*"
-            {...register("postImg", {
-              onChange: (e) => previewImage(e)
-            })}
-          />
+          <ImageLabel>
+            {imgSrc ? <img src={imgSrc} alt="" /> : <div className="noneImg" />}
+            <div className="buttonDiv">
+                <input
+                type="file"
+                accept="image/*"
+                id="img_input"
+                {...register("postImg", {
+                  onChange: (e) => previewImage(e)
+                })}
+                />
+                <label className="uploadBtn" htmlFor="img_input">첨부</label>
+              </div>
+          </ImageLabel>
         </Element>
 
-        <ImageLabel>
-          {imgSrc ? <img src={imgSrc} alt="" /> : <HiOutlinePhotograph />}
-        </ImageLabel>
+      
 
         <Element>
           <label>위치 정보</label>
-          <p>위치를 정확하게 입력해주세요.</p>
+          <p className="warningtext">위치를 정확하게 입력해주세요.</p>
           <select
             name="area"
             id="area"
@@ -216,7 +216,7 @@ const PostCU = () => {
               required: true,
             })}
           >
-            <option value="서울·경기·인천">서울·경기·인천</option>
+          <option value="서울·경기·인천">서울·경기·인천</option>
           <option value="강원">강원</option>
           <option value="대구·경북">대구·경북</option>
           <option value="부산·울산·경남">부산·울산·경남</option>
@@ -330,20 +330,16 @@ const PostBtnDiv = styled.div`
 
 
 const Element = styled.div`
-  display: block;
-  text-align: left;
   flex-direction: column;
   display: flex;
-  justify-content: left;
   font-size: 0.875rem;
   margin-top: 1.125rem;
   font-weight: 500;
   input {
-    padding: 0.75rem 0.625rem;
-    padding-left: 0.625rem;
+    padding: 0.72rem 0.625rem;
     border-radius: 0.3125rem;
     border: 0.0625rem solid #D1D1D6;
-
+    width:100%;
   }
   select{
     padding: 0.75rem 0.625rem;
@@ -351,9 +347,9 @@ const Element = styled.div`
     border-radius: 0.3125rem;
     border: 0.0625rem solid #D1D1D6;
   }
-  p {
+  .warningtext {
     color: #FF3B30;
-    font-weight: 300;
+    font-weight: 400;
     height: 1.25rem;
     width: 100%;
     margin-top: 0.5rem;
@@ -364,20 +360,48 @@ const Element = styled.div`
   }
 `
 
-const ImageLabel = styled.label`
+const ImageLabel = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
   border-radius: 1rem;
   cursor: pointer;
-  img{
-    width: 100%;
-  }
-  svg {
-    margin: 1rem 3rem;
-    font-size: 5rem;
-  }
 
+  img{
+    width: 6rem;
+    height: 5.8rem; 
+    background-color:  #D9D9D9;
+    border-radius: 0.5rem;
+    border:none;
+  }
+  .noneImg{
+    width: 6rem;
+    height: 5.8rem; 
+    background-color:  #D9D9D9;
+    border-radius: 0.5rem;
+    border: 0.0625rem solid  #D9D9D9 ;
+  }
+  
+  .buttonDiv{
+    display: flex;
+    flex-direction: column;
+    margin-left: 0.5rem;
+    width: 100%;
+    input{
+      width: 100%;
+    }
+    input::-webkit-file-upload-button{
+    display: none;
+  }
+    .uploadBtn{
+      background-color: #EFF7FF;
+      margin-top: 0.75rem;
+      height: 2rem;
+      width: 4.25rem;
+      border-radius: 0.25rem;
+      border: none;
+      text-align: center;
+      padding-top: 0.5rem;
+    }
+  }
 `
 
 const SelectAmenity = styled.div`
