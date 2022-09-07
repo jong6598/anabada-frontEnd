@@ -86,7 +86,6 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/signup/welcome" element={<Welcome />} />
             <Route path="/posts" element={<Posts />} />
-            <Route path="/posts/:postId" element={<PostsDetail />} />
             <Route path="/posts/upload" element={<PostCU />} />
             <Route path="/posts/:postId/edit" element={<PostCU />} />
             <Route path="*" element={<NotFound />} />
@@ -99,6 +98,7 @@ function App() {
             <Route path="/meetsAll" element={<MeetsAll />} />
           </Route>
           <Route path="/meets/:thunderPostId" element={<MeetDetail />} />
+          <Route path="/posts/:postId" element={<PostsDetail />} />
           <Route path="/chat/:nickname" element={<Chat />} />
           <Route path="/room" element={<ChatRoom />} />
           <Route path="/notifications" element={<Notification />} />

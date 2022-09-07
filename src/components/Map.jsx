@@ -51,7 +51,7 @@ const KakaoMap = memo(() => {
 
   return (
     <>
-      <MapWrapper center={{ lat: 36.350701, lng: 127.870667 }} level={12}>
+      <MapWrapper center={{ lat: 36.350701, lng: 127.870667 }} level={13}>
         <MarkerClusterer
           averageCenter={true} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
           minLevel={10} // 클러스터 할 최소 지도 레벨

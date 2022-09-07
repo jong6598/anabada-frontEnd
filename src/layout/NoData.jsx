@@ -25,6 +25,7 @@ const NoDataDiv = styled.div`
   width: 100vw;
   height: 100vh;
   position: fixed;
+  z-index: -1;
   top: 0;
   left: 0;
   display: flex;
