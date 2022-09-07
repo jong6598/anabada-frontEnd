@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { postApi } from '../shared/api';
@@ -83,10 +83,6 @@ const PostsDetail = () => {
       fetchNextPage();
     }
   }, [inView]);
-
-  // useEffect(() => {
-  //   queryClient.invalidateQueries("post");
-  // }, [liked]);
 
   const onShowModal = () => {
     setShowModal((prev) => !prev);
@@ -456,7 +452,6 @@ const UserBox = styled.div`
       font-weight: 600;
       font-size: 0.938rem;
       line-height: 1.125rem;
-      /* identical to box height */
       margin-right: 0.3125rem;
       margin-left: 0;
       color: #000000;
@@ -473,7 +468,6 @@ const ThumbnailDiv = styled.div`
   background-repeat: no-repeat;
   img {
     width: 100%;
-    /* object-fit: cover; */
   }
 `;
 
@@ -483,7 +477,6 @@ const AddressBox = styled.div`
   height: 2.875rem;
   width: 100%;
   padding: 0 1rem;
-  /* padding: 0.9375rem, 1rem, 0.9375rem, 1rem; */
 
   span {
     font-size: 0.875rem;
@@ -526,12 +519,10 @@ const Amenity = styled.div`
 `;
 
 const PostBox = styled.div`
-  /* border-top: 0.3rem dashed #f1f1f6; */
   margin-top: 0.5rem;
   width: 100%;
   top: 55.625rem;
   padding: 0.5rem 1rem;
-  /* padding: 1rem, 1rem, 1, 5rem, 1rem; */
   font-size: 0.9375rem;
   font-weight: 400;
 `;
@@ -545,13 +536,11 @@ const CommentBox = styled.div`
 const CountBox = styled.div`
   display: flex;
   align-items: center;
-  /* height: 2.5rem; */
   width: 100%;
   left: 0rem;
   top: 114.8125rem;
   border-radius: 0rem;
   padding: 0.5rem 0;
-  /* padding: 0.625rem, 1rem, 0.625rem, 1rem; */
   span {
     font-size: 0.8125rem;
     line-height: 1.25rem;
@@ -564,10 +553,8 @@ const WriteComment = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  /* margin-top: 0.5625rem; */
   height: 3.125rem;
   width: 100%;
-  /* padding: 0.5rem, 1rem, 0.5rem, 1rem; */
   div {
     display: flex;
     align-items: center;

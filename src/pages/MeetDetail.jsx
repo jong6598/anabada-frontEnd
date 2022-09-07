@@ -7,7 +7,6 @@ import { FiMoreHorizontal } from 'react-icons/fi';
 import { BsFillChatDotsFill } from 'react-icons/bs';
 import { FiEdit2 } from 'react-icons/fi';
 import { RiDeleteBin5Line } from 'react-icons/ri';
-// import { meet } from '../shared/data';
 import { useDetailMeet } from '../react-query/hooks/useDetailMeet';
 import { useSelector } from 'react-redux';
 import { useAddMeet } from '../react-query/hooks/useDeleteMeet';

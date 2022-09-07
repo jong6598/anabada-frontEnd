@@ -40,11 +40,11 @@ const MeetAdd = () => {
         return;
       }
 
-      console.log(new Date().toISOString().split('T')[0])
+     
 
 
       const data = meetInfo.data;
-      console.log(data, "이전 정보 제대로 오는가")
+    
       setValue("title", data.title);
       setValue("area", data.area);
       setValue("address", data.address);
@@ -109,7 +109,7 @@ const MeetAdd = () => {
     let getThumbnailUrl;
 
     if (formData.thumbnailUrl.length > 0) {
-      console.log(formData.thumbnailUrl[0],"test")
+     
       const uploaded_file = await uploadBytes(
         ref(storage, `images/meet/${formData.thumbnailUrl[0].name}`),
         formData.thumbnailUrl[0],
@@ -131,9 +131,9 @@ const MeetAdd = () => {
   };
   
   
-  console.log(watch(),"문제 확인")
 
-  console.log(isValid);
+
+
 
   return (
     <Container>
