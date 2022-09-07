@@ -31,8 +31,8 @@ export function useAddPost() {
 
   const { mutate: onAdd } = useMutation(onSubmitPost, {
     onSuccess: () => {
-      queryClient.invalidateQueries([queryKeys.postList])
       navigate('/posts')
+      return queryClient.invalidateQueries([queryKeys.postList])
     },
     onError: (err) => {
       console.log(err.respose);
