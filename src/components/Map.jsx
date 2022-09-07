@@ -30,9 +30,8 @@ const KakaoMap = memo(() => {
   }, []);
 
   // fetcher
-  const fetchingSpot = () => {};
-  // const fetchingSpot = () =>
-  //   axios.get(`http://${process.env.REACT_APP_API_SERVER}/api/beach`);
+  const fetchingSpot = () =>
+    axios.get(`http://${process.env.REACT_APP_API_SERVER}/api/beach`);
   // react-query
   const { data, isLoading, isFetching, isError, error } = useQuery(
     ["spotData"],
