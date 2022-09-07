@@ -1,26 +1,26 @@
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
-import { memo, useCallback, useState } from 'react';
-import styled, { keyframes } from 'styled-components';
-import checkedWeather from '../styles/weather';
-import { Map, CustomOverlayMap, MarkerClusterer } from 'react-kakao-maps-sdk';
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { memo, useCallback, useState } from "react";
+import styled, { keyframes } from "styled-components";
+import checkedWeather from "../styles/weather";
+import { Map, CustomOverlayMap, MarkerClusterer } from "react-kakao-maps-sdk";
 
 const { kakao } = window;
 
 const KakaoMap = memo(() => {
   const [picker, setPicker] = useState({
     beachId: -1,
-    beachName: '',
-    beachNum: '',
-    pcp: '',
-    pop: '',
-    pty: '',
-    sky: '',
-    tmp: '',
-    wav: '',
-    wsd: '',
+    beachName: "",
+    beachNum: "",
+    pcp: "",
+    pop: "",
+    pty: "",
+    sky: "",
+    tmp: "",
+    wav: "",
+    wsd: "",
     x: 0,
-    y: 0
+    y: 0,
   });
 
   const handlePicker = useCallback((pickerInfo) => {
@@ -30,21 +30,22 @@ const KakaoMap = memo(() => {
   }, []);
 
   // fetcher
-  const fetchingSpot = () =>
-    axios.get(`http://${process.env.REACT_APP_API_SERVER}/api/beach`);
+  const fetchingSpot = () => {};
+  // const fetchingSpot = () =>
+  //   axios.get(`http://${process.env.REACT_APP_API_SERVER}/api/beach`);
   // react-query
   const { data, isLoading, isFetching, isError, error } = useQuery(
-    ['spotData'],
+    ["spotData"],
     fetchingSpot,
     {
       staleTime: 1000 * 60 * 30,
       refetchOnWindowFocus: false,
       onSuccess(data) {
-        console.log('Map Data를 성공적으로 fetch했습니다. ::: ');
+        console.log("Map Data를 성공적으로 fetch했습니다. ::: ");
       },
       onError(err) {
-        console.log('에러가 발생했습니다!! ::: ', err);
-      }
+        console.log("에러가 발생했습니다!! ::: ", err);
+      },
     }
   );
 
@@ -58,37 +59,40 @@ const KakaoMap = memo(() => {
           styles={[
             {
               // calculator 각 사이 값 마다 적용될 스타일을 지정한다
-              width: '30px',
-              height: '30px',
-              background: '#b6d9ff',
-              borderRadius: '15px',
-              color: '#000',
-              textAlign: 'center',
-              fontWeight: 'bold',
-              lineHeight: '31px'
+              width: "30px",
+              height: "30px",
+              background: "#b6d9ff",
+              borderRadius: "15px",
+              color: "#000",
+              textAlign: "center",
+              fontWeight: "bold",
+              lineHeight: "31px",
             },
             {
-              width: '40px',
-              height: '40px',
-              background: '#5dabfd',
-              borderRadius: '20px',
-              color: '#000',
-              textAlign: 'center',
-              fontWeight: 'bold',
-              lineHeight: '41px'
+              width: "50px",
+              height: "50px",
+              background: "#5dabfd",
+              borderRadius: "50px",
+              color: "#000",
+              textAlign: "center",
+              fontWeight: "bold",
+              lineHeight: "41px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
             },
             {
-              width: '50px',
-              height: '50px',
-              background: '#007AFF',
+              width: "70px",
+              height: "70px",
+              background: "#007AFF",
               backgroundImage: 'url("/assets/background.png")',
 
-              borderRadius: '25px',
-              color: '#000',
-              textAlign: 'center',
-              fontWeight: 'bold',
-              lineHeight: '51px'
-            }
+              borderRadius: "50px",
+              color: "#000",
+              textAlign: "center",
+              fontWeight: "bold",
+              lineHeight: "51px",
+            },
           ]}
         >
           {data.data.map((el) => {
@@ -99,7 +103,7 @@ const KakaoMap = memo(() => {
                 key={el.beachId}
                 position={{
                   lat: el.x,
-                  lng: el.y
+                  lng: el.y,
                 }}
                 xAnchor={0.3}
                 yAnchor={0.5}
@@ -171,7 +175,7 @@ const KakaoMap = memo(() => {
                   <span class="material-symbols-outlined">umbrella</span>
                 </div>
                 <div>
-                  {picker.pcp === '강수없음' ? (
+                  {picker.pcp === "강수없음" ? (
                     <span>강수량 : {picker.pcp}</span>
                   ) : (
                     <span>강수량 : {picker.pcp}mm</span>

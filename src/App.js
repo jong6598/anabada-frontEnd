@@ -1,37 +1,37 @@
-import './App.css';
-import { ThemeProvider } from 'styled-components';
-import { Routes, Route } from 'react-router-dom';
-import theme from './styles/theme';
-import GlobalStyle from './styles/global';
-import Meets from './pages/Meets';
-import AddMeet from './pages/MeetAdd';
-import MeetDetail from './pages/MeetDetail';
-import Header from './components/Header';
-import MeetsAll from './pages/MeetsAll';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Signup from './pages/SignUp';
-import NotFound from './pages/NotFound';
-import PostCU from './pages/PostCU';
-import PostsDetail from './pages/PostsDetail';
-import Posts from './pages/Posts';
-import Welcome from './pages/Welcome';
-import Mypage from './pages/Mypage';
-import MyPosts from './pages/MyPosts';
-import MyMeets from './pages/MyMeets';
-import { useSelector, useDispatch } from 'react-redux';
-import { useNotification } from './shared/hooks/notificationHook';
-import { useEffect } from 'react';
-import { Cookies } from 'react-cookie';
-import Notification from './pages/Notification';
-import { api } from './shared/api';
-import Chat from './pages/Chat/Chat';
-import ChatRoom from './pages/Chat/ChatRoom';
-import { userThunk } from './redux/auth-slice';
+import "./App.css";
+import { ThemeProvider } from "styled-components";
+import { Routes, Route } from "react-router-dom";
+import theme from "./styles/theme";
+import GlobalStyle from "./styles/global";
+import Meets from "./pages/Meets";
+import AddMeet from "./pages/MeetAdd";
+import MeetDetail from "./pages/MeetDetail";
+import Header from "./components/Header";
+import MeetsAll from "./pages/MeetsAll";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Signup from "./pages/SignUp";
+import NotFound from "./pages/NotFound";
+import PostCU from "./pages/PostCU";
+import PostsDetail from "./pages/PostsDetail";
+import Posts from "./pages/Posts";
+import Welcome from "./pages/Welcome";
+import Mypage from "./pages/Mypage";
+import MyPosts from "./pages/MyPosts";
+import MyMeets from "./pages/MyMeets";
+import { useSelector, useDispatch } from "react-redux";
+import { useNotification } from "./shared/hooks/notificationHook";
+import { useEffect } from "react";
+import { Cookies } from "react-cookie";
+import Notification from "./pages/Notification";
+import { api } from "./shared/api";
+import Chat from "./pages/Chat/Chat";
+import ChatRoom from "./pages/Chat/ChatRoom";
+import { userThunk } from "./redux/auth-slice";
 
 function App() {
   const cookies = new Cookies();
-  const getCookies = cookies.get('refreshToken');
+  const getCookies = cookies.get("refreshToken");
   const dispatch = useDispatch();
 
   // 새로고침 시 유저정보 리덕스에 재설정
@@ -41,7 +41,7 @@ function App() {
       return;
     } else {
       // 로그인 한 유저가 유저이면 새로고침 시 유저정보를 요청함
-      const getAccess = localStorage.getItem('accessToken');
+      const getAccess = localStorage.getItem("accessToken");
       dispatch(userThunk(getAccess));
     }
   }, []);
@@ -57,18 +57,18 @@ function App() {
   useEffect(() => {
     // 로그인을 했을 때 최초 쌓인 뱃지 요청하기(이후는 소캣 이용해서 업데이트 된다)
     if (getCookies !== undefined) {
-      const accessToken = localStorage.getItem('accessToken');
+      const accessToken = localStorage.getItem("accessToken");
       api
         .get(`/notifications`, {
           headers: {
-            Authorization: accessToken
-          }
+            Authorization: accessToken,
+          },
         })
         .then((res) => {
           return setNotifications((prev) => {
             return {
               ...prev,
-              isBadge: res.data?.badge
+              isBadge: res.data?.badge,
             };
           });
         });
@@ -80,7 +80,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <GlobalStyle />
         <Routes>
-          <Route path="/" element={<Header />}>
+          <Route path="/" element={<Header notifications={notifications} />}>
             <Route index element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
