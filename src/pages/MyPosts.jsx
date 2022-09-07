@@ -16,12 +16,12 @@ const MyPosts = () => {
     const [filter, setFilter] = useState(location.state);
     
 
-    const getMyPosts = async (pageParam=1, filter) => {
+    const getMyPosts = async (pageParam=0, filter) => {
         try {
-            console.log(filter, "필터 확인하기")
             const res = await myApi.getMyPosts(filter, pageParam)
-            const data = res.data.posts.content
-            const last = res.data.posts.last
+            console.log(res, "데이터 형식확인")
+            const data = res.data.content
+            const last = res.data.last
             return { data, nextPage: pageParam + 1, last };
         } catch (err) {
             console.log(err);
@@ -31,7 +31,7 @@ const MyPosts = () => {
 
     const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
         [queryKeys.myPostsList, filter],
-        ({ pageParam = 1 }) => getMyPosts(pageParam, filter),
+        ({ pageParam = 0 }) => getMyPosts(pageParam, filter),
         {
             getNextPageParam: (lastPage) =>
                 !lastPage.last ? lastPage.nextPage : undefined,
