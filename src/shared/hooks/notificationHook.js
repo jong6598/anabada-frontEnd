@@ -21,8 +21,6 @@ export const useNotification = (userId) => {
       //   return;
       // };
 
-      console.log(":: userID입니다 :: ", userId);
-
       // 소켓과 스톰프에 아무것도 할당된 것이 없다면, 즉 socket 객체가 나오지 않거나 stomp가 소켓 위에 올라가지 않는다면 종료
       // 그럼 이런 경우는 언제 있을까? => 방어코드. ts에서는 유효함!
       if (!socketRef || !stompClientRef) return;
@@ -31,15 +29,18 @@ export const useNotification = (userId) => {
         subscriptionRef.current = stompClientRef.current?.subscribe(
           `/topic/notification/${userId}`,
           (message) => {
-            console.log(":: 소켓이 작동합니다 ::");
-            console.log(`:: message ::: ${message} ::`);
             const body = JSON.parse(message.body);
-            console.log(`:: body ::: ${body} ::`);
+            console.log(body);
             setNotifications((prev) => {
               // 실험해보고 false와 관련된 건 알아서 삭제하는 로직을 추가해보자! filter 메소드?
+              console.log("prev::: ", prev);
+              console.log("body::: ", body);
+              const Body = {
+                isBadge: body.badge,
+              };
               return {
                 ...prev,
-                ...body,
+                ...Body,
               };
             });
           }

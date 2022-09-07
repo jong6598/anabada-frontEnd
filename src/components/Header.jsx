@@ -89,8 +89,6 @@ const Header = memo(({ notifications }) => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  console.log("::: notifications 헤더 안 :::", notifications);
-
   return (
     <>
       <HeaderWrapper style={{ marginTop: `${gapY.current}px` }}>
@@ -117,7 +115,7 @@ const Header = memo(({ notifications }) => {
               <>
                 <div className="header__user__info header__user__info-islogin">
                   <Link to="/notifications">
-                    <NotificationContainer noti={notifications}>
+                    <NotificationContainer noti={notifications?.isBadge}>
                       <GrNotification />
                       <div className="notification__red"></div>
                     </NotificationContainer>

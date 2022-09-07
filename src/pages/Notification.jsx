@@ -10,7 +10,7 @@ import NotificationCompo from "../components/NotificationCompo";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { queryKeys } from "../react-query/constants";
 
-const Notification = () => {
+const Notification = ({ setNotifications }) => {
   const lastNotiRef = useRef();
   const navigate = useNavigate();
   // const { alertHandler } = useOutletContext();
@@ -58,6 +58,9 @@ const Notification = () => {
   );
 
   useEffect(() => {
+    setNotifications((prev) => {
+      return { ...prev, isBadge: true };
+    });
     const observer = new IntersectionObserver(handleIntersect, {
       threshold: 0.8,
       root: null,

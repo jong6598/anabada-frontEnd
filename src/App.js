@@ -101,7 +101,10 @@ function App() {
           <Route path="/posts/:postId" element={<PostsDetail />} />
           <Route path="/chat/:nickname" element={<Chat />} />
           <Route path="/room" element={<ChatRoom />} />
-          <Route path="/notifications" element={<Notification />} />
+          <Route
+            path="/notifications"
+            element={<Notification setNotifications={setNotifications} />}
+          />
         </Routes>
       </ThemeProvider>
     </>
