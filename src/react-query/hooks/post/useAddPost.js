@@ -37,7 +37,6 @@ export function useAddPost() {
     onError: (err) => {
       console.log(err.respose);
       alert('게시글 등록에 실패하였습니다')
-     
     }
   });
 
