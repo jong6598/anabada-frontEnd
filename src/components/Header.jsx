@@ -90,7 +90,7 @@ const Header = memo(({ notifications }) => {
   }, []);
 
   return (
-    <>
+   <>
       <HeaderWrapper style={{ marginTop: `${gapY.current}px` }}>
         <MainHeader pathname={pathname}>
           <Link to="/">
@@ -150,19 +150,36 @@ const Header = memo(({ notifications }) => {
         {stateErrTimer && <AlertToast errorMsg={refErrorMessage.current} />}
         <Outlet context={{ alertHandler }} />
       </Layout>
-    </>
+   </>
   );
 });
 
 export default Header;
 
+
+
 const HeaderWrapper = styled.div`
   background-color: white;
   position: fixed;
   z-index: 999;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px;
+
+  @media screen and (min-width: 1100px) {
+    width: 100vw;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+  }
 `;
 
 const MainHeader = styled.div`
+@media screen and (min-width: 1100px) {
+    width: 60vw;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+  }
+
   width: 100vw;
   height: 3.125rem;
   padding: 1rem 0.75rem;
@@ -236,7 +253,13 @@ const MainNav = styled.div`
   height: 2.375rem;
   padding: 0rem 1.375rem;
   font-size: 0.9375rem;
-  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.6px;
+
+  @media screen and (min-width: 1100px) {
+    width: 60vw;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+  }
 `;
 
 const NavElement = styled.nav`
@@ -273,6 +296,14 @@ const NavElement = styled.nav`
 
 const Layout = styled.div`
   padding: 5.5rem 1rem;
+
+  @media screen and (min-width: 1100px) {
+    width: 60vw;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+  }
+  
 `;
 
 const NotificationContainer = styled.div`

@@ -88,6 +88,7 @@ const NotiWrapper = styled.div`
 
   box-shadow: 1px 1px 8px rgba(198, 198, 198, 0.42);
   border-radius: 6px;
+  cursor:pointer;
 `;
 
 const NotiContainer = styled.div`

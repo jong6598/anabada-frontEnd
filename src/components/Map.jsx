@@ -39,9 +39,6 @@ const KakaoMap = memo(() => {
     {
       staleTime: 1000 * 60 * 30,
       refetchOnWindowFocus: false,
-      onSuccess(data) {
-        console.log("Map Data를 성공적으로 fetch했습니다. ::: ");
-      },
       onError(err) {
         console.log("에러가 발생했습니다!! ::: ", err);
       },
@@ -50,7 +47,7 @@ const KakaoMap = memo(() => {
 
   return (
     <>
-      <MapWrapper center={{ lat: 36.350701, lng: 127.870667 }} level={13}>
+      <MapWrapper center={{ lat: 36.350701, lng: 127.400667 }} level={13}>
         <MarkerClusterer
           averageCenter={true} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
           minLevel={10} // 클러스터 할 최소 지도 레벨
@@ -58,39 +55,52 @@ const KakaoMap = memo(() => {
           styles={[
             {
               // calculator 각 사이 값 마다 적용될 스타일을 지정한다
-              width: "30px",
-              height: "30px",
-              background: "#b6d9ff",
-              borderRadius: "15px",
-              color: "#000",
-              textAlign: "center",
-              fontWeight: "bold",
-              lineHeight: "31px",
-            },
-            {
-              width: "50px",
-              height: "50px",
-              background: "#5dabfd",
-              borderRadius: "50px",
-              color: "#000",
-              textAlign: "center",
-              fontWeight: "bold",
-              lineHeight: "41px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            },
-            {
-              width: "70px",
-              height: "70px",
-              background: "#007AFF",
-              backgroundImage: 'url("/assets/background.png")',
+              width: "1.875rem",
+              height: "1.875rem",
+              background: "transparent",
+              backgroundImage: 'url("/assets/c3.png")',
+              borderRadius: "50%",
+              fontSize: '0.7rem',
+              color: "white",
 
-              borderRadius: "50px",
-              color: "#000",
+              display: "flex",
+              justifyContent: "flex-end",
+              padding: "0.3rem",
+              alignItems: "center",
+              textAlign: "center",
+              
+              fontWeight: "bold",
+            },
+            {
+              width: "3.125rem",
+              height: "3.125rem",
+              background: "transparent",
+              backgroundImage: 'url("/assets/c2.png")',
+              borderRadius: "50%",
+              color: "white",
+              display: "flex",
+              justifyContent: "flex-end",
+              padding: "0.4rem",
+              alignItems: "center",
               textAlign: "center",
               fontWeight: "bold",
-              lineHeight: "51px",
+            },
+            {
+              width: "4.375rem",
+              height: "4.375rem",
+              
+              fontSize: '0.9rem',
+              backgroundImage: 'url("/assets/c1.png")',
+              borderRadius: "50%",
+              
+              color: "white",
+              display: "flex",
+              justifyContent: "flex-end",
+              padding: "0.5rem",
+              alignItems: "center",
+              textAlign: "center",
+              fontWeight: "bold",
+              lineHeight: "3.1875rem",
             },
           ]}
         >
@@ -203,7 +213,6 @@ const OverlayMap = styled(CustomOverlayMap)``;
 
 const MapPicker = styled.div`
   position: relative;
-  /* z-index: ${(props) => (props.isClicked ? 100 : 1)}; */
 `;
 
 const PickerInfo = styled.div`
