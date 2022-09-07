@@ -15,13 +15,13 @@ const MyMeets=()=>{
     const [filter, setFilter] = useState(location.state);
 
     
-    const getMyMeets = async (pageParam=1, filter) => {
+    const getMyMeets = async (pageParam=0, filter) => {
         console.log(filter, "함수 안 필터")
         try {
             const res = await myApi.getMyMeets(filter, pageParam)
             console.log(res);
-            const data = res.data.thunderposts.content
-            const last = res.data.thunderposts.last
+            const data = res.data.content
+            const last = res.data.last
             return {data, nextPage: pageParam + 1, last};
         } catch (err) {
             console.log(err);
@@ -31,7 +31,7 @@ const MyMeets=()=>{
 
     const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
         [queryKeys.myMeetsList,filter],
-        ({ pageParam = 1 }) => getMyMeets(pageParam, filter),
+        ({ pageParam = 0 }) => getMyMeets(pageParam, filter),
         {
             getNextPageParam: (lastPage) =>
                 !lastPage.last ? lastPage.nextPage : undefined,
