@@ -73,7 +73,7 @@ const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
 
   const onSearch = (e) => {
     setSearch(e.target.value);
-    // searchRef.current.value = '';
+    searchRef.current.value = '';
   };
 
 

@@ -60,7 +60,6 @@ const Mypage = () => {
         if (result) {
             const res = await myApi.uploadProfile(profileImg)
             console.log("이미지 보내기 성공!")
-            // console.log(profileImg, "보낸 형식 확인")
         } else {
             const deleteImg = ref(storage, uploadUrl);
             deleteObject(deleteImg).then(() => {

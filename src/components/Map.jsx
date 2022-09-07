@@ -5,8 +5,6 @@ import styled, { keyframes } from "styled-components";
 import checkedWeather from "../styles/weather";
 import { Map, CustomOverlayMap, MarkerClusterer } from "react-kakao-maps-sdk";
 
-const { kakao } = window;
-
 const KakaoMap = memo(() => {
   const [picker, setPicker] = useState({
     beachId: -1,
@@ -33,7 +31,7 @@ const KakaoMap = memo(() => {
   const fetchingSpot = () =>
     axios.get(`http://${process.env.REACT_APP_API_SERVER}/api/beach`);
   // react-query
-  const { data, isLoading, isFetching, isError, error } = useQuery(
+  const { data } = useQuery(
     ["spotData"],
     fetchingSpot,
     {

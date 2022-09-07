@@ -79,7 +79,6 @@ const Chat = () => {
   };
 
   const disconnect = () => {
-    console.log('클라이언트 비활성화시킬거임');
     clientRef.current.deactivate();
   };
 
@@ -100,7 +99,6 @@ const Chat = () => {
     // 연결 끊어져 있으면 바로 종료
 
     if (!clientRef.current.connected) {
-      console.log('종료');
       return;
     }
 

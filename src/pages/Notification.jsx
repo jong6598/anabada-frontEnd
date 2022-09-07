@@ -7,16 +7,14 @@ import { useCallback, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { api } from "../shared/api";
 import NotificationCompo from "../components/NotificationCompo";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { queryKeys } from "../react-query/constants";
 
 const Notification = ({ setNotifications }) => {
   const lastNotiRef = useRef();
   const navigate = useNavigate();
-  // const { alertHandler } = useOutletContext();
   // fetcher
   const getNotifications = async (pageParam) => {
-    console.log("::: pagenation 요청 :::");
     const res = await api.patch(`/notifications?page=${pageParam}&size=10`);
     return {
       data: res.data,
@@ -32,16 +30,11 @@ const Notification = ({ setNotifications }) => {
     {
       getNextPageParam(currPage, allPages) {
         if (!currPage.lastPage) {
-          console.log("not last page");
           return currPage.nextPage;
         }
         return undefined;
       },
-      onSuccess(data) {
-        return console.log("데이터를 성공적으로 fetch했습니다.");
-      },
       onError(err) {
-        // alertHandler("데이터를 불러오지 못했습니다. 다시 시도해주세요.");
         return console.log("데이터를 fetch에 실패했습니다.", err);
       },
       suspense: true,

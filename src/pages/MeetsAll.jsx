@@ -4,7 +4,6 @@ import Meet from '../components/Meet';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import { meetsApi } from '../shared/api';
-import { thunderposts } from '../shared/data';
 import Loading from '../layout/Loading';
 
 
@@ -113,14 +112,11 @@ const MeetAllContainer = styled.div``;
 
 const CategoryContainer = styled.div`
   display: flex;
-  /* justify-content: space-between; */
   flex-direction: row;
   align-items: center;
   padding: 0.875rem 0;
-  /* gap: 0.875rem; */
   select {
     padding: 0.625rem 0;
-    /* gap: 0.188rem; */
     background: #ffffff;
     border: 1px solid #c7c7cc;
     border-radius: 4px;
@@ -135,7 +131,6 @@ const CategoryContainer = styled.div`
     font-size: 0.875rem;
     margin-left: 0.75rem;
     width: 100%;
-    /* identical to box height */
     padding: 0.625rem 1rem;
     background-color: #f2f2f7;
     border-radius: 0.75rem;

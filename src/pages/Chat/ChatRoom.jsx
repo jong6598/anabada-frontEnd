@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -16,7 +16,7 @@ const ChatRoom = () => {
 
   const { rooms, isFetchingNextPage, fetchNextPage } = useRooms();
   const { ref, inView } = useInView();
-  console.log(rooms, 'rooms');
+ 
 
   useEffect(() => {
     if (inView) {

@@ -10,8 +10,6 @@ import Loading from '../layout/Loading';
 
 
 const MyMeets=()=>{
-    const navigate = useNavigate();
-    const queryClient = useQueryClient();
     const { ref, inView } = useInView();
     const location = useLocation();
     const [filter, setFilter] = useState(location.state);

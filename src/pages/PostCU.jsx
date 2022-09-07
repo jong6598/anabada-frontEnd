@@ -70,7 +70,6 @@ const PostCU = () => {
     }
   }, []);
 
-  //useRef를 사용해서 이미지(랜더링 되도 값이 초기화되지 않음.)
 
   const previewImage = async (e) => {
     const image = e.target.files[0];
@@ -85,7 +84,6 @@ const PostCU = () => {
     });
   };
 
-  // console.log(watch())
 
   const amenityCheck = (el) => {
 
