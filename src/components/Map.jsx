@@ -29,7 +29,7 @@ const KakaoMap = memo(() => {
 
   // fetcher
   const fetchingSpot = () =>
-    axios.get(`http://${process.env.REACT_APP_API_SERVER}/api/beach`);
+    axios.get(`https://${process.env.REACT_APP_API_SERVER}/api/beach`);
   // react-query
   const { data } = useQuery(
     ["spotData"],
