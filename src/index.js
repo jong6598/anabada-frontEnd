@@ -10,6 +10,7 @@ import { createStandaloneToast } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Loading from './layout/Loading';
 import ScrollToTop from './layout/ScrollToTop';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const toast = createStandaloneToast();
 
@@ -42,6 +43,7 @@ root.render(
           <ScrollToTop />
           <App />
         </Provider>
+        <ReactQueryDevtools position="top-left" />
       </QueryClientProvider>
     </Suspense>
   </BrowserRouter>

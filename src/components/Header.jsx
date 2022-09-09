@@ -1,18 +1,18 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
-import styled from "styled-components";
-import { useSelector } from "react-redux";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { Cookies } from "react-cookie";
-import AlertToast from "./AlertToast";
-import { GrNotification } from "react-icons/gr";
-import { BsFillChatDotsFill } from "react-icons/bs";
+import { Link, Outlet, useLocation } from 'react-router-dom';
+import styled from 'styled-components';
+import { useSelector } from 'react-redux';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
+import { Cookies } from 'react-cookie';
+import AlertToast from './AlertToast';
+import { GrNotification } from 'react-icons/gr';
+import { BsFillChatDotsFill } from 'react-icons/bs';
 
 const Header = memo(({ notifications }) => {
   const location = useLocation();
   const { pathname } = location;
   const timer = useRef(null);
   const cookies = new Cookies();
-  const getCookies = cookies.get("refreshToken");
+  const getCookies = cookies.get('refreshToken');
   const [valueY, setValueY] = useState(null);
   const gapY = useRef(0);
 
@@ -21,10 +21,10 @@ const Header = memo(({ notifications }) => {
    * 사용할 컴포넌트에서 const { alertHandler } = useOutletContext(); 로 호출해서 alertHandler("여기에 메시지를 넣으면 된다.")
    */
   const refErrorTimer = useRef(null);
-  const refErrorMessage = useRef("");
+  const refErrorMessage = useRef('');
   const [stateErrTimer, setStateErrTiemr] = useState(false);
   const alertHandler = useCallback(
-    (errorMessage = "") => {
+    (errorMessage = '') => {
       if (refErrorTimer.current === null) {
         setStateErrTiemr(true);
         refErrorMessage.current = errorMessage;
@@ -81,12 +81,12 @@ const Header = memo(({ notifications }) => {
 
   // 스크롤 이벤트 바인딩
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
-   <>
+    <>
       <HeaderWrapper style={{ marginTop: `${gapY.current}px` }}>
         <MainHeader pathname={pathname}>
           <Link to="/">
@@ -146,13 +146,11 @@ const Header = memo(({ notifications }) => {
         {stateErrTimer && <AlertToast errorMsg={refErrorMessage.current} />}
         <Outlet context={{ alertHandler }} />
       </Layout>
-   </>
+    </>
   );
 });
 
 export default Header;
-
-
 
 const HeaderWrapper = styled.div`
   background-color: white;
@@ -160,7 +158,7 @@ const HeaderWrapper = styled.div`
   z-index: 999;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 1px;
 
-  @media screen and (min-width: 1100px) {
+  @media screen and (min-width: 1024px) {
     width: 100vw;
     margin: 0 auto;
     left: 0;
@@ -169,8 +167,8 @@ const HeaderWrapper = styled.div`
 `;
 
 const MainHeader = styled.div`
-@media screen and (min-width: 1100px) {
-    width: 60vw;
+  @media screen and (min-width: 1024px) {
+    width: 40vw;
     margin: 0 auto;
     left: 0;
     right: 0;
@@ -195,7 +193,6 @@ const MainHeader = styled.div`
     letter-spacing: 0em;
     text-align: left;
 
-
     display: flex;
     justify-content: center;
     align-items: center;
@@ -204,7 +201,6 @@ const MainHeader = styled.div`
       a {
         margin-left: 1.2rem;
       }
-      
     }
 
     svg {
@@ -224,13 +220,12 @@ const MainHeader = styled.div`
   .header__user__signup,
   .header__user__info {
     cursor: pointer;
-    
   }
   .header__user__signup {
-    color: ${(props) => (props.pathname === "/signup" ? "#6486FF" : "inherit")};
+    color: ${(props) => (props.pathname === '/signup' ? '#6486FF' : 'inherit')};
   }
   .header__user__login {
-    color: ${(props) => (props.pathname === "/login" ? "#6486FF" : "inherit")};
+    color: ${(props) => (props.pathname === '/login' ? '#6486FF' : 'inherit')};
   }
   .header__user__divider {
     display: flex;
@@ -253,8 +248,8 @@ const MainNav = styled.div`
   padding: 0rem 1.375rem;
   font-size: 0.9375rem;
 
-  @media screen and (min-width: 1100px) {
-    width: 60vw;
+  @media screen and (min-width: 1024px) {
+    width: 40vw;
     margin: 0 auto;
     left: 0;
     right: 0;
@@ -271,38 +266,37 @@ const NavElement = styled.nav`
     align-items: center;
 
     height: 100%;
-    color: ${(props) => (props.pathname === "/" ? "#2756FF" : "inherit")};
+    color: ${(props) => (props.pathname === '/' ? '#2756FF' : 'inherit')};
     border-bottom: ${(props) =>
-      props.pathname === "/" ? "0.15rem solid #2756FF" : "inherit"};
+      props.pathname === '/' ? '0.15rem solid #2756FF' : 'inherit'};
   }
   .header__nav__posting {
     display: flex;
     align-items: center;
     height: 100%;
-    color: ${(props) => (props.pathname === "/posts" ? "#2756FF" : "inherit")};
+    color: ${(props) => (props.pathname === '/posts' ? '#2756FF' : 'inherit')};
     border-bottom: ${(props) =>
-      props.pathname === "/posts" ? "0.15rem solid #2756FF" : "inherit"};
+      props.pathname === '/posts' ? '0.15rem solid #2756FF' : 'inherit'};
   }
   .header__nav__open {
     display: flex;
     align-items: center;
     height: 100%;
-    color: ${(props) => (props.pathname === "/meets" ? "#2756FF" : "inherit")};
+    color: ${(props) => (props.pathname === '/meets' ? '#2756FF' : 'inherit')};
     border-bottom: ${(props) =>
-      props.pathname === "/meets" ? "0.15rem solid #2756FF" : "inherit"};
+      props.pathname === '/meets' ? '0.15rem solid #2756FF' : 'inherit'};
   }
 `;
 
 const Layout = styled.div`
   padding: 5.5rem 1rem;
 
-  @media screen and (min-width: 1100px) {
-    width: 60vw;
+  @media screen and (min-width: 1024px) {
+    width: 40vw;
     margin: 0 auto;
     left: 0;
     right: 0;
   }
-  
 `;
 
 const NotificationContainer = styled.div`
@@ -311,7 +305,7 @@ const NotificationContainer = styled.div`
     width: 0.4rem;
     height: 0.4rem;
     z-index: 999;
-    background-color: ${(props) => (props.noti ? "inherit" : "red")};
+    background-color: ${(props) => (props.noti ? 'inherit' : 'red')};
     position: absolute;
     border-radius: 50px;
     bottom: 0;

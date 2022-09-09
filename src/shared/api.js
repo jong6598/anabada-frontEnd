@@ -127,7 +127,10 @@ export const userAuth = {
     });
   },
   nicknameValidation(nickname) {
-    return userAxios.post(`/validation/nickname/${nickname}`);
+    // return userAxios.post(`/validation/nickname/${nickname}`);
+    return userAxios.post(`/validation/nickname`, {
+      nickname
+    });
   },
   useAccess(token) {
     // 유저정보 받아오기

@@ -96,9 +96,10 @@ function App() {
             <Route path="/mymeets" element={<MyMeets />} />
             <Route path="/myposts" element={<MyPosts />} />
             <Route path="/meetsAll" element={<MeetsAll />} />
+            <Route path="/meets/:thunderPostId" element={<MeetDetail />} />
+            <Route path="/posts/:postId" element={<PostsDetail />} />
           </Route>
-          <Route path="/meets/:thunderPostId" element={<MeetDetail />} />
-          <Route path="/posts/:postId" element={<PostsDetail />} />
+
           <Route path="/chat/:nickname" element={<Chat />} />
           <Route path="/room" element={<ChatRoom />} />
           <Route
