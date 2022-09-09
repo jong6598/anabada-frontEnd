@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import { Stomp } from "@stomp/stompjs";
 
-const socketServerURL = `http://${process.env.REACT_APP_API_SERVER}/socket`;
+const socketServerURL = `https://${process.env.REACT_APP_API_SERVER}/socket`;
 
 export const useNotification = (userId) => {
   const socketRef = useRef(null);

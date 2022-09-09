@@ -52,8 +52,8 @@ const Chat = () => {
   const connect = () => {
     // client객체를 만들기
     clientRef.current = new Client({
-      brokerURL: 'ws://43.200.6.110/socket', // 웹소켓 서버로 직접 접속
-      webSocketFactory: () => new SockJS('http://43.200.6.110/socket'), // proxy를 통한 접속
+      brokerURL: `ws://${process.env.REACT_APP_API_SERVER}/socket`, // 웹소켓 서버로 직접 접속
+      webSocketFactory: () => new SockJS(`https://${process.env.REACT_APP_API_SERVER}/socket`), // proxy를 통한 접속
       connectHeaders: {
         headers // 토큰 전달
       },
