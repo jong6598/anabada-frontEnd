@@ -4,8 +4,7 @@ import Meet from '../components/Meet';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import { meetsApi } from '../shared/api';
-import Loading from '../layout/Loading';
-
+import Loading, { InfiniteLoading } from '../layout/Loading';
 
 import { queryKeys } from '../react-query/constants';
 import Navigate from '../layout/Navigate';
@@ -15,7 +14,6 @@ const MeetsAll = () => {
   const [areaSelected, setAreaSelected] = useState('ALL');
 
   const fetchPosts = async (pageParam, areaSelected, search) => {
-  
     if (search) {
       try {
         const res = await meetsApi.getSearchPosts(
@@ -79,7 +77,7 @@ const MeetsAll = () => {
       <Navigate text={'오픈 모임 리스트'} />
       <CategoryContainer>
         <select id="area" onChange={onChangeArea} value={areaSelected}>
-        <option value="ALL">전국</option>
+          <option value="ALL">전국</option>
           <option value="서울·경기·인천">서울·경기·인천</option>
           <option value="강원">강원</option>
           <option value="대구·경북">대구·경북</option>
@@ -97,12 +95,12 @@ const MeetsAll = () => {
           onKeyPress={onKeyPress}
         />
       </CategoryContainer>
-
       {data.pages.map((page) => {
         return page.data.map((meet) => (
           <Meet key={meet.thunderPostId} meet={meet} />
         ));
       })}
+
       {isFetchingNextPage ? <Loading /> : <div ref={ref}></div>}
     </MeetAllContainer>
   );

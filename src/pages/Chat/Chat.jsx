@@ -53,7 +53,8 @@ const Chat = () => {
     // client객체를 만들기
     clientRef.current = new Client({
       brokerURL: `ws://${process.env.REACT_APP_API_SERVER}/socket`, // 웹소켓 서버로 직접 접속
-      webSocketFactory: () => new SockJS(`https://${process.env.REACT_APP_API_SERVER}/socket`), // proxy를 통한 접속
+      webSocketFactory: () =>
+        new SockJS(`https://${process.env.REACT_APP_API_SERVER}/socket`), // proxy를 통한 접속
       connectHeaders: {
         headers // 토큰 전달
       },
@@ -342,6 +343,10 @@ export default Chat;
 
 const Container = styled.div`
   /* position: relative; */
+  @media screen and (min-width: 1024px) {
+    margin: 0 auto;
+    width: 40%;
+  }
 
   display: flex;
   flex-direction: column;

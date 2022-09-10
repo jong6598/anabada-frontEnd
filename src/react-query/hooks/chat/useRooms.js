@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { chatApi } from '../../../shared/api';
 import { queryKeys } from '../../constants';
+import { useSelector } from 'react-redux';
 
 // 검색 모임 게시글
 const getRooms = async (pageParam) => {
@@ -17,13 +18,16 @@ const getRooms = async (pageParam) => {
 };
 
 export function useRooms() {
+  const nickname = useSelector((state) => state.auth.nickname);
+  console.log(nickname, 'nickname체크크크');
+
   // 모임 전체 게시글 useQuery
   const {
     data: rooms,
     fetchNextPage,
     isFetchingNextPage
   } = useInfiniteQuery(
-    [queryKeys.rooms],
+    [queryKeys.rooms, nickname],
     ({ pageParam = 0 }) => getRooms(pageParam),
     {
       getNextPageParam: (lastPage) =>

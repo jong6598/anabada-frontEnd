@@ -79,7 +79,7 @@ const MeetAdd = () => {
     } else {
       try {
         const update = await meetsApi.editMeetPost(thunderPostId, newMeet);
-        alert('게시글이 수정되었습니다!');
+        alert('모임이 수정되었습니다!');
       } catch (err) {
         console.log(err);
         alert(err);
@@ -89,11 +89,13 @@ const MeetAdd = () => {
 
   const { mutate: onAdd } = useMutation(onSubmitMeet, {
     onSuccess: () => {
+      queryClient.invalidateQueries([queryKeys.meets]);
+      queryClient.invalidateQueries([queryKeys.allMeets]);
       navigate(`/meets`);
-      return queryClient.invalidateQueries([queryKeys.meets]);
     },
     onError: (err) => {
       console.log(err.respose);
+      alert('모임 등록에 실패하였습니다');
     }
   });
 

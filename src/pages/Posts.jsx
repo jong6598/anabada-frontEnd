@@ -10,6 +10,9 @@ import { queryKeys } from '../react-query/constants';
 
 import Loading from '../layout/Loading';
 import NoData from '../layout/NoData';
+import { usePosts } from '../react-query/hooks/post/usePosts';
+import Navigate from '../layout/Navigate';
+import Masonry from 'react-masonry-css';
 
 const Posts = () => {
   const navigate = useNavigate();
@@ -18,8 +21,17 @@ const Posts = () => {
   const searchRef = useRef();
   const accesstoken = localStorage.getItem('accessToken');
 
+  // const {
+  //   data,
+  //   isFetchingNextPage,
+  //   fetchNextPage,
+  //   setAreaSelected,
+  //   areaSelected,
+  //   setSearch
+  // } = usePosts();
+
   const [areaSelected, setAreaSelected] = useState('ALL');
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(null);
 
   const fetchPosts = async (pageParam, areaSelected, search) => {
     console.log(search, '🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈');
@@ -27,9 +39,9 @@ const Posts = () => {
       try {
         console.log(search, 'search 들어와잇냐?');
         const res = await postApi.getSearchPosts(
+          pageParam,
           areaSelected,
-          search,
-          pageParam
+          search
         );
         const data = res.data.content;
         const last = res.data.last;
@@ -51,8 +63,8 @@ const Posts = () => {
     }
   };
 
-  const { data, fetchNextPage, isFetchingNextPage, refetch } = useInfiniteQuery(
-    [queryKeys.postList, areaSelected, search],
+  const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
+    [queryKeys.posts, areaSelected, search],
     ({ pageParam = 0 }) => fetchPosts(pageParam, areaSelected, search),
     {
       getNextPageParam: (lastPage) =>
@@ -81,11 +93,16 @@ const Posts = () => {
     setAreaSelected(e.target.value);
   };
 
-  console.log(data, 'data');
+  const breakpoints = {
+    default: 3,
+    1100: 3,
+    700: 2
+  };
 
   return (
     <>
       <MainDiv>
+        <Navigate text={'게시글'} />
         <TopDiv>
           <Areabar>
             <select onChange={onChangeArea} value={areaSelected}>
@@ -112,23 +129,25 @@ const Posts = () => {
           {data.pages[0].data.length === 0 && (
             <NoData text={'게시물'} content={'게시물'} />
           )}
-          {data.pages.map((page, idx) => {
-            return (
-              <React.Fragment key={idx}>
-                {page.data.map((post) => (
-                  <PostContainer
-                    key={post.postId}
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => {
-                      navigate(`/posts/${post.postId}`);
-                    }}
-                  >
-                    <Post data={post} />
-                  </PostContainer>
-                ))}
-              </React.Fragment>
-            );
-          })}
+          <Masonry
+            breakpointCols={breakpoints}
+            className="my-masonry-grid"
+            columnClassName="my-masonry-grid_column"
+          >
+            {data.pages.map((page) => {
+              return page.data.map((post) => (
+                <PostContainer
+                  key={post.postId}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => {
+                    navigate(`/posts/${post.postId}`);
+                  }}
+                >
+                  <Post data={post} />
+                </PostContainer>
+              ));
+            })}
+          </Masonry>
           {isFetchingNextPage ? <Loading /> : <div ref={ref}></div>}
         </PostDiv>
       </MainDiv>
@@ -220,10 +239,42 @@ const MainDiv = styled.div`
 `;
 
 const PostDiv = styled.div`
-  margin: 0.625rem auto;
-  flex-wrap: wrap;
+  margin-top: 0.5rem;
+  /* margin: 0.625rem auto;
+
+  position: relative;
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-rows: minmax(100px, auto);
+  grid-auto-flow: dense;
+  grid-gap: 0.625rem; */
+
+  /* flex-wrap: wrap;
   columns: auto 2;
-  column-gap: 1rem;
+  column-gap: 1rem; */
+
+  // mansory ui
+  .my-masonry-grid {
+    display: -webkit-box; /* Not needed if autoprefixing */
+    display: -ms-flexbox; /* Not needed if autoprefixing */
+    display: flex;
+
+    /* margin-left: -30px; */
+    width: auto;
+  }
+  .my-masonry-grid_column {
+    /* padding-left: 10px; */
+    padding: 0 5px;
+    background-clip: padding-box;
+  }
+
+  /* Style your items */
+  .my-masonry-grid_column > div {
+    /* change div to reference your elements you put in <Masonry> */
+
+    margin-bottom: 10px;
+  }
 `;
 
 const TopDiv = styled.div`
@@ -255,7 +306,8 @@ const Areabar = styled.div`
 `;
 
 const PostContainer = styled.div`
-  display: inline-block;
+  /* display: inline-block; */
+  /* box-shadow: rgb(0 0 0 / 15%) 0px 2px 4px 0px; */
 `;
 
 const PostBtn = styled.div`

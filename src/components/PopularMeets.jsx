@@ -1,29 +1,26 @@
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const PopularMeets = ({ popularPosts }) => {
-
-  const difference = useCallback((date1, date2)=> {
+  const navigate = useNavigate();
+  const difference = useCallback((date1, date2) => {
     const date1utc = Date.UTC(
       date1.getFullYear(),
       date1.getMonth(),
       date1.getDate()
-    )
+    );
     const date2utc = Date.UTC(
       date2.getFullYear(),
       date2.getMonth(),
       date2.getDate()
-    )
+    );
     const day = 1000 * 60 * 60 * 24;
-    return (date2utc-date1utc)/day;
-  },[])
+    return (date2utc - date1utc) / day;
+  }, []);
 
   let time = new Date().toISOString();
   const date1 = new Date(time.slice(0, 10));
-  
-  
-
-
 
   return (
     <PopularPostsContainer>
@@ -34,12 +31,21 @@ const PopularMeets = ({ popularPosts }) => {
             <div className="meetImageWrapper">
               <img src={meet.thumbnailUrl} alt="thumbnail" />
             </div>
-            <div className="infoBox">
+            <div
+              className="infoBox"
+              onClick={() => navigate(`/meets/${meet.thunderPostId}`)}
+            >
               <div className="dateBox">
-                {difference(date1, new Date(meet.endDate))>=0?
-                  <p className="dDay">D-{difference(date1, new Date(meet.endDate))===0?'Day' : difference(date1, new Date(meet.endDate)) }</p>
-                  :<p className="dayClosing">마감</p>
-                }
+                {difference(date1, new Date(meet.endDate)) >= 0 ? (
+                  <p className="dDay">
+                    D-
+                    {difference(date1, new Date(meet.endDate)) === 0
+                      ? 'Day'
+                      : difference(date1, new Date(meet.endDate))}
+                  </p>
+                ) : (
+                  <p className="dayClosing">마감</p>
+                )}
                 <p className="endDate">~{meet.endDate}</p>
               </div>
               <div>
@@ -74,7 +80,7 @@ const PopularMeets = ({ popularPosts }) => {
                     fill="#FFFBFF"
                   />
                 </svg>
-                <p>{meet.address}</p>
+                <p>{meet.area}</p>
               </div>
               <div className="subBox bottom">
                 <svg
@@ -165,9 +171,9 @@ const PopularPostsContainer = styled.div`
     align-items: flex-start;
     padding: 1rem;
     gap: 0.5rem;
-
-    /* width: 198px; */
-    /* height: 135px; */
+    cursor: pointer;
+    /* width: 198px;
+    height: 135px; */
 
     background: #ffffff;
     /* default */
@@ -250,9 +256,16 @@ const PopularPostsContainer = styled.div`
     color: #000000;
   }
   .title {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+
     font-style: normal;
     font-weight: 600;
-    font-size: 0.938rem;
+    font-size: 0.9rem;
     line-height: 143.84%;
     /* identical to box height, or 22px */
 

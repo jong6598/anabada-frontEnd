@@ -6,7 +6,7 @@ const Post = ({ data }) => {
     <PostInfoBox>
       <ImageBox>
         <img src={data.thumbnailUrl} alt="thumbnailimage" />
-        <div>
+        <div className="infoBox">
           {data.liked === true ? (
             <>
               <span>{data.likeCount}</span>
@@ -40,7 +40,7 @@ const Post = ({ data }) => {
                 focusable="false"
                 style={{
                   display: 'block',
-                  fill: 'none',
+                  fill: 'rgb(51,37,21)',
                   height: '24px',
                   width: '24px',
                   overflow: 'visible',
@@ -68,10 +68,16 @@ const Post = ({ data }) => {
 export default Post;
 
 const PostInfoBox = styled.div`
-  display: inline-block;
+  /* display: inline-block; */
   border-radius: 0.8125rem;
   margin-bottom: 1.25rem;
-  /* border: 1px solid #ececec; */
+  box-shadow: rgb(0 0 0 / 15%) 0px 2px 4px 0px;
+  display: grid;
+  /* place-items: center; */
+  transition: 0.5s;
+  &:hover {
+    background: #f0f7fd;
+  }
 `;
 
 const ImageBox = styled.div`
@@ -106,15 +112,23 @@ const ImageBox = styled.div`
     object-fit: contain;
     border-radius: 0.8125rem;
     margin-bottom: 0.875rem;
+
     width: 100%;
-    /* border: 1px solid #ececec; */
+    /* @media screen and (min-width: 1024px) {
+      min-width: 12.5rem;
+    } */
   }
 `;
 
 const PostInfo = styled.div`
   display: flex;
   flex-direction: column;
+  padding: 0 0.5rem;
   h2 {
+    display: block;
+    /* white-space: nowrap; */
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-size: 0.9375rem;
     font-weight: 600;
     text-align: left;

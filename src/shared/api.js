@@ -185,9 +185,9 @@ export const postApi = {
   getPosts(pageParam, areaSelected) {
     return api.get(`/posts?area=${areaSelected}&page=${pageParam}&size=6`);
   },
-  getSearchPosts(areaSelected, search, pageParam) {
+  getSearchPosts(pageParam, areaSelected, keyword) {
     return api.get(
-      `/posts/search?area=${areaSelected}&keyword=${search}&page=${pageParam}&size=6`
+      `/posts/search?area=${areaSelected}&keyword=${keyword}&page=${pageParam}&size=6`
     );
   },
   getPost(postId) {

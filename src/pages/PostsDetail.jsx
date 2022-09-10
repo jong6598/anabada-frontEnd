@@ -100,7 +100,7 @@ const PostsDetail = () => {
 
   const { mutate: onDelete } = useMutation(postDelete, {
     onSuccess: () => {
-      queryClient.invalidateQueries([queryKeys.postList]);
+      queryClient.invalidateQueries([queryKeys.posts]);
       navigate('/posts');
       alert('게시글이 삭제되었습니다');
     },
@@ -131,7 +131,7 @@ const PostsDetail = () => {
 
   const { mutate: onToggleLike } = useMutation(toggleLike, {
     onSuccess: () => {
-      return queryClient.invalidateQueries([queryKeys.postList]);
+      return queryClient.invalidateQueries([queryKeys.posts]);
     },
     onError: (err) => {
       console.log(err.respose);
@@ -518,7 +518,7 @@ const Amenity = styled.div`
     div {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
-      gap: 0.5rem;
+      gap: 0.3rem;
     }
   }
 

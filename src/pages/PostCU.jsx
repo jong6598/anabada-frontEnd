@@ -15,8 +15,9 @@ import '../App.css';
 import { Editor } from '@toast-ui/react-editor';
 
 import { amenityInfo } from '../shared/data';
-
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAddPost } from '../react-query/hooks/post/useAddPost';
+import { queryKeys } from '../react-query/constants';
 
 const PostCU = () => {
   const navigate = useNavigate();
@@ -36,7 +37,39 @@ const PostCU = () => {
   const [content, setContent] = useState('');
   const editorRef = useRef();
 
-  const onAdd = useAddPost();
+  // const onAdd = useAddPost();
+
+  const onSubmitPost = async (newPost) => {
+    if (!postId) {
+      try {
+        const post = await postApi.newPost(newPost);
+        alert('게시글이 등록되었습니다!');
+      } catch (err) {
+        alert(err);
+      }
+    } else {
+      try {
+        const update = await postApi.updatePost(postId, newPost);
+        alert('게시글이 수정되었습니다!');
+      } catch (err) {
+        console.log(err);
+        alert(err);
+      }
+    }
+  };
+
+  const queryClient = new useQueryClient();
+
+  const { mutate: onAdd } = useMutation(onSubmitPost, {
+    onSuccess: () => {
+      queryClient.invalidateQueries([queryKeys.posts]);
+      navigate('/posts');
+    },
+    onError: (err) => {
+      console.log(err.respose);
+      alert('게시글 등록에 실패하였습니다');
+    }
+  });
 
   const {
     register,
@@ -121,7 +154,7 @@ const PostCU = () => {
       thumbnailUrl: thumbnailUrl
     };
 
-    onAdd({ newPost, postId });
+    onAdd(newPost);
   };
 
   //toast ui
