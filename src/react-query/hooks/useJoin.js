@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '../constants';
 import { meetsApi } from '../../shared/api';
 import { useNavigate } from 'react-router-dom';
-import { useCustomToast } from '../../layout/useCustomToast';
+// import { useCustomToast } from '../../layout/useCustomToast';
 
 const postJoin = async ({ setIsJoined, isJoined, thunderPostId }) => {
   if (isJoined) {

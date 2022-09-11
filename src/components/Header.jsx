@@ -1,16 +1,16 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
-import { userThunk } from "../redux/auth-slice";
+import { useSelector } from "react-redux";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { Cookies } from "react-cookie";
 import AlertToast from "./AlertToast";
+import { GrNotification } from "react-icons/gr";
+import { BsFillChatDotsFill } from "react-icons/bs";
 
-const Header = memo(() => {
+const Header = ({ notifications }) => {
   const location = useLocation();
   const { pathname } = location;
   const timer = useRef(null);
-  const dispatch = useDispatch();
   const cookies = new Cookies();
   const getCookies = cookies.get("refreshToken");
   const [valueY, setValueY] = useState(null);
@@ -36,18 +36,6 @@ const Header = memo(() => {
     },
     [refErrorTimer]
   );
-
-  // 새로고침 시 유저정보 리덕스에 재설정
-  useEffect(() => {
-    // 로그인 한 유저가 아니면 유저정보를 요청하지 않음
-    if (getCookies === undefined) {
-      return;
-    } else {
-      // 로그인 한 유저가 유저이면 새로고침 시 유저정보를 요청함
-      const getAccess = localStorage.getItem("accessToken");
-      dispatch(userThunk(getAccess));
-    }
-  }, []);
 
   // 헤더에 넣을 유저정보 받아오기
   const userInfo = useSelector((state) => state.auth);
@@ -121,8 +109,19 @@ const Header = memo(() => {
               </>
             ) : (
               <>
-                <div className="header__user__info">
-                  <Link to="/mypage">{userInfo?.nickname} 님 :)</Link>
+                <div className="header__user__info header__user__info-islogin">
+                  <Link to="/notifications">
+                    <NotificationContainer noti={notifications?.isBadge}>
+                      <GrNotification />
+                      <div className="notification__red"></div>
+                    </NotificationContainer>
+                  </Link>
+                  <Link to="/room">
+                    <BsFillChatDotsFill />
+                  </Link>
+                  <Link to="/mypage">
+                    <img src={userInfo.profileImg} alt="" />
+                  </Link>
                 </div>
               </>
             )}
@@ -142,13 +141,14 @@ const Header = memo(() => {
           </NavElement>
         </MainNav>
       </HeaderWrapper>
+
       <Layout>
         {stateErrTimer && <AlertToast errorMsg={refErrorMessage.current} />}
         <Outlet context={{ alertHandler }} />
       </Layout>
     </>
   );
-});
+};
 
 export default Header;
 
@@ -156,9 +156,24 @@ const HeaderWrapper = styled.div`
   background-color: white;
   position: fixed;
   z-index: 999;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px;
+
+  @media screen and (min-width: 1024px) {
+    width: 100vw;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+  }
 `;
 
 const MainHeader = styled.div`
+  @media screen and (min-width: 1024px) {
+    width: 40vw;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+  }
+
   width: 100vw;
   height: 3.125rem;
   padding: 1rem 0.75rem;
@@ -181,6 +196,25 @@ const MainHeader = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+
+    .header__user__info-islogin {
+      a {
+        margin-left: 1.2rem;
+      }
+    }
+
+    svg {
+      width: auto;
+      width: 20px;
+      height: 20px;
+      color: #363636;
+    }
+
+    img {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+    }
   }
   .header__user__login,
   .header__user__signup,
@@ -213,7 +247,13 @@ const MainNav = styled.div`
   height: 2.375rem;
   padding: 0rem 1.375rem;
   font-size: 0.9375rem;
-  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.6px;
+
+  @media screen and (min-width: 1024px) {
+    width: 40vw;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+  }
 `;
 
 const NavElement = styled.nav`
@@ -234,20 +274,51 @@ const NavElement = styled.nav`
     display: flex;
     align-items: center;
     height: 100%;
-    color: ${(props) => (props.pathname === "/posts" ? "#2756FF" : "inherit")};
-    border-bottom: ${(props) =>
-      props.pathname === "/posts" ? "0.15rem solid #2756FF" : "inherit"};
+    color: ${(props) => {
+      return props.pathname.startsWith("/posts") ? "#2756FF" : "inherit";
+    }};
+    border-bottom: ${(props) => {
+      return props.pathname.startsWith("/posts")
+        ? "0.15rem solid #2756FF"
+        : "inherit";
+    }};
   }
   .header__nav__open {
     display: flex;
     align-items: center;
     height: 100%;
-    color: ${(props) => (props.pathname === "/meets" ? "#2756FF" : "inherit")};
-    border-bottom: ${(props) =>
-      props.pathname === "/meets" ? "0.15rem solid #2756FF" : "inherit"};
+    color: ${(props) => {
+      return props.pathname.startsWith("/meets") ? "#2756FF" : "inherit";
+    }};
+    border-bottom: ${(props) => {
+      return props.pathname.startsWith("/meets")
+        ? "0.15rem solid #2756FF"
+        : "inherit";
+    }};
   }
 `;
 
 const Layout = styled.div`
   padding: 5.5rem 1rem;
+
+  @media screen and (min-width: 1024px) {
+    width: 40vw;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+  }
+`;
+
+const NotificationContainer = styled.div`
+  position: relative;
+  .notification__red {
+    width: 0.4rem;
+    height: 0.4rem;
+    z-index: 999;
+    background-color: ${(props) => (props.noti ? "inherit" : "red")};
+    position: absolute;
+    border-radius: 50px;
+    bottom: 0;
+    right: 0;
+  }
 `;

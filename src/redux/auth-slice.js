@@ -1,8 +1,8 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-import { userAuth } from "../shared/api";
+import { userAuth } from '../shared/api';
 
-export const userThunk = createAsyncThunk("users/info", async (data) => {
+export const userThunk = createAsyncThunk('users/info', async (data) => {
   const response = await userAuth.useAccess(data);
   return response.data;
 });
@@ -10,15 +10,15 @@ export const userThunk = createAsyncThunk("users/info", async (data) => {
 const initialState = {};
 
 const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {},
   extraReducers: {
     [userThunk.fulfilled.type](state, action) {
       state = action.payload;
       return state;
-    },
-  },
+    }
+  }
 });
 
 export const authActions = authSlice.actions;

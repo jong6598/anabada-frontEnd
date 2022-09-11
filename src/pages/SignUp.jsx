@@ -21,7 +21,7 @@ const SignUp = () => {
     getValues,
     formState: { errors, dirtyFields },
   } = useForm({
-    mode: "onBlur",
+    mode: "all",
   });
   const [emailState, setEmailState] = useState(false);
   const [nicknameState, setNicknameState] = useState(false);
@@ -116,6 +116,14 @@ const SignUp = () => {
       // 중복체크 실패했을 때
       if (response.response.status === 409) {
         return alertHandler("존재하는 닉네임 입니다!");
+      }
+      // 공백 예외처리
+      else if (response.response.data === "닉네임은 8자 이하로 설정해 주세요") {
+        return alertHandler("닉네임은 8자 이하로 설정해 주세요");
+      } else if (
+        response.response.data === "닉네임에 빈 칸을 사용할 수 없습니다."
+      ) {
+        return alertHandler("닉네임에 빈 칸을 사용할 수 없습니다.");
       }
     } catch (err) {
       console.log(err);
@@ -261,6 +269,9 @@ const SignUp = () => {
             {errors.nickname?.type === "validate" && (
               <ErrorSpan>{errors.nickname.message}</ErrorSpan>
             )}
+            {errors.nickname?.type === "maxLength" && (
+              <ErrorSpan>{errors.nickname.message}</ErrorSpan>
+            )}
             <FormInput
               errors={errors?.nickname}
               type="text"
@@ -268,6 +279,10 @@ const SignUp = () => {
               {...register("nickname", {
                 required: "닉네임을 입력해주세요!",
                 validate: () => nicknameState || "닉네임 중복확인을 해주세요!",
+                maxLength: {
+                  value: 8,
+                  message: "8글자 이하로 작성해주세요.",
+                },
               })}
             ></FormInput>
             <div
@@ -288,11 +303,17 @@ export default SignUp;
 
 const SignupWrapper = styled(FormWrapper)`
   margin-top: 4.375rem;
+  display: flex;
+  justify-content: center;
 `;
 
 const SignupForm = styled(FormDiv)`
   padding: 0;
   margin-top: 0.5rem;
+
+  @media screen and (min-width: 1024px) {
+    width: 23rem;
+  }
 
   .login__wrapper-verification {
     margin-bottom: 1.125rem;
@@ -319,7 +340,8 @@ const SignupForm = styled(FormDiv)`
   }
   .login__wrapper__password {
     color: black;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
   }
 `;
 

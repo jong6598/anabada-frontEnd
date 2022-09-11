@@ -3,7 +3,7 @@ import { Link, useNavigate, useOutletContext } from "react-router-dom";
 import { userAuth } from "../shared/api";
 import { Cookies } from "react-cookie";
 import { userThunk } from "../redux/auth-slice";
-import { memo, useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 
@@ -94,13 +94,13 @@ const Login = () => {
             <FormBtn>로그인</FormBtn>
           </form>
           <FormSection>
-            <div className="login__wrapper-extra__btn__find">
+            {/* <div className="login__wrapper-extra__btn__find">
               <span className="login__wrapper-extra__btn">아이디 찾기</span>
               <div className="header__user__divider">
                 <div></div>
               </div>
               <span className="login__wrapper-extra__btn">비밀번호 찾기</span>
-            </div>
+            </div> */}
             <div className="login__wrapper-extra__btn__signup">
               <Link to="/signup">
                 <span className="login__wrapper-extra__btn">회원가입</span>
@@ -121,7 +121,9 @@ export const FormWrapper = styled.div`
 
 export const LoginWelcome = styled.section`
   div {
-    padding: 0 4.6875rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     img {
       height: 4.93875rem;
       width: 13rem;
@@ -132,6 +134,11 @@ export const LoginWelcome = styled.section`
 export const FormDiv = styled.div`
   margin-top: 2.1875rem;
   padding: 0 2.625rem;
+  @media screen and (min-width: 1024px) {
+    width: 23rem;
+    margin: 0 auto;
+    margin-top: 1rem;
+  }
   .login__wrapper-form {
     display: flex;
     flex-direction: column;

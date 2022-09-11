@@ -1,26 +1,24 @@
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { memo, useCallback, useState } from "react";
-import styled, { keyframes } from "styled-components";
-import checkedWeather from "../styles/weather";
-import { Map, CustomOverlayMap, MarkerClusterer } from "react-kakao-maps-sdk";
-
-const { kakao } = window;
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { memo, useCallback, useState } from 'react';
+import styled, { keyframes } from 'styled-components';
+import checkedWeather from '../styles/weather';
+import { Map, CustomOverlayMap, MarkerClusterer } from 'react-kakao-maps-sdk';
 
 const KakaoMap = memo(() => {
   const [picker, setPicker] = useState({
     beachId: -1,
-    beachName: "",
-    beachNum: "",
-    pcp: "",
-    pop: "",
-    pty: "",
-    sky: "",
-    tmp: "",
-    wav: "",
-    wsd: "",
+    beachName: '',
+    beachNum: '',
+    pcp: '',
+    pop: '',
+    pty: '',
+    sky: '',
+    tmp: '',
+    wav: '',
+    wsd: '',
     x: 0,
-    y: 0,
+    y: 0
   });
 
   const handlePicker = useCallback((pickerInfo) => {
@@ -31,29 +29,74 @@ const KakaoMap = memo(() => {
 
   // fetcher
   const fetchingSpot = () =>
-    axios.get(`http://${process.env.REACT_APP_API_SERVER}/api/beach`);
+    axios.get(`https://${process.env.REACT_APP_API_SERVER}/api/beach`);
   // react-query
-  const { data, isLoading, isFetching, isError, error } = useQuery(
-    ["spotData"],
-    fetchingSpot,
-    {
-      staleTime: 1000 * 60 * 30,
-      refetchOnWindowFocus: false,
-      onSuccess(data) {
-        console.log("Map Data를 성공적으로 fetch했습니다. ::: ");
-      },
-      onError(err) {
-        console.log("에러가 발생했습니다!! ::: ", err);
-      },
+  const { data } = useQuery(['spotData'], fetchingSpot, {
+    staleTime: 1000 * 60 * 30,
+    refetchOnWindowFocus: false,
+    onError(err) {
+      console.log('에러가 발생했습니다!! ::: ', err);
     }
-  );
+  });
 
   return (
     <>
-      <MapWrapper center={{ lat: 36.350701, lng: 127.870667 }} level={13}>
+      <MapWrapper center={{ lat: 36.350701, lng: 127.600667 }} level={13}>
         <MarkerClusterer
           averageCenter={true} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
           minLevel={10} // 클러스터 할 최소 지도 레벨
+          calculator={[10, 30, 50]}
+          styles={[
+            {
+              // calculator 각 사이 값 마다 적용될 스타일을 지정한다
+              width: '1.875rem',
+              height: '1.875rem',
+              background: 'transparent',
+              backgroundImage: 'url("/assets/c3.png")',
+              borderRadius: '50%',
+              fontSize: '0.7rem',
+              color: 'white',
+
+              display: 'flex',
+              justifyContent: 'flex-end',
+              padding: '0.3rem',
+              alignItems: 'center',
+              textAlign: 'center',
+
+              fontWeight: 'bold'
+            },
+            {
+              width: '3.125rem',
+              height: '3.125rem',
+              background: 'transparent',
+              backgroundImage: 'url("/assets/c2.png")',
+              borderRadius: '50%',
+              color: 'white',
+              display: 'flex',
+              justifyContent: 'flex-end',
+              padding: '0.4rem',
+              alignItems: 'center',
+              textAlign: 'center',
+              fontWeight: 'bold'
+            },
+            {
+              width: '4.375rem',
+              height: '4.375rem',
+
+              fontSize: '0.9rem',
+              backgroundImage: 'url("/assets/c1.png")',
+              borderRadius: '50%',
+
+              color: 'white',
+              display: 'flex',
+              justifyContent: 'flex-end',
+              padding: '0.5rem',
+              alignItems: 'center',
+              textAlign: 'center',
+              fontWeight: 'bold',
+              lineHeight: '3.1875rem'
+            }
+          ]}
         >
           {data.data.map((el) => {
             const weatherIcons = checkedWeather(el.sky, el.pty);
@@ -63,7 +106,7 @@ const KakaoMap = memo(() => {
                 key={el.beachId}
                 position={{
                   lat: el.x,
-                  lng: el.y,
+                  lng: el.y
                 }}
                 xAnchor={0.3}
                 yAnchor={0.5}
@@ -135,7 +178,7 @@ const KakaoMap = memo(() => {
                   <span class="material-symbols-outlined">umbrella</span>
                 </div>
                 <div>
-                  {picker.pcp === "강수없음" ? (
+                  {picker.pcp === '강수없음' ? (
                     <span>강수량 : {picker.pcp}</span>
                   ) : (
                     <span>강수량 : {picker.pcp}mm</span>
@@ -164,7 +207,6 @@ const OverlayMap = styled(CustomOverlayMap)``;
 
 const MapPicker = styled.div`
   position: relative;
-  /* z-index: ${(props) => (props.isClicked ? 100 : 1)}; */
 `;
 
 const PickerInfo = styled.div`

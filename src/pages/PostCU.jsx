@@ -1,46 +1,85 @@
-import { upload } from "@testing-library/user-event/dist/upload";
-import React, { useEffect, useState, useRef } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
-import { css } from "styled-components";
-import styled from "styled-components";
-import { postApi } from "../shared/api";
-import { useSelector } from "react-redux";
-import { HiOutlinePhotograph } from "react-icons/hi";
-import { storage } from "../firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import React, { useEffect, useState, useRef } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
+import { css } from 'styled-components';
+import styled from 'styled-components';
+import { postApi } from '../shared/api';
+import { useSelector } from 'react-redux';
+import { storage } from '../firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import 'tui-color-picker/dist/tui-color-picker.css';
 import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css';
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
-import "../App.css";
+import '../App.css';
 import { Editor } from '@toast-ui/react-editor';
-import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { amenityInfo } from "../shared/data";
-import { queryKeys } from "../react-query/constants";
+
+import { amenityInfo } from '../shared/data';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAddPost } from '../react-query/hooks/post/useAddPost';
+import { queryKeys } from '../react-query/constants';
 
 const PostCU = () => {
   const navigate = useNavigate();
   const postId = useParams().postId;
-  const nickname = useSelector((state) => state.auth.nickname)
-  const [imgSrc, setImgSrc] = useState("");
-  const [check, setCheck] = useState({ airgun: false, shower: false, shop: false, cafe: false, park: false, sleep: false });
+  const nickname = useSelector((state) => state.auth.nickname);
+  const [imgSrc, setImgSrc] = useState('');
 
-  const queryClient = useQueryClient();
+  const [check, setCheck] = useState({
+    airgun: false,
+    shower: false,
+    shop: false,
+    cafe: false,
+    park: false,
+    sleep: false
+  });
 
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState('');
   const editorRef = useRef();
 
+  // const onAdd = useAddPost();
+
+  const onSubmitPost = async (newPost) => {
+    if (!postId) {
+      try {
+        const post = await postApi.newPost(newPost);
+        alert('게시글이 등록되었습니다!');
+      } catch (err) {
+        alert(err);
+      }
+    } else {
+      try {
+        const update = await postApi.updatePost(postId, newPost);
+        alert('게시글이 수정되었습니다!');
+      } catch (err) {
+        console.log(err);
+        alert(err);
+      }
+    }
+  };
+
+  const queryClient = new useQueryClient();
+
+  const { mutate: onAdd } = useMutation(onSubmitPost, {
+    onSuccess: () => {
+      queryClient.invalidateQueries([queryKeys.posts]);
+      navigate('/posts');
+    },
+    onError: (err) => {
+      console.log(err.respose);
+      alert('게시글 등록에 실패하였습니다');
+    }
+  });
 
   const {
     register,
     handleSubmit,
-    setValue,
-    formState: { isValid },
-  } = useForm({
-    mode: "all",
-  });
 
+    setValue,
+    formState: { isValid }
+  } = useForm({
+    mode: 'all'
+  });
 
   useEffect(() => {
     if (postId) {
@@ -48,20 +87,19 @@ const PostCU = () => {
         const postInfo = await postApi.getPost(`${postId}`);
 
         if (postInfo.data.nickname !== nickname) {
-          alert("수정 권한이 없습니다.");
+          alert('수정 권한이 없습니다.');
           navigate(-1);
           return;
         }
 
-
         const data = postInfo.data;
-        console.log(data)
-        setValue("title", data.title);
-        setValue("area", data.area);
-        setValue("address", data.address);
-        setValue("createAt", data.createAt);
-        setValue("content", data.content);
-        setValue("amenity", data.amenity);
+        console.log(data);
+        setValue('title', data.title);
+        setValue('area', data.area);
+        setValue('address', data.address);
+        setValue('createAt', data.createAt);
+        setValue('content', data.content);
+        setValue('amenity', data.amenity);
         setImgSrc(data.thumbnailUrl);
 
         const htmlString = data.content;
@@ -70,9 +108,6 @@ const PostCU = () => {
       setPost();
     }
   }, []);
-
-  //usemutation을 사용해서 수정, 작성 해야함
-  //useRef를 사용해서 이미지(랜더링 되도 값이 초기화되지 않음.)
 
   const previewImage = async (e) => {
     const image = e.target.files[0];
@@ -87,61 +122,22 @@ const PostCU = () => {
     });
   };
 
-  // console.log(watch())
-
   const amenityCheck = (el) => {
-
     setCheck({
       ...check,
       [el.value]: !check[el.value]
     });
-  }
-
-
-
-
-
-  const onSubmitPost = async (newPost) => {
-    if (!postId) {
-      try {
-        const post =await  postApi.newPost(newPost);
-        alert("게시글이 등록되었습니다!");
-        navigate("/posts");
-      } catch (err) {
-        alert(err);
-      }
-    } else {
-      try {
-        const update =await postApi.updatePost(newPost);
-        alert("게시글이 수정되었습니다!")
-        navigate(`/posts`);
-      } catch (err) {
-        console.log(err);
-        alert(err);
-      }
-    }
   };
 
-  const {mutate:onAdd} = useMutation(onSubmitPost, {
-    onSuccess: () => {
-      console.log('호출확인ㄴㄴㄴ')
-      queryClient.invalidateQueries([queryKeys.postList])
-    },
-    onError: (err) => {
-      console.log(err.respose);
-    }
-  })
-
-  const onSubmit = async(formData) => {
-   
+  const onSubmit = async (formData) => {
     let thumbnailUrl;
 
     if (formData.postImg.length > 0) {
-      console.log(formData.postImg[0],"test")
+      console.log(formData.postImg[0], 'test');
       const uploaded_file = await uploadBytes(
         ref(storage, `images/post/${formData.postImg[0].name}`),
-        formData.postImg[0],
-      )
+        formData.postImg[0]
+      );
       thumbnailUrl = await getDownloadURL(uploaded_file.ref);
     } else if (postId) {
       thumbnailUrl = imgSrc;
@@ -155,26 +151,23 @@ const PostCU = () => {
       address: formData.address,
       content: content,
       amenity: `${check.airgun} ${check.shower} ${check.shop} ${check.cafe} ${check.park} ${check.sleep}`,
-      thumbnailUrl: thumbnailUrl,
+      thumbnailUrl: thumbnailUrl
     };
 
-    onAdd(newPost)
-  }
+    onAdd(newPost);
+  };
 
-//toast ui 
+  //toast ui
   const handleChangeInput = () => {
-    setContent(editorRef.current.getInstance().getHTML()
-    )
-
-  }
+    setContent(editorRef.current.getInstance().getHTML());
+  };
 
   const onUploadImage = async (blob, callback) => {
-      let formData= new FormData();
-      formData.append('file', blob); 
-      const {data:url} = await postApi.uploadImages(formData)
-      callback(url.url, "콜백 이미지 URL")
-    }
-
+    let formData = new FormData();
+    formData.append('file', blob);
+    const { data: url } = await postApi.uploadImages(formData);
+    callback(url.url, '콜백 이미지 URL');
+  };
 
   return (
     <>
@@ -185,46 +178,51 @@ const PostCU = () => {
             type="text"
             placeholder="제목을 입력해 주세요"
             autoComplete="off"
-            {...register("title", {
-              required: true,
+            {...register('title', {
+              required: true
             })}
           />
         </Element>
 
         <Element>
           <label>대표 이미지 등록</label>
-          <input
-            type="file"
-            accept="image/*"
-            {...register("postImg", {
-              onChange: (e) => previewImage(e)
-            })}
-          />
+          <ImageLabel>
+            {imgSrc ? <img src={imgSrc} alt="" /> : <div className="noneImg" />}
+            <div className="buttonDiv">
+              <input
+                type="file"
+                accept="image/*"
+                id="img_input"
+                {...register('postImg', {
+                  onChange: (e) => previewImage(e)
+                })}
+              />
+              <label className="uploadBtn" htmlFor="img_input">
+                첨부
+              </label>
+            </div>
+          </ImageLabel>
         </Element>
-
-        <ImageLabel>
-          {imgSrc ? <img src={imgSrc} alt="" /> : <HiOutlinePhotograph />}
-        </ImageLabel>
 
         <Element>
           <label>위치 정보</label>
-          <p>위치를 정확하게 입력해주세요.</p>
+          <p className="warningtext">위치를 정확하게 입력해주세요.</p>
           <select
             name="area"
             id="area"
-            {...register("area", {
-              required: true,
+            {...register('area', {
+              required: true
             })}
           >
             <option value="서울·경기·인천">서울·경기·인천</option>
-          <option value="강원">강원</option>
-          <option value="대구·경북">대구·경북</option>
-          <option value="부산·울산·경남">부산·울산·경남</option>
-          <option value="전북">전북</option>
-          <option value="광주·전남">광주·전남</option>
-          <option value="충북">충북</option>
-          <option value="충남">충남</option>
-          <option value="제주">제주</option>
+            <option value="강원">강원</option>
+            <option value="대구·경북">대구·경북</option>
+            <option value="부산·울산·경남">부산·울산·경남</option>
+            <option value="전북">전북</option>
+            <option value="광주·전남">광주·전남</option>
+            <option value="충북">충북</option>
+            <option value="충남">충남</option>
+            <option value="제주">제주</option>
           </select>
         </Element>
 
@@ -233,8 +231,8 @@ const PostCU = () => {
             type="text"
             placeholder="상세주소를 입력해 주세요"
             autoComplete="off"
-            {...register("address", {
-              required: true,
+            {...register('address', {
+              required: true
             })}
           />
         </Element>
@@ -242,9 +240,26 @@ const PostCU = () => {
         <Element>
           <label>주변 정보</label>
           <SelectAmenity>
-            {
-              amenityInfo.map((it, idx) => { return <div key={idx}>{it.map((el) => { return <AmenityButton type="button" active={check[el.value]} check={check[el.value]} className="amenityBtn" onClick={() => amenityCheck(el)} key={el.id}>{el.text}</AmenityButton> })}</div> })
-            }
+            {amenityInfo.map((it, idx) => {
+              return (
+                <div key={idx}>
+                  {it.map((el) => {
+                    return (
+                      <AmenityButton
+                        type="button"
+                        active={check[el.value]}
+                        check={check[el.value]}
+                        className="amenityBtn"
+                        onClick={() => amenityCheck(el)}
+                        key={el.id}
+                      >
+                        {el.text}
+                      </AmenityButton>
+                    );
+                  })}
+                </div>
+              );
+            })}
           </SelectAmenity>
         </Element>
 
@@ -270,10 +285,10 @@ const PostCU = () => {
             ]}
             toolbarItems={[
               // 툴바 옵션 설정
-              ["heading", "image", "bold", "italic", "strike"],
-              ["hr", "quote"],
+              ['heading', 'image', 'bold', 'italic', 'strike'],
+              ['hr', 'quote'],
               ['ul', 'ol'],
-              ["link"],
+              ['link']
             ]}
             //FIXME:DOMPURIFY
             // customHTMLSanitizer={
@@ -287,108 +302,128 @@ const PostCU = () => {
         </Toastdiv>
         <PostBtnDiv>
           <button type="submit" disabled={!isValid}>
-            게시글 {postId ? "수정" : "등록"} 하기
+            게시글 {postId ? '수정' : '등록'} 하기
           </button>
         </PostBtnDiv>
       </PostForm>
-
     </>
-  )
-}
+  );
+};
 
 export default PostCU;
-
-
 
 const PostForm = styled.form`
   display: flex;
   flex-direction: column;
-`
+`;
 
 const PostBtnDiv = styled.div`
-    button{
-      height: 2.5625rem;
-      width: 100%;
-      border-radius: 0.3125rem;
-      border: none;
-      cursor: pointer;
-      padding: 0.75rem, 0.625rem, 0.75rem, 0.625rem;
-      background-color: #007AFF;
-      color: #FFFFFF;
-    }
+  button {
+    height: 2.5625rem;
+    width: 100%;
+    border-radius: 0.3125rem;
+    border: none;
+    cursor: pointer;
+    padding: 0.75rem, 0.625rem, 0.75rem, 0.625rem;
+    background-color: #007aff;
+    color: #ffffff;
+  }
 
-    button:disabled{
-      height: 2.5625rem;
-      width: 100%;
-      border-radius: 0.3125rem;
-      border: none;
-      padding: 0.75rem, 0.625rem, 0.75rem, 0.625rem;
-      background-color: #E5E5EA;
-      color: #FFFFFF;
-    }
-`
-
+  button:disabled {
+    height: 2.5625rem;
+    width: 100%;
+    border-radius: 0.3125rem;
+    border: none;
+    padding: 0.75rem, 0.625rem, 0.75rem, 0.625rem;
+    background-color: #e5e5ea;
+    color: #ffffff;
+  }
+`;
 
 const Element = styled.div`
-  display: block;
-  text-align: left;
   flex-direction: column;
   display: flex;
-  justify-content: left;
   font-size: 0.875rem;
   margin-top: 1.125rem;
   font-weight: 500;
   input {
-    padding: 0.75rem 0.625rem;
-    padding-left: 0.625rem;
+    padding: 0.72rem 0.625rem;
     border-radius: 0.3125rem;
-    border: 0.0625rem solid #D1D1D6;
-
+    border: 0.0625rem solid #d1d1d6;
+    width: 100%;
   }
-  select{
+  select {
     padding: 0.75rem 0.625rem;
     text-align: center;
     border-radius: 0.3125rem;
-    border: 0.0625rem solid #D1D1D6;
+    border: 0.0625rem solid #d1d1d6;
   }
-  p {
-    color: #FF3B30;
-    font-weight: 300;
+  .warningtext {
+    color: #ff3b30;
+    font-weight: 400;
     height: 1.25rem;
     width: 100%;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
   }
-  label{
+  label {
     margin-bottom: 0.5rem;
   }
-`
+`;
 
-const ImageLabel = styled.label`
+const ImageLabel = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
   border-radius: 1rem;
   cursor: pointer;
-  img{
-    width: 100%;
+
+  img {
+    width: 6rem;
+    height: 5.8rem;
+    background-color: #d9d9d9;
+    border-radius: 0.5rem;
+    border: none;
   }
-  svg {
-    margin: 1rem 3rem;
-    font-size: 5rem;
+  .noneImg {
+    width: 6rem;
+    height: 5.8rem;
+    background-color: #d9d9d9;
+    border-radius: 0.5rem;
+    border: 0.0625rem solid #d9d9d9;
   }
 
-`
+  .buttonDiv {
+    display: flex;
+    flex-direction: column;
+    margin-left: 0.5rem;
+    width: 100%;
+    input {
+      width: 100%;
+    }
+    input::-webkit-file-upload-button {
+      display: none;
+    }
+    .uploadBtn {
+      background-color: #eff7ff;
+      margin-top: 0.75rem;
+      height: 2rem;
+      width: 4.25rem;
+      border-radius: 0.25rem;
+      border: none;
+      text-align: center;
+      padding-top: 0.5rem;
+    }
+  }
+`;
 
 const SelectAmenity = styled.div`
-    display:flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  div {
+    display: flex;
     gap: 0.5rem;
-    div{
-      display: flex;
-      gap: 0.5rem;
-    }
-`
+  }
+`;
 
 const AmenityButton = styled.button`
   align-items: center;
@@ -398,26 +433,25 @@ const AmenityButton = styled.button`
 
   font-size: 0.875rem;
   font-weight: 600;
-${({ active }) => active && css`
-background-color:#007AFF;
-color:white;
-border:none;
-`}
-  &:hover{
-    color:${(props) => (props.check ? 'white' : 'black')};
+  ${({ active }) =>
+    active &&
+    css`
+      background-color: #007aff;
+      color: white;
+      border: none;
+    `}
+  &:hover {
+    color: ${(props) => (props.check ? 'white' : 'black')};
     background-color: ${(props) => (props.check ? '#007AFF' : 'transparent')};
-    border:${(props) => (props.check ? 'none' : '0.0625rem solid #000000')};
+    border: ${(props) => (props.check ? 'none' : '0.0625rem solid #000000')};
   }
-`
+`;
 
 const Toastdiv = styled.div`
   margin-top: 1.125rem;
   margin-bottom: 1.875rem;
-  label{
+  label {
     font-size: 0.875rem;
     font-weight: 500;
   }
-`
-
-
-
+`;

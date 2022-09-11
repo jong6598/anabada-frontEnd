@@ -9,6 +9,8 @@ import store from './redux/store';
 import { createStandaloneToast } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Loading from './layout/Loading';
+import ScrollToTop from './layout/ScrollToTop';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const toast = createStandaloneToast();
 
@@ -17,7 +19,7 @@ function queryErrorHandler(error) {
   const title = error ? error.message : 'error connecting to server';
 
   // toast.closeAll();
-  toast({ title, status: 'error', variant: 'subtle', isClosable: true });
+  // toast({ title, status: 'error', variant: 'subtle', isClosable: true });
 }
 
 const queryClient = new QueryClient({
@@ -38,8 +40,10 @@ root.render(
     <Suspense fallback={<Loading />}>
       <QueryClientProvider client={queryClient}>
         <Provider store={store}>
+          <ScrollToTop />
           <App />
         </Provider>
+        <ReactQueryDevtools position="top-left" />
       </QueryClientProvider>
     </Suspense>
   </BrowserRouter>

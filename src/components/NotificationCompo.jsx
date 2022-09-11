@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
 import { api } from "../shared/api";
 import { queryKeys } from "../react-query/constants";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const NotificationCompo = ({
   notificationType,
@@ -12,7 +12,6 @@ const NotificationCompo = ({
   read,
   refValue,
 }) => {
-  //   const { alertHandler } = useOutletContext();
   // 삭제 버튼 눌렀을 때 mutation
   const navigate = useNavigate();
   const queryClient = new useQueryClient();
@@ -21,7 +20,7 @@ const NotificationCompo = ({
     try {
       return await api.delete(`notifications/${notificationId}`);
     } catch (err) {
-      //   alertHandler("서버와 통신이 불안정 합니다. 다시 시도해주세요.");
+
       return console.log(err);
     }
   };
@@ -41,7 +40,6 @@ const NotificationCompo = ({
     return navigate(`/posts/${post.postId}`);
   };
 
-  console.log(read);
   return (
     <>
       <NotiWrapper ref={refValue} onClick={handleNotiWrapper}>
@@ -88,6 +86,7 @@ const NotiWrapper = styled.div`
 
   box-shadow: 1px 1px 8px rgba(198, 198, 198, 0.42);
   border-radius: 6px;
+  cursor:pointer;
 `;
 
 const NotiContainer = styled.div`

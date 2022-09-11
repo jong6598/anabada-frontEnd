@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import styled from "styled-components";
-import { meetsApi } from "../shared/api";
-import { useQuery } from "@tanstack/react-query";
-import { FiMoreHorizontal } from "react-icons/fi";
-import { FiEdit2 } from "react-icons/fi";
-import { RiDeleteBin5Line } from "react-icons/ri";
-// import { meet } from '../shared/data';
-import { useDetailMeet } from "../react-query/hooks/useDetailMeet";
-import { useSelector } from "react-redux";
-import { useAddMeet } from "../react-query/hooks/useDeleteMeet";
-import { useLike } from "../react-query/hooks/useLike";
-import { useJoin } from "../react-query/hooks/useJoin";
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import styled from 'styled-components';
+import { meetsApi } from '../shared/api';
+import { useQuery } from '@tanstack/react-query';
+import { FiMoreHorizontal } from 'react-icons/fi';
+import { BsFillChatDotsFill } from 'react-icons/bs';
+import { FiEdit2 } from 'react-icons/fi';
+import { RiDeleteBin5Line } from 'react-icons/ri';
+import { useDetailMeet } from '../react-query/hooks/useDetailMeet';
+import { useSelector } from 'react-redux';
+import { useAddMeet } from '../react-query/hooks/useDeleteMeet';
+import { useLike } from '../react-query/hooks/useLike';
+import { useJoin } from '../react-query/hooks/useJoin';
+import Navigate from '../layout/Navigate';
+import Divider from '../layout/Divider';
 
 const MeetDetail = () => {
   const [showModal, setShowModal] = useState(false);
@@ -39,8 +41,14 @@ const MeetDetail = () => {
     setShowModal((prev) => !prev);
   };
 
+  const onRequestChat = (nickname) => {
+    navigate(`/chat/${nickname}`);
+  };
+
   return (
     <Container>
+      <Navigate text={'모임'} />
+      {/* <Divider /> */}
       <div className="postTopInfo">
         <p className="title">{meet.title}</p>
         <div className="postUserInfoContainer">
@@ -78,9 +86,17 @@ const MeetDetail = () => {
             </svg>
             <p>조회 {meet.viewCount}</p>
           </div>
-          {nickname !== meet.nickname && (
+          {nickname === meet.nickname && (
             <button className="moreBtn" onClick={onShowModal}>
               <FiMoreHorizontal />
+            </button>
+          )}
+          {nickname !== meet.nickname && (
+            <button
+              className="chatBtn"
+              onClick={() => onRequestChat(meet.nickname)}
+            >
+              <BsFillChatDotsFill />
             </button>
           )}
           {showModal && (
@@ -88,7 +104,7 @@ const MeetDetail = () => {
               <div
                 className="editBtn"
                 onClick={() => {
-                  navigate(`/meets/${params.thunderPostId}/edit`);
+                  navigate(`/meetAdd/${params.thunderPostId}/edit`);
                 }}
               >
                 수정하기
@@ -97,7 +113,7 @@ const MeetDetail = () => {
               <div
                 className="deleteBtn"
                 onClick={() => {
-                  const result = window.confirm("정말 삭제하시겠습니까?");
+                  const result = window.confirm('정말 삭제하시겠습니까?');
                   if (result) {
                     onDelete(meet.thunderPostId);
                   }
@@ -142,7 +158,7 @@ const MeetDetail = () => {
             fill="#FFFBFF"
           />
         </svg>
-
+        <p className="area">{meet.area}</p>
         <p>{meet.address}</p>
       </AddressContainer>
       <PostDetailInfo>
@@ -205,14 +221,11 @@ const MeetDetail = () => {
             </svg>
 
             <p>모집 기간</p>
-            <p>
-              {meet.startDate} ~ {meet.endDate}
-            </p>
+            <p>~ {meet.endDate}</p>
           </div>
         </div>
       </PostDetailInfo>
       <PostDescription>{meet.content}</PostDescription>
-      {/* FIXME: !===으로 바꿔야함 */}
       {nickname !== meet.nickname && (
         <ButtonContainer>
           <button
@@ -221,7 +234,7 @@ const MeetDetail = () => {
               const state = {
                 setIsLiked,
                 isLiked,
-                thunderPostId: meet.thunderPostId,
+                thunderPostId: meet.thunderPostId
               };
               onLike(state);
             }}
@@ -267,12 +280,12 @@ const MeetDetail = () => {
           {isJoined ? (
             <button
               className="requestedBtn"
-              style={{ backgroundColor: "#007AFF", color: "white" }}
+              style={{ backgroundColor: '#007AFF', color: 'white' }}
               onClick={() => {
                 const state = {
                   setIsJoined,
                   isJoined,
-                  thunderPostId: meet.thunderPostId,
+                  thunderPostId: meet.thunderPostId
                 };
                 onJoin(state);
               }}
@@ -286,7 +299,7 @@ const MeetDetail = () => {
                 const state = {
                   setIsJoined,
                   isJoined,
-                  thunderPostId: meet.thunderPostId,
+                  thunderPostId: meet.thunderPostId
                 };
                 onJoin(state);
               }}
@@ -296,26 +309,28 @@ const MeetDetail = () => {
           )}
         </ButtonContainer>
       )}
-
-      {meet.member?.length > 0 && (
+      {meet.members?.length > 0 && (
         <MembersContainer>
-          <Divider />
-          <p>참여 인원 목록</p>
+          <DividerMembers />
+          <p className="title">참여 인원 목록</p>
+          <div className="memberLists">
+            <img src={meet.profileImg} alt="profileImg" />
+            <div>
+              <p>{meet.nickname}</p>
+              <p className="host">주최자</p>
+            </div>
+          </div>
           {meet.members.map((member) => {
             return (
-              <ul className="memberLists">
-                <li>
-                  <div>
-                    <img src={member.profileUrl} alt="profileImg" />
-                    <p>{member.nickname}</p>
-                  </div>
-                  {nickname === meet.nickname ? (
-                    <p className="host">주최자</p>
-                  ) : (
+              <div className="memberLists">
+                <img src={member.profileImg} alt="profileImg" />
+                <div>
+                  <p>{member.nickname}</p>
+                  {nickname === member.nickname && (
                     <p className="participant">참여자</p>
                   )}
-                </li>
-              </ul>
+                </div>
+              </div>
             );
           })}
         </MembersContainer>
@@ -325,8 +340,15 @@ const MeetDetail = () => {
 };
 
 const Container = styled.div`
+  /* border-left: 1px solid #ececee;
+  border-right: 1px solid #ececee;
+  border-bottom: 1px solid #ececee; */
+  @media screen and (min-width: 1024px) {
+    margin: 0 auto;
+    width: 100%;
+  }
   .postTopInfo {
-    padding: 1rem;
+    padding: 1rem 0;
     .title {
       font-style: normal;
       font-weight: 600;
@@ -340,14 +362,23 @@ const Container = styled.div`
   .postUserInfoContainer {
     position: relative;
     display: flex;
+
     align-items: center;
     justify-content: space-between;
     .moreBtn {
       display: flex;
       padding: 0;
+    }
+    .chatBtn {
+      display: flex;
+      align-items: center;
+      padding: 0;
       svg {
-        font-size: 1rem;
+        color: #007aff;
       }
+    }
+    svg {
+      font-size: 1rem;
     }
   }
 
@@ -358,14 +389,13 @@ const Container = styled.div`
     p {
       font-style: normal;
       font-weight: 300;
-      font-size: 13px;
-      line-height: 143.84%;
-      margin: 0 5px;
+      font-size: 0.8125rem;
+      margin: 0 0.33rem;
     }
     img {
       width: 1.5rem;
       height: 1.5rem;
-      margin-right: 6px;
+      margin-right: 0.33rem;
       border-radius: 50%;
       border: 1px solid #ececee;
     }
@@ -375,18 +405,9 @@ const Container = styled.div`
       font-size: 0.938rem;
       line-height: 1.125rem;
       /* identical to box height */
-      margin-right: 5px;
+      margin-right: 0.3125rem;
       margin-left: 0;
       color: #000000;
-    }
-    .moreBtn {
-      display: flex;
-
-      align-items: center;
-      padding: 0;
-    }
-    svg {
-      font-size: 1rem;
     }
   }
 `;
@@ -397,7 +418,7 @@ const SelectContainer = styled.div`
   background: rgb(255, 255, 255);
   border: 1px solid rgb(230, 230, 230);
   box-shadow: rgb(0 0 0 / 15%) 0px 2px 4px 0px;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   /* padding: 4px 0px; */
   color: rgb(61, 61, 61);
   bottom: auto;
@@ -434,14 +455,18 @@ const SelectContainer = styled.div`
 `;
 
 const ImageWrapper = styled.div`
+  display: flex;
+  justify-content: center;
   width: 100%;
   img {
-    width: 100%;
+    min-width: 100px;
+    max-width: 800px;
+    object-fit: cover;
   }
 `;
 
 const AddressContainer = styled.div`
-  padding: 0.938rem 1rem;
+  padding: 0.938rem 0;
   display: flex;
   align-items: center;
   p {
@@ -455,10 +480,14 @@ const AddressContainer = styled.div`
 
     color: #8e8e93;
   }
+  p.area {
+    color: black;
+    font-weight: 600;
+  }
 `;
 
 const PostDetailInfo = styled.div`
-  padding: 0 1rem;
+  /* padding: 0 1rem; */
   h2 {
     font-style: normal;
     font-weight: 600;
@@ -495,11 +524,11 @@ const PostDetailInfo = styled.div`
 `;
 
 const PostDescription = styled.div`
-  padding: 1.625rem 1rem;
+  padding: 1.1625rem 0;
 `;
 
 const ButtonContainer = styled.div`
-  padding: 1rem;
+  padding: 1rem 0;
   display: flex;
   gap: 0.5rem;
   button {
@@ -511,7 +540,7 @@ const ButtonContainer = styled.div`
     padding: 0.375rem 0.625rem;
 
     background-color: #eff7ff;
-    border-radius: 4px;
+    border-radius: 0.25rem;
 
     /* Inside auto layout */
 
@@ -531,12 +560,41 @@ const ButtonContainer = styled.div`
   }
 `;
 
-const Divider = styled.div`
-  background-color: #ececec;
-  height: 0.5rem;
-`;
+const DividerMembers = styled.div``;
 
 const MembersContainer = styled.div`
-  padding: 1rem;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  border-radius: 0.25rem;
+  padding: 0 1rem;
+  p.title {
+    font-size: 1rem;
+    padding-top: 0.75rem;
+  }
+  div.memberLists {
+    display: flex;
+    flex-direction: row;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+  img {
+    width: 2rem;
+    height: 2rem;
+    margin-right: 0.5rem;
+    border-radius: 50%;
+  }
+  p {
+    font-size: 0.9rem;
+    font-weight: 400;
+    text-align: left;
+  }
+  p.host {
+    font-size: 0.7rem;
+    font-weight: 300;
+    color: #007aff;
+  }
+  p.participant {
+    font-weight: 300;
+    font-size: 0.7rem;
+  }
 `;
 export default MeetDetail;

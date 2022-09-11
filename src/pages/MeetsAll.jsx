@@ -4,10 +4,8 @@ import Meet from '../components/Meet';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import { meetsApi } from '../shared/api';
-import { thunderposts } from '../shared/data';
-import Loading from '../layout/Loading';
-import { useAllMeets } from '../react-query/hooks/useAllMeets';
-import { useSearchMeets } from '../react-query/hooks/useSearchMeets';
+import Loading, { InfiniteLoading } from '../layout/Loading';
+
 import { queryKeys } from '../react-query/constants';
 import Navigate from '../layout/Navigate';
 
@@ -15,7 +13,7 @@ const MeetsAll = () => {
   const [search, setSearch] = useState(null);
   const [areaSelected, setAreaSelected] = useState('ALL');
 
-  const getPosts = async (pageParam = 0) => {
+  const fetchPosts = async (pageParam, areaSelected, search) => {
     if (search) {
       try {
         const res = await meetsApi.getSearchPosts(
@@ -43,30 +41,12 @@ const MeetsAll = () => {
 
   const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
     [queryKeys.allMeets, areaSelected, search],
-    ({ pageParam = 0 }) => getPosts(pageParam),
+    ({ pageParam = 0 }) => fetchPosts(pageParam, areaSelected, search),
     {
       getNextPageParam: (lastPage) =>
         !lastPage.last ? lastPage.nextPage : undefined
     }
   );
-
-  // FIXME: CUSTOM QUERY ?
-  // const {
-  //   data,
-  //   areaSelected,
-  //   setAreaSelected,
-  //   isFetchingNextPage,
-  //   setIsSearch,
-  //   fetchNextPage
-  // } = useAllMeets();
-
-  // const {
-  //   searchPosts,
-  //   setAreaSelectedSearch,
-  //   setKeyword,
-  //   isFetchingNextPageSearch,
-  //   fetchNextPageSearch
-  // } = useSearchMeets();
 
   const searchRef = useRef();
   const { ref, inView } = useInView();
@@ -97,13 +77,13 @@ const MeetsAll = () => {
       <Navigate text={'오픈 모임 리스트'} />
       <CategoryContainer>
         <select id="area" onChange={onChangeArea} value={areaSelected}>
-          <option value="ALL">전체</option>
-          <option value="서울·경기·인천">서울, 경기, 인천</option>
+          <option value="ALL">전국</option>
+          <option value="서울·경기·인천">서울·경기·인천</option>
           <option value="강원">강원</option>
-          <option value="대구·경북">대구, 경북</option>
-          <option value="부산·울산·경남">부산, 울산, 경남</option>
+          <option value="대구·경북">대구·경북</option>
+          <option value="부산·울산·경남">부산·울산·경남</option>
           <option value="전북">전북</option>
-          <option value="광주·전남">광주, 전남</option>
+          <option value="광주·전남">광주·전남</option>
           <option value="충북">충북</option>
           <option value="충남">충남</option>
           <option value="제주">제주</option>
@@ -115,23 +95,12 @@ const MeetsAll = () => {
           onKeyPress={onKeyPress}
         />
       </CategoryContainer>
-      {/* {searchPosts &&
-        searchPosts.pages?.map((page) => {
-          return page.data?.map((meet) => (
-            <Meet key={meet.thunderPostId} meet={meet} />
-          ));
-        })}
-      {data.pages.map((page) => {
-        return page.data.map((meet) => (
-          <Meet key={meet.thunderPostId} meet={meet} />
-        ));
-      })} */}
       {data.pages.map((page) => {
         return page.data.map((meet) => (
           <Meet key={meet.thunderPostId} meet={meet} />
         ));
       })}
-      {/* {isFetchingNextPage ? <Loading /> : <div ref={ref}></div>} */}
+
       {isFetchingNextPage ? <Loading /> : <div ref={ref}></div>}
     </MeetAllContainer>
   );
@@ -141,14 +110,11 @@ const MeetAllContainer = styled.div``;
 
 const CategoryContainer = styled.div`
   display: flex;
-  justify-content: space-between;
   flex-direction: row;
   align-items: center;
   padding: 0.875rem 0;
-  /* gap: 0.875rem; */
   select {
     padding: 0.625rem 0;
-    /* gap: 0.188rem; */
     background: #ffffff;
     border: 1px solid #c7c7cc;
     border-radius: 4px;
@@ -161,11 +127,11 @@ const CategoryContainer = styled.div`
   input {
     font-weight: 400;
     font-size: 0.875rem;
-    line-height: 1.125rem;
-    /* identical to box height */
+    margin-left: 0.75rem;
+    width: 100%;
     padding: 0.625rem 1rem;
     background-color: #f2f2f7;
-    border-radius: 4px;
+    border-radius: 0.75rem;
   }
 `;
 
