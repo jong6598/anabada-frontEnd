@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react';
-import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import React, { useCallback } from "react";
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const PopularMeets = ({ popularPosts }) => {
   const navigate = useNavigate();
@@ -40,7 +40,7 @@ const PopularMeets = ({ popularPosts }) => {
                   <p className="dDay">
                     D-
                     {difference(date1, new Date(meet.endDate)) === 0
-                      ? 'Day'
+                      ? "Day"
                       : difference(date1, new Date(meet.endDate))}
                   </p>
                 ) : (
@@ -48,9 +48,9 @@ const PopularMeets = ({ popularPosts }) => {
                 )}
                 <p className="endDate">~{meet.endDate}</p>
               </div>
-              <div>
-                <p className="title">{meet.title}</p>
-              </div>
+
+              <div className="title">{meet.title}</div>
+
               <div className="areaInfo">
                 <svg
                   width="16"
@@ -147,6 +147,7 @@ const PopularPostsContainer = styled.div`
   }
 
   div.meetBox {
+    width: 14.375rem;
     margin-right: 1rem;
     border-radius: 13px;
     position: relative;
@@ -156,10 +157,10 @@ const PopularPostsContainer = styled.div`
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     border-radius: 13px;
     img {
-      width: 12.375rem;
+      width: 100%;
       height: 11.875rem;
+      object-fit: cover;
 
-      /* background: url(.jpg), #d9d9d9; */
       border-radius: 13px;
     }
   }
@@ -187,6 +188,18 @@ const PopularPostsContainer = styled.div`
     order: 1;
     align-self: stretch;
     flex-grow: 0;
+
+    width: 100%;
+  }
+  .title {
+    width: 100%;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    font-weight: 600;
+    font-size: 0.9rem;
   }
 
   .dDay {
@@ -252,22 +265,6 @@ const PopularPostsContainer = styled.div`
     line-height: 143.84%;
 
     /* or 17px */
-
-    color: #000000;
-  }
-  .title {
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-
-    font-style: normal;
-    font-weight: 600;
-    font-size: 0.9rem;
-    line-height: 143.84%;
-    /* identical to box height, or 22px */
 
     color: #000000;
   }
