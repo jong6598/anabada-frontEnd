@@ -1,25 +1,25 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import styled from 'styled-components';
-import { postApi } from '../shared/api';
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import styled from "styled-components";
+import { postApi } from "../shared/api";
 import {
   useQuery,
   useQueryClient,
   useMutation,
-  useInfiniteQuery
-} from '@tanstack/react-query';
-import { Viewer } from '@toast-ui/react-editor';
-import '@toast-ui/editor/dist/toastui-editor-viewer.css';
-import Comment from '../components/Comment';
-import { useInView } from 'react-intersection-observer';
-import { FiMoreHorizontal } from 'react-icons/fi';
-import { FiEdit2 } from 'react-icons/fi';
-import { RiDeleteBin5Line } from 'react-icons/ri';
-import { queryKeys } from '../react-query/constants';
-import { FiInbox } from 'react-icons/fi';
-import { BsFillChatDotsFill } from 'react-icons/bs';
-import Navigate from '../layout/Navigate';
+  useInfiniteQuery,
+} from "@tanstack/react-query";
+import { Viewer } from "@toast-ui/react-editor";
+import "@toast-ui/editor/dist/toastui-editor-viewer.css";
+import Comment from "../components/Comment";
+import { useInView } from "react-intersection-observer";
+import { FiMoreHorizontal } from "react-icons/fi";
+import { FiEdit2 } from "react-icons/fi";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import { queryKeys } from "../react-query/constants";
+import { FiInbox } from "react-icons/fi";
+import { BsFillChatDotsFill } from "react-icons/bs";
+import Navigate from "../layout/Navigate";
 
 const PostsDetail = () => {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const PostsDetail = () => {
   const [liked, setLiked] = useState();
   const queryClient = useQueryClient();
   const profileImg = useSelector((state) => state.auth.profileImg);
-  const [newComment, setNewComment] = useState('');
+  const [newComment, setNewComment] = useState("");
   const [isValid, setIsValid] = useState(false);
   const { ref, inView } = useInView();
   const write_ref = useRef();
@@ -38,7 +38,7 @@ const PostsDetail = () => {
   const getPost = async () => {
     try {
       const res = await postApi.getPost(`${params.postId}`);
-      console.log(res.data.liked, 'liked 확인해보자');
+      console.log(res.data.liked, "liked 확인해보자");
       return res.data;
     } catch (err) {
       console.log(err);
@@ -46,11 +46,11 @@ const PostsDetail = () => {
     }
   };
 
-  const postInfo = useQuery(['post', liked], getPost, {
-    refetchOnWindowFocus: false
+  const postInfo = useQuery(["post", liked], getPost, {
+    refetchOnWindowFocus: false,
   }).data;
 
-  const getAmenity = postInfo.amenity.split(' ');
+  const getAmenity = postInfo.amenity.split(" ");
 
   const fetchComments = async (pageParam) => {
     try {
@@ -68,13 +68,13 @@ const PostsDetail = () => {
   const {
     data: comments,
     fetchNextPage,
-    isFetchingNextPage
+    isFetchingNextPage,
   } = useInfiniteQuery(
     [queryKeys.commentList],
     ({ pageParam = 0 }) => fetchComments(pageParam),
     {
       getNextPageParam: (lastPage) =>
-        !lastPage.last ? lastPage.nextPage : undefined
+        !lastPage.last ? lastPage.nextPage : undefined,
     }
   );
 
@@ -101,12 +101,12 @@ const PostsDetail = () => {
   const { mutate: onDelete } = useMutation(postDelete, {
     onSuccess: () => {
       queryClient.invalidateQueries([queryKeys.posts]);
-      navigate('/posts');
-      alert('게시글이 삭제되었습니다');
+      navigate("/posts");
+      alert("게시글이 삭제되었습니다");
     },
     onError: (err) => {
       console.log(err.respose);
-    }
+    },
   });
 
   //좋아요 기능구현
@@ -135,7 +135,7 @@ const PostsDetail = () => {
     },
     onError: (err) => {
       console.log(err.respose);
-    }
+    },
   });
 
   //댓글 작성
@@ -149,12 +149,12 @@ const PostsDetail = () => {
 
   const submitCommentsMutation = useMutation(submitComments, {
     onSuccess: () => {
-      write_ref.current.value = '';
+      write_ref.current.value = "";
       queryClient.invalidateQueries([queryKeys.commentList]);
     },
     onError: (err) => {
       console.log(err.respose);
-    }
+    },
   });
 
   const onRequestChat = (nickname) => {
@@ -163,7 +163,7 @@ const PostsDetail = () => {
 
   return (
     <Container>
-      <Navigate text={'포스트'} />
+      <Navigate text={"포스트"} />
       <TitleDiv>
         <span>{postInfo.title}</span>
       </TitleDiv>
@@ -227,7 +227,7 @@ const PostsDetail = () => {
             <div
               className="deleteBtn"
               onClick={() => {
-                const result = window.confirm('정말 삭제하시겠습니까?');
+                const result = window.confirm("정말 삭제하시겠습니까?");
                 if (result) {
                   onDelete(params.postId);
                 }
@@ -280,12 +280,12 @@ const PostsDetail = () => {
       <Amenity>
         <label>주변정보</label>
         <div>
-          {getAmenity[0] === 'true' ? <p>💨 에어건이 있어요</p> : null}
-          {getAmenity[1] === 'true' ? <p>🏄 서핑샵이 있어요</p> : null}
-          {getAmenity[2] === 'true' ? <p>🛀 샤워시설이 있어요</p> : null}
-          {getAmenity[3] === 'true' ? <p>🍽 식당 카페가 있어요</p> : null}
-          {getAmenity[4] === 'true' ? <p>🚘 주차장이 있어요</p> : null}
-          {getAmenity[5] === 'true' ? <p>🏨 숙박시설이 있어요</p> : null}
+          {getAmenity[0] === "true" ? <p>💨 에어건이 있어요</p> : null}
+          {getAmenity[1] === "true" ? <p>🏄 서핑샵이 있어요</p> : null}
+          {getAmenity[2] === "true" ? <p>🛀 샤워시설이 있어요</p> : null}
+          {getAmenity[3] === "true" ? <p>🍽 식당 카페가 있어요</p> : null}
+          {getAmenity[4] === "true" ? <p>🚘 주차장이 있어요</p> : null}
+          {getAmenity[5] === "true" ? <p>🏨 숙박시설이 있어요</p> : null}
         </div>
       </Amenity>
 
@@ -369,7 +369,7 @@ const PostsDetail = () => {
             disabled={isValid === false}
             onClick={() => {
               const postComment = {
-                content: newComment
+                content: newComment,
               };
               submitCommentsMutation.mutate(postComment);
             }}
@@ -569,6 +569,7 @@ const WriteComment = styled.div`
   align-items: center;
   height: 3.125rem;
   width: 100%;
+  position: relative;
   div {
     display: flex;
     position: relative;
@@ -601,7 +602,7 @@ const WriteComment = styled.div`
   }
   button {
     position: absolute;
-    right: 1.625rem;
+    right: 1rem;
     border-radius: 1rem;
     border: none;
     font-size: 0.75rem;

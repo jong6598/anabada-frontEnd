@@ -274,17 +274,27 @@ const NavElement = styled.nav`
     display: flex;
     align-items: center;
     height: 100%;
-    color: ${(props) => (props.pathname === "/posts" ? "#2756FF" : "inherit")};
-    border-bottom: ${(props) =>
-      props.pathname === "/posts" ? "0.15rem solid #2756FF" : "inherit"};
+    color: ${(props) => {
+      return props.pathname.startsWith("/posts") ? "#2756FF" : "inherit";
+    }};
+    border-bottom: ${(props) => {
+      return props.pathname.startsWith("/posts")
+        ? "0.15rem solid #2756FF"
+        : "inherit";
+    }};
   }
   .header__nav__open {
     display: flex;
     align-items: center;
     height: 100%;
-    color: ${(props) => (props.pathname === "/meets" ? "#2756FF" : "inherit")};
-    border-bottom: ${(props) =>
-      props.pathname === "/meets" ? "0.15rem solid #2756FF" : "inherit"};
+    color: ${(props) => {
+      return props.pathname.startsWith("/meets") ? "#2756FF" : "inherit";
+    }};
+    border-bottom: ${(props) => {
+      return props.pathname.startsWith("/meets")
+        ? "0.15rem solid #2756FF"
+        : "inherit";
+    }};
   }
 `;
 
