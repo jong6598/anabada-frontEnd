@@ -10,6 +10,7 @@ import NotificationCompo from '../components/NotificationCompo';
 import { useNavigate } from 'react-router-dom';
 import { queryKeys } from '../react-query/constants';
 import Navigate from '../layout/Navigate';
+import NoData from '../layout/NoData';
 
 const Notification = ({ setNotifications }) => {
   const lastNotiRef = useRef();
@@ -94,6 +95,9 @@ const Notification = ({ setNotifications }) => {
     <Container>
       <NotificationWrapper>
         <Navigate text={'알림'} />
+        {data.pages[0].data.content.length === 0 && (
+          <NoData text={'알림'} notification={true} />
+        )}
         <NotificationContainer>
           {isSuccess &&
             data.pages.map((page, pageIndex) => {
@@ -148,17 +152,22 @@ const NotificationContainer = styled.div`
 const NotiAllDelete = styled.div`
   position: fixed;
   z-index: 300;
-  bottom: 8rem;
-  right: 3rem;
+  bottom: 1.7rem;
+  right: 2.3rem;
 
-  width: 3rem;
-  height: 3rem;
+  cursor: pointer;
+  width: 60px;
+  height: 60px;
 
+  color: white;
   background-color: #007aff;
   opacity: 0.9;
-  border-radius: 100rem;
+  border-radius: 50%;
 
   display: flex;
   justify-content: center;
   align-items: center;
+  .material-symbols-outlined {
+    font-weight: 500;
+  }
 `;

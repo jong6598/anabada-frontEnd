@@ -13,6 +13,8 @@ import NoData from '../layout/NoData';
 import { usePosts } from '../react-query/hooks/post/usePosts';
 import Navigate from '../layout/Navigate';
 import Masonry from 'react-masonry-css';
+import SkeletonItem from '../layout/SkeletonItem';
+import { TbPencil } from 'react-icons/tb';
 
 const Posts = () => {
   const navigate = useNavigate();
@@ -20,15 +22,6 @@ const Posts = () => {
   const { ref, inView } = useInView();
   const searchRef = useRef();
   const accesstoken = localStorage.getItem('accessToken');
-
-  // const {
-  //   data,
-  //   isFetchingNextPage,
-  //   fetchNextPage,
-  //   setAreaSelected,
-  //   areaSelected,
-  //   setSearch
-  // } = usePosts();
 
   const [areaSelected, setAreaSelected] = useState('ALL');
   const [search, setSearch] = useState(null);
@@ -63,14 +56,15 @@ const Posts = () => {
     }
   };
 
-  const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
-    [queryKeys.posts, areaSelected, search],
-    ({ pageParam = 0 }) => fetchPosts(pageParam, areaSelected, search),
-    {
-      getNextPageParam: (lastPage) =>
-        !lastPage.last ? lastPage.nextPage : undefined
-    }
-  );
+  const { data, fetchNextPage, isFetchingNextPage, isLoading } =
+    useInfiniteQuery(
+      [queryKeys.posts, areaSelected, search],
+      ({ pageParam = 0 }) => fetchPosts(pageParam, areaSelected, search),
+      {
+        getNextPageParam: (lastPage) =>
+          !lastPage.last ? lastPage.nextPage : undefined
+      }
+    );
 
   useEffect(() => {
     if (inView) {
@@ -83,6 +77,8 @@ const Posts = () => {
       onSearch(e);
     }
   };
+
+  // window.location.reload();
 
   const onSearch = (e) => {
     setSearch(e.target.value);
@@ -102,29 +98,26 @@ const Posts = () => {
   return (
     <>
       <MainDiv>
-        <Navigate text={'게시글'} />
-        <TopDiv>
-          <Areabar>
-            <select onChange={onChangeArea} value={areaSelected}>
-              <option value="ALL">전국</option>
-              <option value="서울·경기·인천">서울·경기·인천</option>
-              <option value="강원">강원</option>
-              <option value="대구·경북">대구·경북</option>
-              <option value="부산·울산·경남">부산·울산·경남</option>
-              <option value="전북">전북</option>
-              <option value="광주·전남">광주·전남</option>
-              <option value="충북">충북</option>
-              <option value="충남">충남</option>
-              <option value="제주">제주</option>
-            </select>
-          </Areabar>
+        <CategoryContainer>
+          <select id="area" onChange={onChangeArea} value={areaSelected}>
+            <option value="ALL">전국</option>
+            <option value="서울·경기·인천">서울·경기·인천</option>
+            <option value="강원">강원</option>
+            <option value="대구·경북">대구·경북</option>
+            <option value="부산·울산·경남">부산·울산·경남</option>
+            <option value="전북">전북</option>
+            <option value="광주·전남">광주·전남</option>
+            <option value="충북">충북</option>
+            <option value="충남">충남</option>
+            <option value="제주">제주</option>
+          </select>
           <input
             type="text"
-            placeholder="검색어를 입력해주세요."
+            placeholder="검색어를 입력해주세요"
             ref={searchRef}
             onKeyPress={onKeyPress}
           />
-        </TopDiv>
+        </CategoryContainer>
         <PostDiv>
           {data.pages[0].data.length === 0 && (
             <NoData text={'게시물'} content={'게시물'} />
@@ -143,6 +136,7 @@ const Posts = () => {
                     navigate(`/posts/${post.postId}`);
                   }}
                 >
+                  {/* {!post && <SkeletonItem />} */}
                   <Post data={post} />
                 </PostContainer>
               ));
@@ -153,79 +147,8 @@ const Posts = () => {
       </MainDiv>
       {accesstoken && (
         <PostBtn>
-          <Link to="/posts/upload">
-            <svg
-              width="70"
-              height="70"
-              viewBox="0 0 70 70"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <g filter="url(#filter0_d_225_2066)">
-                <rect
-                  x="5"
-                  y="5"
-                  width="56"
-                  height="56"
-                  rx="28"
-                  fill="#007AFF"
-                />
-                <path
-                  d="M23.6625 42.7501L27.905 42.7502L43.4613 27.1938L39.2187 22.9512L23.6624 38.5075L23.6625 42.7501Z"
-                  fill="white"
-                />
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  d="M38.6884 22.4208C38.9813 22.1279 39.4561 22.1279 39.749 22.4208L43.9917 26.6635C44.1323 26.8041 44.2113 26.9949 44.2113 27.1938C44.2113 27.3927 44.1323 27.5835 43.9917 27.7241L28.4353 43.2805C28.2947 43.4211 28.1039 43.5002 27.905 43.5002L23.6625 43.5001C23.2483 43.5 22.9125 43.1643 22.9125 42.7501L22.9124 38.5075C22.9123 38.3086 22.9914 38.1178 23.132 37.9772L38.6884 22.4208ZM39.2187 24.0118L24.4124 38.8182L24.4125 42.0001L27.5943 42.0001L42.4007 27.1938L39.2187 24.0118Z"
-                  fill="white"
-                />
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  d="M34.4457 26.6635C34.7386 26.3706 35.2135 26.3706 35.5064 26.6635L39.749 30.9062C40.0419 31.1991 40.0419 31.6739 39.749 31.9668C39.4561 32.2597 38.9813 32.2597 38.6884 31.9668L34.4457 27.7242C34.1528 27.4313 34.1528 26.9564 34.4457 26.6635Z"
-                  fill="white"
-                />
-              </g>
-              <defs>
-                <filter
-                  id="filter0_d_225_2066"
-                  x="0"
-                  y="0"
-                  width="70"
-                  height="70"
-                  filterUnits="userSpaceOnUse"
-                  color-interpolation-filters="sRGB"
-                >
-                  <feFlood flood-opacity="0" result="BackgroundImageFix" />
-                  <feColorMatrix
-                    in="SourceAlpha"
-                    type="matrix"
-                    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-                    result="hardAlpha"
-                  />
-                  <feOffset dx="2" dy="2" />
-                  <feGaussianBlur stdDeviation="3.5" />
-                  <feComposite in2="hardAlpha" operator="out" />
-                  <feColorMatrix
-                    type="matrix"
-                    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
-                  />
-                  <feBlend
-                    mode="normal"
-                    in2="BackgroundImageFix"
-                    result="effect1_dropShadow_225_2066"
-                  />
-                  <feBlend
-                    mode="normal"
-                    in="SourceGraphic"
-                    in2="effect1_dropShadow_225_2066"
-                    result="shape"
-                  />
-                </filter>
-              </defs>
-            </svg>
-          </Link>
+          <Link to="/posts/upload"></Link>
+          <TbPencil />
         </PostBtn>
       )}
     </>
@@ -240,19 +163,6 @@ const MainDiv = styled.div`
 
 const PostDiv = styled.div`
   margin-top: 0.5rem;
-  /* margin: 0.625rem auto;
-
-  position: relative;
-  max-width: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  grid-template-rows: minmax(100px, auto);
-  grid-auto-flow: dense;
-  grid-gap: 0.625rem; */
-
-  /* flex-wrap: wrap;
-  columns: auto 2;
-  column-gap: 1rem; */
 
   // mansory ui
   .my-masonry-grid {
@@ -277,31 +187,27 @@ const PostDiv = styled.div`
   }
 `;
 
-const TopDiv = styled.div`
+const CategoryContainer = styled.div`
   display: flex;
-  input {
-    background-color: #f2f2f7;
-    border: 0;
-    border-radius: 2.625rem;
-    margin-left: 0.75rem;
-    height: 2.375rem;
-    margin-top: 0.9375rem;
-    width: 100%;
-    padding-left: 0.9375rem;
-  }
-`;
-
-const Areabar = styled.div`
-  height: 3.75rem;
-  padding: 0.875rem, 1rem, 0.5rem, 1rem;
-
+  flex-direction: row;
+  align-items: center;
+  padding: 0.875rem 0;
   select {
-    border-radius: 0.25rem;
-    margin-top: 0.9375rem;
     padding: 0.625rem;
-    gap: 0.188rem;
     background: #ffffff;
-    border: 0.0625rem solid #c7c7cc;
+    border: 1px solid #c7c7cc;
+    border-radius: 4px;
+    height: 40px;
+  }
+
+  input {
+    font-weight: 400;
+    font-size: 0.875rem;
+    margin-left: 0.75rem;
+    width: 100%;
+    padding: 0.625rem 1rem;
+    background-color: #f2f2f7;
+    border-radius: 0.75rem;
   }
 `;
 
@@ -311,8 +217,24 @@ const PostContainer = styled.div`
 `;
 
 const PostBtn = styled.div`
-  cursor: pointer;
   position: fixed;
-  bottom: 1rem;
-  right: 1rem;
+  bottom: 1.7rem;
+  right: 2.3rem;
+  z-index: 300;
+  cursor: pointer;
+  width: 60px;
+  height: 60px;
+  opacity: 0.9;
+
+  background-color: #007aff;
+  border-radius: 50%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  svg {
+    font-size: 2rem;
+    color: white;
+    font-weight: 200;
+  }
 `;

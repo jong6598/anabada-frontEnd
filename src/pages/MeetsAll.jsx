@@ -74,7 +74,6 @@ const MeetsAll = () => {
 
   return (
     <MeetAllContainer>
-      <Navigate text={'오픈 모임 리스트'} />
       <CategoryContainer>
         <select id="area" onChange={onChangeArea} value={areaSelected}>
           <option value="ALL">전국</option>
@@ -114,7 +113,7 @@ const CategoryContainer = styled.div`
   align-items: center;
   padding: 0.875rem 0;
   select {
-    padding: 0.625rem 0;
+    padding: 0.625rem;
     background: #ffffff;
     border: 1px solid #c7c7cc;
     border-radius: 4px;

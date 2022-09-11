@@ -114,6 +114,7 @@ const ImageBox = styled.div`
     margin-bottom: 0.875rem;
 
     width: 100%;
+    min-height: 50px;
     /* @media screen and (min-width: 1024px) {
       min-width: 12.5rem;
     } */
@@ -126,7 +127,7 @@ const PostInfo = styled.div`
   padding: 0 0.5rem;
   h2 {
     display: block;
-    /* white-space: nowrap; */
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: 0.9375rem;
