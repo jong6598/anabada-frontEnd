@@ -210,9 +210,6 @@ const PopularPostsContainer = styled.div`
     gap: 0.625rem;
     margin-right: 0.75rem;
 
-    /* width: 35px; */
-    /* height: 21px; */
-
     background: #ff3b30;
     border-radius: 4px;
 

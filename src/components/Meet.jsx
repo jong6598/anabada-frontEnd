@@ -36,7 +36,7 @@ const Meet = ({ meet }) => {
               D-
               {difference(date1, new Date(meet.endDate)) === 0
                 ? "Day"
-                : difference(date1, new Date(meet.endDate))}
+                :difference(date1, new Date(meet.endDate))}
             </p>
           ) : (
             <p className="dayClosing">마감</p>
@@ -177,8 +177,6 @@ const RightWrapper = styled.div`
       padding: 0.125rem 0.25rem;
       gap: 0.625rem;
       margin-right: 0.75rem;
-
-      width: 35px;
       /* height: 21px; */
 
       background: #ff3b30;
