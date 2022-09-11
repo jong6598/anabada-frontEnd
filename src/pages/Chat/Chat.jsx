@@ -256,7 +256,6 @@ const Chat = () => {
           );
         })}
 
-        <Time>오후 12:34</Time>
         {chatMessages &&
           chatMessages.length > 0 &&
           chatMessages.map((msg, index) =>
