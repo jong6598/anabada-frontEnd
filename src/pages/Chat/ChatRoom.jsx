@@ -31,8 +31,6 @@ const ChatRoom = () => {
     }
   }, [inView]);
 
-  console.log(rooms, 'rooms!!');
-
   return (
     <Container>
       <Navigate text={'채팅'} />

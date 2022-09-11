@@ -11,7 +11,6 @@ import { queryKeys } from '../react-query/constants';
 import Loading from '../layout/Loading';
 import NoData from '../layout/NoData';
 import { usePosts } from '../react-query/hooks/post/usePosts';
-import Navigate from '../layout/Navigate';
 import Masonry from 'react-masonry-css';
 import SkeletonItem from '../layout/SkeletonItem';
 import { TbPencil } from 'react-icons/tb';
@@ -27,10 +26,8 @@ const Posts = () => {
   const [search, setSearch] = useState(null);
 
   const fetchPosts = async (pageParam, areaSelected, search) => {
-    console.log(search, '🎈🎈🎈🎈🎈🎈🎈🎈🎈🎈');
     if (search) {
       try {
-        console.log(search, 'search 들어와잇냐?');
         const res = await postApi.getSearchPosts(
           pageParam,
           areaSelected,
@@ -44,7 +41,6 @@ const Posts = () => {
       }
     } else {
       try {
-        console.log('search 없이 요청');
         const res = await postApi.getPosts(pageParam, areaSelected);
         const data = res.data.content;
         const last = res.data.last;
@@ -147,8 +143,9 @@ const Posts = () => {
       </MainDiv>
       {accesstoken && (
         <PostBtn>
-          <Link to="/posts/upload"></Link>
-          <TbPencil />
+          <Link to="/posts/upload">
+            <TbPencil />
+          </Link>
         </PostBtn>
       )}
     </>

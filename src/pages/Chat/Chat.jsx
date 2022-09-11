@@ -152,7 +152,7 @@ const Chat = () => {
         __setRoomId(getRoomId);
       } catch (error) {
         // error가 나면 roomId를 받는다.
-        console.log(error, 'error');
+        // console.log(error, 'error');
       }
     }
     getRoomId();

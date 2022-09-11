@@ -38,7 +38,6 @@ const PostsDetail = () => {
   const getPost = async () => {
     try {
       const res = await postApi.getPost(`${params.postId}`);
-      console.log(res.data.liked, "liked 확인해보자");
       return res.data;
     } catch (err) {
       console.log(err);

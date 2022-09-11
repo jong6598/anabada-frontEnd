@@ -24,7 +24,6 @@ const Comment = ({ comment }) => {
   //댓글 수정 
   const startEditing = () => {
     setEditing((prev) => !prev)
-    console.log("수정모드!")
   }
 
   const onShowModal = () => {

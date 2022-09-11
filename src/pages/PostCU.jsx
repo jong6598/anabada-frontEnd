@@ -16,7 +16,6 @@ import { Editor } from '@toast-ui/react-editor';
 
 import { amenityInfo } from '../shared/data';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAddPost } from '../react-query/hooks/post/useAddPost';
 import { queryKeys } from '../react-query/constants';
 
 const PostCU = () => {
@@ -52,8 +51,7 @@ const PostCU = () => {
         const update = await postApi.updatePost(postId, newPost);
         alert('게시글이 수정되었습니다!');
       } catch (err) {
-        console.log(err);
-        alert(err);
+        alert('게시글 수정에 실패했습니다');
       }
     }
   };
@@ -64,6 +62,7 @@ const PostCU = () => {
     onSuccess: () => {
       queryClient.invalidateQueries([queryKeys.posts]);
       navigate('/posts');
+      window.location.href = 'https://ohanabada.com/posts';
     },
     onError: (err) => {
       console.log(err.respose);

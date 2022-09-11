@@ -20,12 +20,10 @@ const MyPosts = () => {
   const getMyPosts = async (pageParam = 0, filter) => {
     try {
       const res = await myApi.getMyPosts(filter, pageParam);
-      console.log(res, '데이터 형식확인');
       const data = res.data.content;
       const last = res.data.last;
       return { data, nextPage: pageParam + 1, last };
     } catch (err) {
-      console.log(err);
       alert(err);
     }
   };

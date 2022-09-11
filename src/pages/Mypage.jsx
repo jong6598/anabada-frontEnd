@@ -40,7 +40,6 @@ const Mypage = () => {
         fileInput.current?.files[0]
       );
       uploadUrl = await getDownloadURL(uploaded_file.ref);
-      console.log(uploadUrl, 'url 두두둥장');
     }
 
     reader.onload = () => {
@@ -57,16 +56,15 @@ const Mypage = () => {
     const result = window.confirm('변경된 프로필 사진을 등록하시겠습니까?');
     if (result) {
       const res = await myApi.uploadProfile(profileImg);
-      console.log('이미지 보내기 성공!');
     } else {
       const deleteImg = ref(storage, uploadUrl);
       deleteObject(deleteImg)
         .then(() => {
-          console.log('삭제 완료!');
+          alert('취소 완료!');
           setImgSrc('');
         })
         .catch((err) => {
-          console.log(err);
+          alert('취소 실패!');
         });
     }
   };
