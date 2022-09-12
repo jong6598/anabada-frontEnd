@@ -1,24 +1,22 @@
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
-import { memo, useCallback, useState } from 'react';
-import styled, { keyframes } from 'styled-components';
-import checkedWeather from '../styles/weather';
-import { Map, CustomOverlayMap, MarkerClusterer } from 'react-kakao-maps-sdk';
+import { useCallback, useState } from "react";
+import styled, { keyframes } from "styled-components";
+import checkedWeather from "../styles/weather";
+import { Map, CustomOverlayMap, MarkerClusterer } from "react-kakao-maps-sdk";
 
-const KakaoMap = memo(() => {
+const KakaoMap = ({ data }) => {
   const [picker, setPicker] = useState({
     beachId: -1,
-    beachName: '',
-    beachNum: '',
-    pcp: '',
-    pop: '',
-    pty: '',
-    sky: '',
-    tmp: '',
-    wav: '',
-    wsd: '',
+    beachName: "",
+    beachNum: "",
+    pcp: "",
+    pop: "",
+    pty: "",
+    sky: "",
+    tmp: "",
+    wav: "",
+    wsd: "",
     x: 0,
-    y: 0
+    y: 0,
   });
 
   const handlePicker = useCallback((pickerInfo) => {
@@ -26,18 +24,6 @@ const KakaoMap = memo(() => {
       return { ...prev, ...pickerInfo };
     });
   }, []);
-
-  // fetcher
-  const fetchingSpot = () =>
-    axios.get(`https://${process.env.REACT_APP_API_SERVER}/api/beach`);
-  // react-query
-  const { data } = useQuery(['spotData'], fetchingSpot, {
-    staleTime: 1000 * 60 * 30,
-    refetchOnWindowFocus: false,
-    onError(err) {
-      console.log('에러가 발생했습니다!! ::: ', err);
-    }
-  });
 
   return (
     <>
@@ -49,53 +35,53 @@ const KakaoMap = memo(() => {
           styles={[
             {
               // calculator 각 사이 값 마다 적용될 스타일을 지정한다
-              width: '1.875rem',
-              height: '1.875rem',
-              background: 'transparent',
+              width: "1.875rem",
+              height: "1.875rem",
+              background: "transparent",
               backgroundImage: 'url("/assets/c3.png")',
-              borderRadius: '50%',
-              fontSize: '0.7rem',
-              color: 'white',
+              borderRadius: "50%",
+              fontSize: "0.7rem",
+              color: "white",
 
-              display: 'flex',
-              justifyContent: 'flex-end',
-              padding: '0.3rem',
-              alignItems: 'center',
-              textAlign: 'center',
+              display: "flex",
+              justifyContent: "flex-end",
+              padding: "0.3rem",
+              alignItems: "center",
+              textAlign: "center",
 
-              fontWeight: 'bold'
+              fontWeight: "bold",
             },
             {
-              width: '3.125rem',
-              height: '3.125rem',
-              background: 'transparent',
+              width: "3.125rem",
+              height: "3.125rem",
+              background: "transparent",
               backgroundImage: 'url("/assets/c2.png")',
-              borderRadius: '50%',
-              color: 'white',
-              display: 'flex',
-              justifyContent: 'flex-end',
-              padding: '0.4rem',
-              alignItems: 'center',
-              textAlign: 'center',
-              fontWeight: 'bold'
+              borderRadius: "50%",
+              color: "white",
+              display: "flex",
+              justifyContent: "flex-end",
+              padding: "0.4rem",
+              alignItems: "center",
+              textAlign: "center",
+              fontWeight: "bold",
             },
             {
-              width: '4.375rem',
-              height: '4.375rem',
+              width: "4.375rem",
+              height: "4.375rem",
 
-              fontSize: '0.9rem',
+              fontSize: "0.9rem",
               backgroundImage: 'url("/assets/c1.png")',
-              borderRadius: '50%',
+              borderRadius: "50%",
 
-              color: 'white',
-              display: 'flex',
-              justifyContent: 'flex-end',
-              padding: '0.5rem',
-              alignItems: 'center',
-              textAlign: 'center',
-              fontWeight: 'bold',
-              lineHeight: '3.1875rem'
-            }
+              color: "white",
+              display: "flex",
+              justifyContent: "flex-end",
+              padding: "0.5rem",
+              alignItems: "center",
+              textAlign: "center",
+              fontWeight: "bold",
+              lineHeight: "3.1875rem",
+            },
           ]}
         >
           {data.data.map((el) => {
@@ -106,7 +92,7 @@ const KakaoMap = memo(() => {
                 key={el.beachId}
                 position={{
                   lat: el.x,
-                  lng: el.y
+                  lng: el.y,
                 }}
                 xAnchor={0.3}
                 yAnchor={0.5}
@@ -178,7 +164,7 @@ const KakaoMap = memo(() => {
                   <span class="material-symbols-outlined">umbrella</span>
                 </div>
                 <div>
-                  {picker.pcp === '강수없음' ? (
+                  {picker.pcp === "강수없음" ? (
                     <span>강수량 : {picker.pcp}</span>
                   ) : (
                     <span>강수량 : {picker.pcp}mm</span>
@@ -191,7 +177,7 @@ const KakaoMap = memo(() => {
       </MapWrapper>
     </>
   );
-});
+};
 
 export default KakaoMap;
 

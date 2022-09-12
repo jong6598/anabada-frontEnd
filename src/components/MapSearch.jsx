@@ -74,34 +74,68 @@ const beachname = [
   "38해변",
 ].sort();
 
-const MapSearch = () => {
+const MapSearch = ({ setLatlng }) => {
   const inputRef = useRef(null);
-  const [inputName, setInputName] = useState("");
   const debounceRef = useRef(null);
+  const [inputName, setInputName] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
 
-  const handleOnSubmit = () => {};
-
-  const searchBeach = (searchValue) => {
-    const length = searchBeach.length;
-    // const test = beachname.find(el=>);
-    console.log(test);
-    return (debounceRef.current = null);
+  /**
+   * 검색 버튼 눌렀을 때, 해당 해수욕장 위치를 지도 가운데로 가져오고 확대해주기 아마도 부모 컴포넌트에서 state 만들어서 받아와야 할 듯
+   * @param {Event} event
+   */
+  const handleOnSubmit = (event) => {
+    event.preventDefault();
+    return setLatlng(inputName);
   };
 
+  /**
+   * ul의 li를 클릭했을 때 밑에 ul 없어지면서 input 값 그걸로 바뀌게 하기
+   * @param {Event} event
+   */
+  const handleOnclickList = (event) => {
+    setInputName(event.target.innerText);
+    return setSearchResult([]);
+  };
+
+  /**
+   * debouncing function으로부터 Input value를 이어받아서 이름이 일치하는 해수욕장을 검색해주기
+   * @param {String} searchValue
+   * @returns
+   */
+  const searchBeach = (searchValue) => {
+    console.log("test");
+    setSearchResult([]);
+    if (searchValue === "") return;
+
+    const resultArr = beachname.filter((el) => el.startsWith(searchValue));
+    return setSearchResult(resultArr);
+  };
+
+  /**
+   * debouncing을 해서 setState이 과도하게 일어나지 않도록 하기
+   * @param {String} searchValue
+   */
   const handleDebouce = (searchValue) => {
-    // timeout이 있으면
+    // timeout이 있으면,
     if (debounceRef.current || debounceRef.current === null) {
       // 기존의 이벤트를 해제하고 새로운 setTimeout 지정
       clearTimeout(debounceRef.current);
-      setTimeout(() => searchBeach(searchValue), 1000);
+      return (debounceRef.current = setTimeout(
+        () => searchBeach(searchValue),
+        1000
+      ));
     }
   };
 
-  const handleOnChange = (e) => {
-    e.preventDefault();
-    console.log("handleOnChange ::: ", e.target.value);
-    handleDebouce(e.target.value);
-    return setInputName(e.target.value);
+  /**
+   * 입력을 할 때 debounce함수를 이용해서 일정 시간 마다 검색 결과를 setState해서 list태그에 map 메소드로 브라우저에 표현해주기
+   * @param {Event} event
+   * @returns
+   */
+  const handleOnChange = (event) => {
+    handleDebouce(event.target.value);
+    return setInputName(event.target.value);
   };
 
   useEffect(() => {
@@ -114,8 +148,8 @@ const MapSearch = () => {
   return (
     <>
       <SearchForm autoComplete="off">
-        <SearchWrapper onSubmit={handleOnSubmit}>
-          <span class="material-symbols-outlined">search</span>
+        <SearchWrapper>
+          <span className="material-symbols-outlined">search</span>
           <input
             type="text"
             className="search__input"
@@ -124,13 +158,21 @@ const MapSearch = () => {
             onChange={handleOnChange}
             value={inputName}
           ></input>
-          <button type="submit" className="search__btn">
+          <button
+            type="submit"
+            className="search__btn"
+            onClick={handleOnSubmit}
+          >
             검색
           </button>
         </SearchWrapper>
-        <searchResultWrapper>
-          {<searchResult></searchResult>}
-        </searchResultWrapper>
+        <SearchResultWrapper>
+          {searchResult.map((el) => (
+            <SearchResultLi key={el} onClick={handleOnclickList}>
+              {el}
+            </SearchResultLi>
+          ))}
+        </SearchResultWrapper>
       </SearchForm>
     </>
   );
@@ -140,34 +182,31 @@ export default MapSearch;
 
 const SearchForm = styled.form`
   z-index: 999;
-  width: 70vw;
   top: 150px;
+  width: 25rem;
   position: fixed;
   margin: 0 auto;
   left: 0;
   right: 0;
+  transition: all 0.3s ease-in-out;
+  &:focus-within {
+    width: 30rem;
+  }
 `;
 
 const SearchWrapper = styled.form`
   display: flex;
   align-items: center;
   position: relative;
-  width: 50%;
+  width: 100%;
   height: 3.5rem;
   margin: 0 auto;
-  span,
-  input,
-  button {
-    transition: all 0.3s ease-in-out;
-  }
 
-  &:focus-within span,
   &:focus-within button {
-    opacity: 1;
+    background-color: #007aff;
   }
-
-  &:focus-within input {
-    width: 100%;
+  &:focus-within span {
+    opacity: 1;
   }
 
   span {
@@ -186,26 +225,26 @@ const SearchWrapper = styled.form`
     right: 0;
     top: 0;
 
-    background-color: #007aff;
+    background-color: #2b91ff;
     width: 4rem;
     height: 100%;
 
     border-radius: 10px;
     margin-left: 0;
 
-    opacity: 0;
+    opacity: 1;
     z-index: 1;
 
     font-size: 1rem;
 
-    &:hover {
-      background-color: #007aff;
+    &:active {
+      background-color: #7cbbff;
     }
   }
 
   input {
     height: 100%;
-    width: 80%;
+    width: 100%;
     border-radius: 10px;
     padding-left: 3rem;
     margin: 0 auto;
@@ -216,6 +255,31 @@ const SearchWrapper = styled.form`
   }
 `;
 
-const searchResultWrapper = styled.ul``;
+const SearchResultWrapper = styled.ul`
+  margin: 0;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+`;
 
-const searchResult = styled.li``;
+const SearchResultLi = styled.li`
+  height: 3.375;
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 1.25rem 0.8rem;
+  margin-bottom: 1px;
+
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 0.3px;
+
+  transition: all 0.3s ease;
+
+  font-size: 1rem;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 0.6px;
+  }
+`;
