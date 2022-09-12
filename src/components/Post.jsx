@@ -1,9 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const Post = ({ data }) => {
+  const navigate = useNavigate();
+  console.log(data, '정보확인');
   return (
-    <PostInfoBox>
+    <PostInfoBox
+      onClick={() => {
+        navigate(`/posts/${data.postId}`);
+      }}
+    >
       <ImageBox>
         <img src={data.thumbnailUrl} alt="thumbnailimage" />
         <div className="infoBox">

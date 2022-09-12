@@ -8,6 +8,7 @@ import { myApi } from '../shared/api';
 import { queryKeys } from '../react-query/constants';
 import Loading from '../layout/Loading';
 import { css } from 'styled-components';
+import NoData from '../layout/NoData';
 
 const MyMeets = () => {
   const { ref, inView } = useInView();
@@ -79,6 +80,9 @@ const MyMeets = () => {
       </BtnDiv>
 
       <MeetAllContainer>
+        {data.pages[0].data.length === 0 && (
+          <NoData text={'모임'} content={'모임'} />
+        )}
         {data &&
           data.pages.map((page) => {
             return page.data.map((meet) => (

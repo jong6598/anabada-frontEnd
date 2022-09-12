@@ -46,7 +46,7 @@ const PopularMeets = ({ popularPosts }) => {
                 ) : (
                   <p className="dayClosing">마감</p>
                 )}
-                <p className="endDate">~{meet.endDate}</p>
+                <p className="endDate"></p>
               </div>
 
               <div className="title">{meet.title}</div>
@@ -147,9 +147,15 @@ const PopularPostsContainer = styled.div`
   }
 
   div.meetBox {
-    width: 14.375rem;
+    min-width: 14.375rem;
+    max-height: 21.5rem;
     margin-right: 1rem;
     border-radius: 13px;
+
+    cursor: pointer;
+    &:hover {
+      background: #f7faff;
+    }
   }
   div.meetImageWrapper {
     width: 100%;
@@ -166,10 +172,6 @@ const PopularPostsContainer = styled.div`
     }
   }
   div.infoBox {
-    &:hover {
-      background: #f7faff;
-    }
-
     bottom: 2rem;
     display: flex;
     position: relative;

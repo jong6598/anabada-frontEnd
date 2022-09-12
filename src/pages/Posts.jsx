@@ -125,13 +125,7 @@ const Posts = () => {
           >
             {data.pages.map((page) => {
               return page.data.map((post) => (
-                <PostContainer
-                  key={post.postId}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => {
-                    navigate(`/posts/${post.postId}`);
-                  }}
-                >
+                <PostContainer key={post.postId} style={{ cursor: 'pointer' }}>
                   {/* {!post && <SkeletonItem />} */}
                   <Post data={post} />
                 </PostContainer>

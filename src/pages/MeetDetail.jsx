@@ -91,7 +91,7 @@ const MeetDetail = () => {
               <FiMoreHorizontal />
             </button>
           )}
-          {nickname !== meet.nickname && (
+          {nickname && nickname !== meet.nickname && (
             <button
               className="chatBtn"
               onClick={() => onRequestChat(meet.nickname)}
@@ -226,7 +226,7 @@ const MeetDetail = () => {
         </div>
       </PostDetailInfo>
       <PostDescription>{meet.content}</PostDescription>
-      {nickname !== meet.nickname && (
+      {nickname && nickname !== meet.nickname && (
         <ButtonContainer>
           <button
             className="likeBtn"
@@ -326,9 +326,7 @@ const MeetDetail = () => {
                 <img src={member.profileImg} alt="profileImg" />
                 <div>
                   <p>{member.nickname}</p>
-                  {nickname === member.nickname && (
-                    <p className="participant">참여자</p>
-                  )}
+                  {member.nickname && <p className="participant">참여자</p>}
                 </div>
               </div>
             );
@@ -523,8 +521,14 @@ const PostDetailInfo = styled.div`
   }
 `;
 
-const PostDescription = styled.div`
+const PostDescription = styled.pre`
   padding: 1.1625rem 0;
+  font-size: 0.875rem;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 `;
 
 const ButtonContainer = styled.div`

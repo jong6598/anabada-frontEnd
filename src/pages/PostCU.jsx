@@ -186,7 +186,15 @@ const PostCU = () => {
         <Element>
           <label>대표 이미지 등록</label>
           <ImageLabel>
-            {imgSrc ? <img src={imgSrc} alt="" /> : <div className="noneImg" />}
+            {imgSrc ? (
+              <img src={imgSrc} alt="" />
+            ) : (
+              <img
+                className="noneImg"
+                alt="ready"
+                src="/assets/readyImage.png"
+              />
+            )}
             <div className="buttonDiv">
               <input
                 type="file"
@@ -376,15 +384,15 @@ const ImageLabel = styled.div`
   cursor: pointer;
 
   img {
-    width: 6rem;
-    height: 5.8rem;
+    width: 8rem;
+    height: 8rem;
     background-color: #d9d9d9;
     border-radius: 0.5rem;
     border: none;
   }
   .noneImg {
-    width: 6rem;
-    height: 5.8rem;
+    width: 8rem;
+    height: 8rem;
     background-color: #d9d9d9;
     border-radius: 0.5rem;
     border: 0.0625rem solid #d9d9d9;
@@ -419,7 +427,8 @@ const SelectAmenity = styled.div`
   flex-direction: column;
   gap: 0.5rem;
   div {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 0.5rem;
   }
 `;

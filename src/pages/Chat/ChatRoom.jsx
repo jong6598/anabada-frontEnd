@@ -88,6 +88,10 @@ const Container = styled.div`
   }
 
   div.chatContainer {
+    &:hover {
+      background: #f7faff;
+    }
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: space-between;

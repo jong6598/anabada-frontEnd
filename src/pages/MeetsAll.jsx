@@ -8,10 +8,14 @@ import Loading, { InfiniteLoading } from '../layout/Loading';
 
 import { queryKeys } from '../react-query/constants';
 import Navigate from '../layout/Navigate';
+import { TbPencil } from 'react-icons/tb';
+import { Link } from 'react-router-dom';
+import NoData from '../layout/NoData';
 
 const MeetsAll = () => {
   const [search, setSearch] = useState(null);
   const [areaSelected, setAreaSelected] = useState('ALL');
+  const accesstoken = localStorage.getItem('accessToken');
 
   const fetchPosts = async (pageParam, areaSelected, search) => {
     if (search) {
@@ -94,6 +98,16 @@ const MeetsAll = () => {
           onKeyPress={onKeyPress}
         />
       </CategoryContainer>
+      {accesstoken && (
+        <PostBtn>
+          <Link to="/meetAdd">
+            <TbPencil />
+          </Link>
+        </PostBtn>
+      )}
+      {data.pages[0].data.length === 0 && (
+        <NoData text={'모임'} content={'모임'} />
+      )}
       {data.pages.map((page) => {
         return page.data.map((meet) => (
           <Meet key={meet.thunderPostId} meet={meet} />
@@ -131,6 +145,29 @@ const CategoryContainer = styled.div`
     padding: 0.625rem 1rem;
     background-color: #f2f2f7;
     border-radius: 0.75rem;
+  }
+`;
+
+const PostBtn = styled.div`
+  position: fixed;
+  bottom: 1.7rem;
+  right: 2.3rem;
+  z-index: 300;
+  cursor: pointer;
+  width: 60px;
+  height: 60px;
+
+  background-color: #007aff;
+  border-radius: 50%;
+  opacity: 0.9;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  svg {
+    font-size: 2rem;
+    color: white;
+    font-weight: 200;
   }
 `;
 

@@ -60,6 +60,11 @@ const GlobalStyle = createGlobalStyle`
     textarea{
       font-family: 'Pretendard-Regular';
     }
+    pre{
+    
+      font-family: 'Pretendard-Regular';
+    
+    }
 `;
 
 export default GlobalStyle;

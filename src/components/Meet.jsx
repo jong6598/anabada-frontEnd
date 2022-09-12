@@ -41,7 +41,7 @@ const Meet = ({ meet }) => {
           ) : (
             <p className="dayClosing">마감</p>
           )}
-          <p className="endDate">~ {meet.endDate}</p>
+          <p className="endDate"></p>
         </div>
         <div className="titleDiv">{meet.title}</div>
         <div className="subBox">
@@ -157,11 +157,10 @@ const LeftWrapper = styled.div`
     background: url(.jpg), #d9d9d9;
     border-radius: 0.8125rem;
 
-    /* Inside auto layout */
-
-    flex: none;
-    order: 0;
-    flex-grow: 0;
+    @media screen and (max-width: 550px) {
+      width: 5rem;
+      height: 5rem;
+    }
   }
 `;
 
@@ -241,12 +240,14 @@ const RightWrapper = styled.div`
   }
 
   .titleDiv {
-    width: 70%;
+    width: 100%;
 
-    white-space: wrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; //원하는 라인수
+    -webkit-box-orient: vertical;
+    white-space: pre-wrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    display: block;
 
     font-weight: 600;
     font-size: 0.9375rem;
@@ -267,6 +268,16 @@ const RightWrapper = styled.div`
       /* identical to box height, or 19px */
       color: #000000;
       margin-right: 0.3rem;
+      white-space: nowrap;
+    }
+    p.address {
+      display: -webkit-box;
+
+      -webkit-line-clamp: 1; //원하는 라인수
+      -webkit-box-orient: vertical;
+      white-space: pre-wrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     svg:last-child {

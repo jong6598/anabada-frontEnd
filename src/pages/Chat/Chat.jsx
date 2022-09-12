@@ -26,6 +26,7 @@ const Chat = () => {
   const [roomId, setRoomId] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
   const [senderProfileImg, setSenderProfileImg] = useState('');
+  const [receiverProfileImg, setReceiverProfileImg] = useState('');
   const [message, setMessage] = useState('');
 
   const isMessage = message !== '';
@@ -137,15 +138,20 @@ const Chat = () => {
         // 방생성 요청
         const res = await chatApi.createChat(params.nickname);
 
-        let getRoomId, getSenderProfileImg;
+        let getRoomId, getSenderProfileImg, getReceiverProfileImg;
         if (res.status === 200) {
           getRoomId = res.data.roomId;
+
           getSenderProfileImg = res.data.senderProfileImg;
+          getReceiverProfileImg = res.data.receiverProfileImg;
         } else {
+          console.log(res.response.data, 'resdata체크');
           getRoomId = res.response.data.roomId;
           getSenderProfileImg = res.response.data.senderProfileImg;
+          getReceiverProfileImg = res.response.data.receiverProfileImg;
         }
 
+        setReceiverProfileImg(getReceiverProfileImg);
         setSenderProfileImg(getSenderProfileImg);
         setRoomId(getRoomId);
 
@@ -201,7 +207,7 @@ const Chat = () => {
       <Navigate
         text={senderNickname}
         padding={true}
-        profileImg={senderProfileImg}
+        profileImg={receiverProfileImg}
       />
       <Divider />
       <ChatContainer ref={scrollRef}>
@@ -216,7 +222,7 @@ const Chat = () => {
                   page.data[idx - 1].nickname !== page.data[idx].nickname) ? (
                   <>
                     <img
-                      src={senderProfileImg}
+                      src={receiverProfileImg}
                       alt="profileImage"
                       style={{
                         width: '2rem',
@@ -231,7 +237,7 @@ const Chat = () => {
                 ) : (
                   <>
                     <img
-                      src={senderProfileImg}
+                      src={receiverProfileImg}
                       alt="profileImage"
                       style={{
                         width: '2rem',
