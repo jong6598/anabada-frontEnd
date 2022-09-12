@@ -1,6 +1,6 @@
-import React, { useCallback } from "react";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import React, { useCallback } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const PopularMeets = ({ popularPosts }) => {
   const navigate = useNavigate();
@@ -40,7 +40,7 @@ const PopularMeets = ({ popularPosts }) => {
                   <p className="dDay">
                     D-
                     {difference(date1, new Date(meet.endDate)) === 0
-                      ? "Day"
+                      ? 'Day'
                       : difference(date1, new Date(meet.endDate))}
                   </p>
                 ) : (
@@ -150,12 +150,13 @@ const PopularPostsContainer = styled.div`
     width: 14.375rem;
     margin-right: 1rem;
     border-radius: 13px;
-    position: relative;
   }
   div.meetImageWrapper {
     width: 100%;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     border-radius: 13px;
+    position: relative;
+
     img {
       width: 100%;
       height: 11.875rem;
@@ -165,9 +166,14 @@ const PopularPostsContainer = styled.div`
     }
   }
   div.infoBox {
+    &:hover {
+      background: #f7faff;
+    }
+
+    bottom: 2rem;
     display: flex;
     position: relative;
-    bottom: 2rem;
+
     flex-direction: column;
     align-items: flex-start;
     padding: 1rem;
@@ -194,7 +200,11 @@ const PopularPostsContainer = styled.div`
   .title {
     width: 100%;
     display: block;
-    white-space: nowrap;
+    display: -webkit-box;
+
+    -webkit-line-clamp: 2; //원하는 라인수
+    -webkit-box-orient: vertical;
+    white-space: pre-wrap;
     overflow: hidden;
     text-overflow: ellipsis;
 

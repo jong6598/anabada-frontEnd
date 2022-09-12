@@ -33,7 +33,7 @@ const PostInfoBox = styled.div`
   /* place-items: center; */
   transition: 0.5s;
   &:hover {
-    background: #f0f7fd;
+    background: #f7faff;
   }
   .imageBox {
     display: flex;

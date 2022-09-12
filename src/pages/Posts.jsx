@@ -208,10 +208,7 @@ const CategoryContainer = styled.div`
   }
 `;
 
-const PostContainer = styled.div`
-  /* display: inline-block; */
-  /* box-shadow: rgb(0 0 0 / 15%) 0px 2px 4px 0px; */
-`;
+const PostContainer = styled.div``;
 
 const PostBtn = styled.div`
   position: fixed;

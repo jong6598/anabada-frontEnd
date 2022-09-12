@@ -1,7 +1,7 @@
-import React, { useCallback } from "react";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-import { useDetailMeet } from "../react-query/hooks/useDetailMeet";
+import React, { useCallback } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { useDetailMeet } from '../react-query/hooks/useDetailMeet';
 
 const Meet = ({ meet }) => {
   const navigate = useNavigate();
@@ -35,8 +35,8 @@ const Meet = ({ meet }) => {
             <p className="dDay">
               D-
               {difference(date1, new Date(meet.endDate)) === 0
-                ? "Day"
-                :difference(date1, new Date(meet.endDate))}
+                ? 'Day'
+                : difference(date1, new Date(meet.endDate))}
             </p>
           ) : (
             <p className="dayClosing">마감</p>
@@ -73,8 +73,8 @@ const Meet = ({ meet }) => {
               fill="#FFFBFF"
             />
           </svg>
-
-          <p>{meet.address}</p>
+          <p className="area">{meet.area}</p>
+          <p className="address">{meet.address}</p>
         </div>
         <div className="subBox bottom">
           <svg
@@ -120,6 +120,10 @@ const Meet = ({ meet }) => {
 };
 
 const MeetContinaer = styled.div`
+  &:hover {
+    background: #f7faff;
+  }
+
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -147,8 +151,8 @@ const MeetContinaer = styled.div`
 
 const LeftWrapper = styled.div`
   img {
-    /* width: 4.25rem; */
-    height: 4.25rem;
+    width: 10rem;
+    height: 10rem;
 
     background: url(.jpg), #d9d9d9;
     border-radius: 0.8125rem;
@@ -249,20 +253,24 @@ const RightWrapper = styled.div`
   }
 
   .subBox {
+    display: flex;
+    align-items: center;
     margin-bottom: 0.5rem;
     svg {
       margin-right: 0.5rem;
     }
-    p:first-child {
+    p.area {
       font-style: normal;
-      font-weight: 600;
-      font-size: 0.8125rem;
-      line-height: 1rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+
       /* identical to box height, or 19px */
       color: #000000;
+      margin-right: 0.3rem;
     }
+
     svg:last-child {
-      font-family: "Pretendard";
+      font-family: 'Pretendard';
       font-style: normal;
       font-weight: 400;
       font-size: 0.8125rem;
@@ -272,7 +280,7 @@ const RightWrapper = styled.div`
       color: #8e8e93;
     }
     p:last-child {
-      font-family: "Pretendard";
+      font-family: 'Pretendard';
       font-style: normal;
       font-weight: 400;
       font-size: 0.8125rem;
@@ -282,7 +290,7 @@ const RightWrapper = styled.div`
     }
   }
   .bottom {
-    margin-bottom: 0;
+    margin-bottom: 0.5rem;
   }
 `;
 
