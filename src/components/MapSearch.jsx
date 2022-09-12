@@ -72,7 +72,7 @@ const beachname = [
   "옥계 해수욕장",
   "북분리 해수욕장",
   "38해변",
-];
+].sort();
 
 const MapSearch = () => {
   const inputRef = useRef(null);
@@ -113,10 +113,9 @@ const MapSearch = () => {
 
   return (
     <>
-      <SearchBox>
+      <SearchForm autoComplete="off">
         <SearchWrapper onSubmit={handleOnSubmit}>
           <span class="material-symbols-outlined">search</span>
-
           <input
             type="text"
             className="search__input"
@@ -125,33 +124,37 @@ const MapSearch = () => {
             onChange={handleOnChange}
             value={inputName}
           ></input>
-
           <button type="submit" className="search__btn">
             검색
           </button>
         </SearchWrapper>
-      </SearchBox>
+        <searchResultWrapper>
+          {<searchResult></searchResult>}
+        </searchResultWrapper>
+      </SearchForm>
     </>
   );
 };
 
 export default MapSearch;
 
-const SearchBox = styled.div`
+const SearchForm = styled.form`
+  z-index: 999;
+  width: 70vw;
+  top: 150px;
   position: fixed;
   margin: 0 auto;
   left: 0;
   right: 0;
-
-  z-index: 999;
-  width: 70vw;
-  top: 150px;
 `;
 
 const SearchWrapper = styled.form`
   display: flex;
   align-items: center;
   position: relative;
+  width: 50%;
+  height: 3.5rem;
+  margin: 0 auto;
   span,
   input,
   button {
@@ -163,20 +166,16 @@ const SearchWrapper = styled.form`
     opacity: 1;
   }
 
-  &:focus-within span,
-  &:focus-within button,
-  &:focus-within input {
-    transform: translateX(0);
-  }
   &:focus-within input {
     width: 100%;
   }
 
   span {
     position: absolute;
-    left: 0.2rem;
+    left: 0.5rem;
     display: flex;
     align-items: center;
+    font-size: 2rem;
 
     opacity: 0;
     z-index: 1;
@@ -189,23 +188,34 @@ const SearchWrapper = styled.form`
 
     background-color: #007aff;
     width: 4rem;
-    height: 2rem;
+    height: 100%;
 
     border-radius: 10px;
     margin-left: 0;
 
     opacity: 0;
     z-index: 1;
+
+    font-size: 1rem;
+
+    &:hover {
+      background-color: #007aff;
+    }
   }
 
   input {
-    height: 2rem;
+    height: 100%;
     width: 80%;
     border-radius: 10px;
-    padding-left: 2rem;
-    transform: translateX(7vw);
+    padding-left: 3rem;
+    margin: 0 auto;
+    font-size: 1rem;
     &:focus {
       outline: none;
     }
   }
 `;
+
+const searchResultWrapper = styled.ul``;
+
+const searchResult = styled.li``;
