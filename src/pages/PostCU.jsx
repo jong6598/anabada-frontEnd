@@ -83,7 +83,7 @@ const PostCU = () => {
   useEffect(() => {
     if (postId) {
       const setPost = async () => {
-        const postInfo = await postApi.getPost(`${postId}`);
+        const postInfo = await postApi.getPostDetail(`${postId}`);
 
         if (postInfo.data.nickname !== nickname) {
           alert('수정 권한이 없습니다.');
