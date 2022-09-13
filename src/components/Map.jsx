@@ -1,29 +1,13 @@
-import { useCallback, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import checkedWeather from "../styles/weather";
 import { Map, CustomOverlayMap, MarkerClusterer } from "react-kakao-maps-sdk";
 
-const KakaoMap = ({ data }) => {
-  const [picker, setPicker] = useState({
-    beachId: -1,
-    beachName: "",
-    beachNum: "",
-    pcp: "",
-    pop: "",
-    pty: "",
-    sky: "",
-    tmp: "",
-    wav: "",
-    wsd: "",
-    x: 0,
-    y: 0,
-  });
-
-  const handlePicker = useCallback((pickerInfo) => {
+const KakaoMap = ({ data, picker, setPicker }) => {
+  const handlePicker = (pickerInfo) => {
     setPicker((prev) => {
       return { ...prev, ...pickerInfo };
     });
-  }, []);
+  };
 
   return (
     <>

@@ -188,10 +188,7 @@ const SearchForm = styled.form`
   margin: 0 auto;
   left: 0;
   right: 0;
-  transition: all 0.3s ease-in-out;
-  &:focus-within {
-    width: 30rem;
-  }
+  width: 30rem;
 `;
 
 const SearchWrapper = styled.form`
@@ -202,13 +199,6 @@ const SearchWrapper = styled.form`
   height: 3.5rem;
   margin: 0 auto;
 
-  &:focus-within button {
-    background-color: #007aff;
-  }
-  &:focus-within span {
-    opacity: 1;
-  }
-
   span {
     position: absolute;
     left: 0.5rem;
@@ -216,7 +206,7 @@ const SearchWrapper = styled.form`
     align-items: center;
     font-size: 2rem;
 
-    opacity: 0;
+    opacity: 1;
     z-index: 1;
   }
 
@@ -225,7 +215,7 @@ const SearchWrapper = styled.form`
     right: 0;
     top: 0;
 
-    background-color: #2b91ff;
+    background-color: #007aff;
     width: 4rem;
     height: 100%;
 
@@ -236,6 +226,8 @@ const SearchWrapper = styled.form`
     z-index: 1;
 
     font-size: 1rem;
+
+    transition: all 0.3s ease-in-out;
 
     &:active {
       background-color: #7cbbff;

@@ -1,11 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import KakaoMap from "../components/Map";
 import MapSearch from "../components/MapSearch";
 
 const Home = () => {
   const [latlng, setLatlng] = useState("");
+  const [picker, setPicker] = useState({
+    beachId: -1,
+    beachName: "",
+    beachNum: "",
+    pcp: "",
+    pop: "",
+    pty: "",
+    sky: "",
+    tmp: "",
+    wav: "",
+    wsd: "",
+    x: 0,
+    y: 0,
+  });
 
   // fetcher
   const fetchingSpot = () =>
@@ -19,10 +33,14 @@ const Home = () => {
     },
   });
 
+  useEffect(() => {
+    console.log(data);
+  }, [latlng]);
+
   return (
     <>
       <MapSearch setLatlng={setLatlng} />
-      <KakaoMap data={data} />
+      <KakaoMap data={data} picker={picker} setPicker={setPicker} />
     </>
   );
 };
