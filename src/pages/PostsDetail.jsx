@@ -103,9 +103,9 @@ const PostsDetail = () => {
   };
 
   const { mutate: onDelete } = useMutation(postDelete, {
-    onSuccess: () => {
-      queryClient.invalidateQueries([queryKeys.posts]);
-      navigate('/posts');
+    onSuccess: async() => {
+      await queryClient.invalidateQueries([queryKeys.posts]);
+      return navigate('/posts');
       // alert('게시글이 삭제되었습니다');
     },
     onError: (err) => {
@@ -134,8 +134,8 @@ const PostsDetail = () => {
   };
 
   const { mutate: onToggleLike } = useMutation(toggleLike, {
-    onSuccess: () => {
-      return queryClient.invalidateQueries([queryKeys.posts]);
+    onSuccess: async() => {
+      await queryClient.invalidateQueries([queryKeys.posts]);
     },
     onError: (err) => {
       console.log(err.respose);
