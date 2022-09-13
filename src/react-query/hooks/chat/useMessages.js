@@ -10,7 +10,6 @@ const fetchMessages = async (pageParam, __roomId) => {
     const res = await chatApi.getMessages(pageParam, __roomId);
     const data = res.data.content;
     const last = res.data.last;
-    const first = res.data.fist;
 
     return { data, nextPage: pageParam + 1, last };
   } catch (error) {
@@ -24,8 +23,7 @@ export function useMessages() {
   const {
     data: messages,
     fetchNextPage,
-    // fetchPreviousPage,
-    // isFetchingPreviousPage,
+
     isFetchingNextPage
   } = useInfiniteQuery(
     [queryKeys.messages, __roomId],
@@ -34,12 +32,18 @@ export function useMessages() {
       select: (data) => ({
         pages: [...data.pages].reverse()
       }),
-      // getPreviousPageParam: (firstPage) =>
-      //   !firstPage.first ? firstPage.prevPage : undefined,
+
       getNextPageParam: (lastPage) =>
         !lastPage.last ? lastPage.nextPage : undefined,
-      enabled: !!__roomId
+      enabled: !!__roomId,
+      refetchOnWindowFocus: false
     }
   );
-  return { messages, __setRoomId, isFetchingNextPage, fetchNextPage };
+  return {
+    messages,
+    __setRoomId,
+
+    isFetchingNextPage,
+    fetchNextPage
+  };
 }

@@ -42,10 +42,21 @@ const Header = ({ notifications }) => {
 
   // scroll 이벤트 핸들러
   const handleScroll = () => {
-    const { scrollY } = window;
+    const { scrollY, visualViewport } = window;
+    const { scrollHeight } = document.getElementById("root");
     setValueY((prev) => {
-      // 스크롤이 올라갈 때
+      // safari에서 bounce scroll 처리하기
+      // 최상단
+      if (scrollY < 20) {
+        return (gapY.current = 0);
+      }
+      // 최하단
+      if (scrollHeight <= scrollY + visualViewport.height + 20) {
+        return (gapY.current = -50);
+      }
+
       if (prev - scrollY > 0) {
+        // 스크롤이 올라갈 때
         // gapY.current가 0이면 더 더하지 말기
         if (gapY.current >= 0) {
           timer.current = null;
@@ -91,7 +102,7 @@ const Header = ({ notifications }) => {
         <MainHeader pathname={pathname}>
           <Link to="/">
             <div>
-              <img src="/assets/logo_small.svg"></img>
+              <img src="/assets/logo_small.svg" alt=""></img>
             </div>
           </Link>
           <div className="header__user">

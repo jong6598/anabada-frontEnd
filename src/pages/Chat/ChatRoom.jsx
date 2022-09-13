@@ -31,11 +31,9 @@ const ChatRoom = () => {
     }
   }, [inView]);
 
-  console.log(rooms, 'rooms!!');
-
   return (
     <Container>
-      <Navigate text={'채팅'} />
+      <Navigate text={'채팅'} padding={true} />
       {/* <Divider /> */}
       {rooms.pages[0].data.length === 0 && (
         <NoData text={'받은 메세지'} chat={true} />
@@ -84,12 +82,17 @@ const ChatRoom = () => {
 
 const Container = styled.div`
   /* padding: 0 1rem; */
+
   @media screen and (min-width: 1024px) {
     margin: 0 auto;
     width: 40vw;
   }
 
   div.chatContainer {
+    &:hover {
+      background: #f7faff;
+    }
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: space-between;

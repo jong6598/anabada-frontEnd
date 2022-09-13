@@ -16,7 +16,6 @@ import { Editor } from '@toast-ui/react-editor';
 
 import { amenityInfo } from '../shared/data';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAddPost } from '../react-query/hooks/post/useAddPost';
 import { queryKeys } from '../react-query/constants';
 
 const PostCU = () => {
@@ -43,17 +42,16 @@ const PostCU = () => {
     if (!postId) {
       try {
         const post = await postApi.newPost(newPost);
-        alert('게시글이 등록되었습니다!');
+        // alert('게시글이 등록되었습니다!');
       } catch (err) {
         alert(err);
       }
     } else {
       try {
         const update = await postApi.updatePost(postId, newPost);
-        alert('게시글이 수정되었습니다!');
+        // alert('게시글이 수정되었습니다!');
       } catch (err) {
-        console.log(err);
-        alert(err);
+        alert('게시글 수정에 실패했습니다');
       }
     }
   };
@@ -64,6 +62,7 @@ const PostCU = () => {
     onSuccess: () => {
       queryClient.invalidateQueries([queryKeys.posts]);
       navigate('/posts');
+      window.location.href = 'https://ohanabada.com/posts';
     },
     onError: (err) => {
       console.log(err.respose);
@@ -84,7 +83,7 @@ const PostCU = () => {
   useEffect(() => {
     if (postId) {
       const setPost = async () => {
-        const postInfo = await postApi.getPost(`${postId}`);
+        const postInfo = await postApi.getPostDetail(`${postId}`);
 
         if (postInfo.data.nickname !== nickname) {
           alert('수정 권한이 없습니다.');
@@ -187,7 +186,15 @@ const PostCU = () => {
         <Element>
           <label>대표 이미지 등록</label>
           <ImageLabel>
-            {imgSrc ? <img src={imgSrc} alt="" /> : <div className="noneImg" />}
+            {imgSrc ? (
+              <img src={imgSrc} alt="" />
+            ) : (
+              <img
+                className="noneImg"
+                alt="ready"
+                src="/assets/readyImage.png"
+              />
+            )}
             <div className="buttonDiv">
               <input
                 type="file"
@@ -377,15 +384,15 @@ const ImageLabel = styled.div`
   cursor: pointer;
 
   img {
-    width: 6rem;
-    height: 5.8rem;
+    width: 8rem;
+    height: 8rem;
     background-color: #d9d9d9;
     border-radius: 0.5rem;
     border: none;
   }
   .noneImg {
-    width: 6rem;
-    height: 5.8rem;
+    width: 8rem;
+    height: 8rem;
     background-color: #d9d9d9;
     border-radius: 0.5rem;
     border: 0.0625rem solid #d9d9d9;
@@ -420,7 +427,8 @@ const SelectAmenity = styled.div`
   flex-direction: column;
   gap: 0.5rem;
   div {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 0.5rem;
   }
 `;

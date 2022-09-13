@@ -1,4 +1,3 @@
-import React from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '../constants';
 import { meetsApi } from '../../shared/api';
@@ -11,7 +10,7 @@ const postJoin = async ({ setIsJoined, isJoined, thunderPostId }) => {
       const result = window.confirm('참가를 취소하시겠습니까?');
       if (result) {
         const res = await meetsApi.deleteRequest(thunderPostId);
-        alert('참가가 취소되었습니다');
+        // alert('참가가 취소되었습니다');
         setIsJoined((prev) => !prev);
       }
     } catch (error) {
@@ -22,7 +21,7 @@ const postJoin = async ({ setIsJoined, isJoined, thunderPostId }) => {
       const result = window.confirm('모임에 참가하시겠습니까?');
       if (result) {
         const res = await meetsApi.postRequest(thunderPostId);
-        alert('모임에 참가되었습니다');
+        // alert('모임에 참가되었습니다');
         setIsJoined((prev) => !prev);
       }
     } catch (error) {

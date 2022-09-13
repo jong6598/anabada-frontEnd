@@ -1,6 +1,6 @@
-import React, { useCallback } from "react";
-import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import React, { useCallback } from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const PopularMeets = ({ popularPosts }) => {
   const navigate = useNavigate();
@@ -27,26 +27,27 @@ const PopularMeets = ({ popularPosts }) => {
       <h2>인기모임🔥</h2>
       <div className="meetsBox">
         {popularPosts.map((meet) => (
-          <div className="meetBox" key={meet.thunderPostId}>
+          <div
+            className="meetBox"
+            key={meet.thunderPostId}
+            onClick={() => navigate(`/meets/${meet.thunderPostId}`)}
+          >
             <div className="meetImageWrapper">
               <img src={meet.thumbnailUrl} alt="thumbnail" />
             </div>
-            <div
-              className="infoBox"
-              onClick={() => navigate(`/meets/${meet.thunderPostId}`)}
-            >
+            <div className="infoBox">
               <div className="dateBox">
                 {difference(date1, new Date(meet.endDate)) >= 0 ? (
                   <p className="dDay">
                     D-
                     {difference(date1, new Date(meet.endDate)) === 0
-                      ? "Day"
+                      ? 'Day'
                       : difference(date1, new Date(meet.endDate))}
                   </p>
                 ) : (
                   <p className="dayClosing">마감</p>
                 )}
-                <p className="endDate">~{meet.endDate}</p>
+                <p className="endDate"></p>
               </div>
 
               <div className="title">{meet.title}</div>
@@ -147,15 +148,22 @@ const PopularPostsContainer = styled.div`
   }
 
   div.meetBox {
-    width: 14.375rem;
+    min-width: 14.375rem;
+    max-height: 21.5rem;
     margin-right: 1rem;
     border-radius: 13px;
-    position: relative;
+
+    cursor: pointer;
+    &:hover {
+      background: #f7faff;
+    }
   }
   div.meetImageWrapper {
     width: 100%;
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
     border-radius: 13px;
+    position: relative;
+
     img {
       width: 100%;
       height: 11.875rem;
@@ -165,9 +173,10 @@ const PopularPostsContainer = styled.div`
     }
   }
   div.infoBox {
+    bottom: 2rem;
     display: flex;
     position: relative;
-    bottom: 2rem;
+
     flex-direction: column;
     align-items: flex-start;
     padding: 1rem;
@@ -194,7 +203,11 @@ const PopularPostsContainer = styled.div`
   .title {
     width: 100%;
     display: block;
-    white-space: nowrap;
+    display: -webkit-box;
+
+    -webkit-line-clamp: 2; //원하는 라인수
+    -webkit-box-orient: vertical;
+    white-space: pre-wrap;
     overflow: hidden;
     text-overflow: ellipsis;
 
@@ -209,9 +222,6 @@ const PopularPostsContainer = styled.div`
     padding: 0.125rem 0.25rem;
     gap: 0.625rem;
     margin-right: 0.75rem;
-
-    /* width: 35px; */
-    /* height: 21px; */
 
     background: #ff3b30;
     border-radius: 4px;

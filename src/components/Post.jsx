@@ -1,9 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const Post = ({ data }) => {
+  const navigate = useNavigate();
+
   return (
-    <PostInfoBox>
+    <PostInfoBox
+      onClick={() => {
+        navigate(`/posts/${data.postId}`);
+      }}
+    >
       <ImageBox>
         <img src={data.thumbnailUrl} alt="thumbnailimage" />
         <div className="infoBox">
@@ -68,15 +75,17 @@ const Post = ({ data }) => {
 export default Post;
 
 const PostInfoBox = styled.div`
-  /* display: inline-block; */
+  display: inline-block;
+
   border-radius: 0.8125rem;
   margin-bottom: 1.25rem;
   box-shadow: rgb(0 0 0 / 15%) 0px 2px 4px 0px;
   display: grid;
+
   /* place-items: center; */
   transition: 0.5s;
   &:hover {
-    background: #f0f7fd;
+    background: #f7faff;
   }
 `;
 
@@ -114,22 +123,28 @@ const ImageBox = styled.div`
     margin-bottom: 0.875rem;
 
     width: 100%;
-    /* @media screen and (min-width: 1024px) {
-      min-width: 12.5rem;
-    } */
+
+    /* FIXME: 스켈레톤으로 바꿔야함 */
+    min-height: 50px;
   }
 `;
 
 const PostInfo = styled.div`
   display: flex;
   flex-direction: column;
+
   padding: 0 0.5rem;
   h2 {
     display: block;
-    /* white-space: nowrap; */
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2; //원하는 라인수
+    -webkit-box-orient: vertical;
+    white-space: pre-wrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-size: 0.9375rem;
+
+    font-size: 0.9rem;
     font-weight: 600;
     text-align: left;
   }
@@ -148,5 +163,9 @@ const UserInfo = styled.div`
   h3 {
     font-size: 0.75rem;
     font-weight: 300;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 `;

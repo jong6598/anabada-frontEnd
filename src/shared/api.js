@@ -190,7 +190,7 @@ export const postApi = {
       `/posts/search?area=${areaSelected}&keyword=${keyword}&page=${pageParam}&size=6`
     );
   },
-  getPost(postId) {
+  getPostDetail(postId) {
     return api.get(`/posts/${postId}`);
   },
   getComments(pageParam, postId) {

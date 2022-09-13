@@ -71,18 +71,15 @@ const MeetAdd = () => {
     if (!thunderPostId) {
       try {
         const post = await meetsApi.postMeetPost(newMeet);
-        alert('모임이 등록되었습니다!');
       } catch (err) {
-        alert(err);
-        console.log(err);
+        alert('모임 등록에 실패하였습니다');
       }
     } else {
       try {
         const update = await meetsApi.editMeetPost(thunderPostId, newMeet);
-        alert('모임이 수정되었습니다!');
       } catch (err) {
         console.log(err);
-        alert(err);
+        alert('모임 수정에 실패하였습니다');
       }
     }
   };
@@ -143,7 +140,11 @@ const MeetAdd = () => {
             {imgSrc ? (
               <img src={imgSrc} alt="thumbnail" />
             ) : (
-              <div className="noneImg" />
+              <img
+                className="noneImg"
+                alt="ready"
+                src="/assets/readyImage.png"
+              />
             )}
             <div className="buttonDiv">
               <input
@@ -333,14 +334,15 @@ const ImageLabel = styled.div`
     display: flex;
 
     img {
-      width: 6rem;
-      height: 5rem;
+      width: 8rem;
+      height: 8rem;
       background-color: transparent;
       border-radius: 0.5rem;
       border: none;
     }
     .noneImg {
-      width: 6rem;
+      width: 8rem;
+      height: 8rem;
       background-color: #d9d9d9;
       border-radius: 0.5rem;
       border: 0.0625rem solid #d9d9d9;

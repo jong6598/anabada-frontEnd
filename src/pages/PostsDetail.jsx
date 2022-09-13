@@ -1,44 +1,44 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import styled from "styled-components";
-import { postApi } from "../shared/api";
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import styled from 'styled-components';
+import { postApi } from '../shared/api';
 import {
   useQuery,
   useQueryClient,
   useMutation,
-  useInfiniteQuery,
-} from "@tanstack/react-query";
-import { Viewer } from "@toast-ui/react-editor";
-import "@toast-ui/editor/dist/toastui-editor-viewer.css";
-import Comment from "../components/Comment";
-import { useInView } from "react-intersection-observer";
-import { FiMoreHorizontal } from "react-icons/fi";
-import { FiEdit2 } from "react-icons/fi";
-import { RiDeleteBin5Line } from "react-icons/ri";
-import { queryKeys } from "../react-query/constants";
-import { FiInbox } from "react-icons/fi";
-import { BsFillChatDotsFill } from "react-icons/bs";
-import Navigate from "../layout/Navigate";
+  useInfiniteQuery
+} from '@tanstack/react-query';
+import { Viewer } from '@toast-ui/react-editor';
+import '@toast-ui/editor/dist/toastui-editor-viewer.css';
+import Comment from '../components/Comment';
+import { useInView } from 'react-intersection-observer';
+import { FiMoreHorizontal } from 'react-icons/fi';
+import { FiEdit2 } from 'react-icons/fi';
+import { RiDeleteBin5Line } from 'react-icons/ri';
+import { queryKeys } from '../react-query/constants';
+import { FiInbox } from 'react-icons/fi';
+import { BsFillChatDotsFill } from 'react-icons/bs';
+import Navigate from '../layout/Navigate';
 
 const PostsDetail = () => {
   const navigate = useNavigate();
   const params = useParams();
+  const postId = params.postId;
   const nickname = useSelector((state) => state.auth.nickname);
   const [liked, setLiked] = useState();
   const queryClient = useQueryClient();
   const profileImg = useSelector((state) => state.auth.profileImg);
-  const [newComment, setNewComment] = useState("");
+  const [newComment, setNewComment] = useState('');
   const [isValid, setIsValid] = useState(false);
   const { ref, inView } = useInView();
   const write_ref = useRef();
 
   const [showModal, setShowModal] = useState(false);
 
-  const getPost = async () => {
+  const getPostDetail = async () => {
     try {
-      const res = await postApi.getPost(`${params.postId}`);
-      console.log(res.data.liked, "liked 확인해보자");
+      const res = await postApi.getPostDetail(`${postId}`);
       return res.data;
     } catch (err) {
       console.log(err);
@@ -46,11 +46,15 @@ const PostsDetail = () => {
     }
   };
 
-  const postInfo = useQuery(["post", liked], getPost, {
-    refetchOnWindowFocus: false,
-  }).data;
+  const postInfo = useQuery(
+    [queryKeys.detailPost, liked, postId],
+    getPostDetail,
+    {
+      refetchOnWindowFocus: false
+    }
+  ).data;
 
-  const getAmenity = postInfo.amenity.split(" ");
+  const getAmenity = postInfo.amenity.split(' ');
 
   const fetchComments = async (pageParam) => {
     try {
@@ -68,13 +72,13 @@ const PostsDetail = () => {
   const {
     data: comments,
     fetchNextPage,
-    isFetchingNextPage,
+    isFetchingNextPage
   } = useInfiniteQuery(
     [queryKeys.commentList],
     ({ pageParam = 0 }) => fetchComments(pageParam),
     {
       getNextPageParam: (lastPage) =>
-        !lastPage.last ? lastPage.nextPage : undefined,
+        !lastPage.last ? lastPage.nextPage : undefined
     }
   );
 
@@ -101,12 +105,12 @@ const PostsDetail = () => {
   const { mutate: onDelete } = useMutation(postDelete, {
     onSuccess: () => {
       queryClient.invalidateQueries([queryKeys.posts]);
-      navigate("/posts");
-      alert("게시글이 삭제되었습니다");
+      navigate('/posts');
+      // alert('게시글이 삭제되었습니다');
     },
     onError: (err) => {
       console.log(err.respose);
-    },
+    }
   });
 
   //좋아요 기능구현
@@ -135,7 +139,7 @@ const PostsDetail = () => {
     },
     onError: (err) => {
       console.log(err.respose);
-    },
+    }
   });
 
   //댓글 작성
@@ -149,12 +153,12 @@ const PostsDetail = () => {
 
   const submitCommentsMutation = useMutation(submitComments, {
     onSuccess: () => {
-      write_ref.current.value = "";
+      write_ref.current.value = '';
       queryClient.invalidateQueries([queryKeys.commentList]);
     },
     onError: (err) => {
       console.log(err.respose);
-    },
+    }
   });
 
   const onRequestChat = (nickname) => {
@@ -163,7 +167,7 @@ const PostsDetail = () => {
 
   return (
     <Container>
-      <Navigate text={"포스트"} />
+      <Navigate text={'포스트'} />
       <TitleDiv>
         <span>{postInfo.title}</span>
       </TitleDiv>
@@ -203,11 +207,12 @@ const PostsDetail = () => {
           </svg>
           <span>조회 {postInfo.viewCount}</span>
         </UserBox>
-        {nickname === postInfo.nickname ? (
+        {nickname === postInfo.nickname && (
           <button className="moreBtn" onClick={onShowModal}>
             <FiMoreHorizontal />
           </button>
-        ) : (
+        )}
+        {nickname && nickname !== postInfo.nickname && (
           <button
             className="chatBtn"
             onClick={() => onRequestChat(postInfo.nickname)}
@@ -227,7 +232,7 @@ const PostsDetail = () => {
             <div
               className="deleteBtn"
               onClick={() => {
-                const result = window.confirm("정말 삭제하시겠습니까?");
+                const result = window.confirm('정말 삭제하시겠습니까?');
                 if (result) {
                   onDelete(params.postId);
                 }
@@ -280,12 +285,12 @@ const PostsDetail = () => {
       <Amenity>
         <label>주변정보</label>
         <div>
-          {getAmenity[0] === "true" ? <p>💨 에어건이 있어요</p> : null}
-          {getAmenity[1] === "true" ? <p>🏄 서핑샵이 있어요</p> : null}
-          {getAmenity[2] === "true" ? <p>🛀 샤워시설이 있어요</p> : null}
-          {getAmenity[3] === "true" ? <p>🍽 식당 카페가 있어요</p> : null}
-          {getAmenity[4] === "true" ? <p>🚘 주차장이 있어요</p> : null}
-          {getAmenity[5] === "true" ? <p>🏨 숙박시설이 있어요</p> : null}
+          {getAmenity[0] === 'true' ? <p>💨 에어건이 있어요</p> : null}
+          {getAmenity[1] === 'true' ? <p>🏄 서핑샵이 있어요</p> : null}
+          {getAmenity[2] === 'true' ? <p>🛀 샤워시설이 있어요</p> : null}
+          {getAmenity[3] === 'true' ? <p>🍽 식당 카페가 있어요</p> : null}
+          {getAmenity[4] === 'true' ? <p>🚘 주차장이 있어요</p> : null}
+          {getAmenity[5] === 'true' ? <p>🏨 숙박시설이 있어요</p> : null}
         </div>
       </Amenity>
 
@@ -293,7 +298,7 @@ const PostsDetail = () => {
         <Viewer initialValue={postInfo.content} />
       </PostBox>
       <ButtonContainer>
-        {postInfo.nickname !== nickname ? (
+        {nickname && postInfo.nickname !== nickname ? (
           <HeartBtn
             onClick={() => {
               onToggleLike(postInfo.postId);
@@ -349,34 +354,36 @@ const PostsDetail = () => {
           <span>댓글 {postInfo.totalComment}개</span>
           <span>좋아요 {postInfo.likeCount}개</span>
         </CountBox>
-        <WriteComment>
-          <img src={profileImg} alt="" />
-          <input
-            type="text"
-            placeholder="댓글 내용을 입력하세요."
-            ref={write_ref}
-            onChange={(e) => {
-              setNewComment(e.currentTarget.value);
-            }}
-            onKeyUp={(e) => {
-              e.currentTarget.value.length > 0
-                ? setIsValid(true)
-                : setIsValid(false);
-            }}
-          />
-          <button
-            type="submit"
-            disabled={isValid === false}
-            onClick={() => {
-              const postComment = {
-                content: newComment,
-              };
-              submitCommentsMutation.mutate(postComment);
-            }}
-          >
-            게시
-          </button>
-        </WriteComment>
+        {nickname && (
+          <WriteComment>
+            <img src={profileImg} alt="" />
+            <input
+              type="text"
+              placeholder="댓글 내용을 입력하세요."
+              ref={write_ref}
+              onChange={(e) => {
+                setNewComment(e.currentTarget.value);
+              }}
+              onKeyUp={(e) => {
+                e.currentTarget.value.length > 0
+                  ? setIsValid(true)
+                  : setIsValid(false);
+              }}
+            />
+            <button
+              type="submit"
+              disabled={isValid === false}
+              onClick={() => {
+                const postComment = {
+                  content: newComment
+                };
+                submitCommentsMutation.mutate(postComment);
+              }}
+            >
+              게시
+            </button>
+          </WriteComment>
+        )}
         {comments.pages.map((page) =>
           page.data.map((comment) => {
             return <Comment comment={comment} key={comment.commentId} />;
@@ -412,6 +419,7 @@ const Box = styled.div`
   }
   .chatBtn {
     color: #007aff;
+    font-size: 1.3rem;
   }
 `;
 
@@ -424,16 +432,17 @@ const TitleDiv = styled.div`
 `;
 
 const UserBox = styled.div`
+  @media screen and (max-width: 430px) {
+  }
   display: flex;
   align-items: center;
-  font-size: 0.9375rem;
-  font-weight: 400;
 
   img {
     height: 1.5rem;
     width: 1.5rem;
-    border-radius: 1rem;
-    margin-right: 0.5rem;
+    border-radius: 50%;
+    margin-right: 0.33rem;
+    border: 1px solid #ececee;
   }
   span {
     font-style: normal;
@@ -506,24 +515,15 @@ const Amenity = styled.div`
     top: 44.4375rem;
     font-weight: 600;
     border-radius: none;
-    padding: 0.625rem, 1rem, 0.625rem, 1rem;
   }
   div {
     display: grid;
+    text-align: center;
     grid-template-columns: 1fr 1fr;
     gap: 0.5rem;
   }
 
-  @media screen and (min-width: 1024px) {
-    div {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 0.3rem;
-    }
-  }
-
   p {
-    align-items: center;
     font-size: 0.875rem;
     font-weight: 600;
     padding: 0.625rem 0.875rem;
