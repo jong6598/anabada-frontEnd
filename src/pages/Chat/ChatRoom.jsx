@@ -33,7 +33,7 @@ const ChatRoom = () => {
 
   return (
     <Container>
-      <Navigate text={'채팅'} />
+      <Navigate text={'채팅'} padding={true} />
       {/* <Divider /> */}
       {rooms.pages[0].data.length === 0 && (
         <NoData text={'받은 메세지'} chat={true} />
@@ -82,6 +82,7 @@ const ChatRoom = () => {
 
 const Container = styled.div`
   /* padding: 0 1rem; */
+
   @media screen and (min-width: 1024px) {
     margin: 0 auto;
     width: 40vw;

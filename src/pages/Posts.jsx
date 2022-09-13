@@ -10,7 +10,7 @@ import { queryKeys } from '../react-query/constants';
 
 import Loading from '../layout/Loading';
 import NoData from '../layout/NoData';
-import { usePosts } from '../react-query/hooks/post/usePosts';
+
 import Masonry from 'react-masonry-css';
 import SkeletonItem from '../layout/SkeletonItem';
 import { TbPencil } from 'react-icons/tb';

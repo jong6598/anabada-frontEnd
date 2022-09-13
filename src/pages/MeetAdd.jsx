@@ -71,14 +71,12 @@ const MeetAdd = () => {
     if (!thunderPostId) {
       try {
         const post = await meetsApi.postMeetPost(newMeet);
-        alert('모임이 등록되었습니다!');
       } catch (err) {
         alert('모임 등록에 실패하였습니다');
       }
     } else {
       try {
         const update = await meetsApi.editMeetPost(thunderPostId, newMeet);
-        alert('모임이 수정되었습니다!');
       } catch (err) {
         console.log(err);
         alert('모임 수정에 실패하였습니다');

@@ -60,7 +60,7 @@ const Mypage = () => {
       const deleteImg = ref(storage, uploadUrl);
       deleteObject(deleteImg)
         .then(() => {
-          alert('취소 완료!');
+          // alert('취소 완료!');
           setImgSrc('');
         })
         .catch((err) => {

@@ -276,8 +276,40 @@ const MeetDetail = () => {
             )}
             좋아요
           </button>
-
-          {isJoined ? (
+          {isJoined && meet.goalMember - meet.currentMember === 0 && (
+            <button
+              className="requestedBtn"
+              style={{ backgroundColor: '#007AFF', color: 'white' }}
+              onClick={() => {
+                const state = {
+                  setIsJoined,
+                  isJoined,
+                  thunderPostId: meet.thunderPostId
+                };
+                onJoin(state);
+              }}
+            >
+              마감 (참가 취소)
+            </button>
+          )}
+          {!isJoined && meet.goalMember - meet.currentMember === 0 && (
+            <button
+              disabled
+              className="requestedBtn"
+              style={{ backgroundColor: '#007AFF', color: 'white' }}
+              onClick={() => {
+                const state = {
+                  setIsJoined,
+                  isJoined,
+                  thunderPostId: meet.thunderPostId
+                };
+                onJoin(state);
+              }}
+            >
+              마감
+            </button>
+          )}
+          {meet.goalMember - meet.currentMember > 0 && isJoined && (
             <button
               className="requestedBtn"
               style={{ backgroundColor: '#007AFF', color: 'white' }}
@@ -292,7 +324,8 @@ const MeetDetail = () => {
             >
               참가 취소
             </button>
-          ) : (
+          )}
+          {meet.goalMember - meet.currentMember > 0 && !isJoined && (
             <button
               className="requestBtn"
               onClick={() => {
@@ -376,7 +409,7 @@ const Container = styled.div`
       }
     }
     svg {
-      font-size: 1rem;
+      font-size: 1.3rem;
     }
   }
 

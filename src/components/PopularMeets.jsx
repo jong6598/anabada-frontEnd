@@ -27,14 +27,15 @@ const PopularMeets = ({ popularPosts }) => {
       <h2>인기모임🔥</h2>
       <div className="meetsBox">
         {popularPosts.map((meet) => (
-          <div className="meetBox" key={meet.thunderPostId}>
+          <div
+            className="meetBox"
+            key={meet.thunderPostId}
+            onClick={() => navigate(`/meets/${meet.thunderPostId}`)}
+          >
             <div className="meetImageWrapper">
               <img src={meet.thumbnailUrl} alt="thumbnail" />
             </div>
-            <div
-              className="infoBox"
-              onClick={() => navigate(`/meets/${meet.thunderPostId}`)}
-            >
+            <div className="infoBox">
               <div className="dateBox">
                 {difference(date1, new Date(meet.endDate)) >= 0 ? (
                   <p className="dDay">

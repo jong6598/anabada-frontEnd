@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Post = ({ data }) => {
   const navigate = useNavigate();
-  console.log(data, '정보확인');
+
   return (
     <PostInfoBox
       onClick={() => {

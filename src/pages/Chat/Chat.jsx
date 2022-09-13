@@ -24,6 +24,7 @@ const Chat = () => {
 
   const clientRef = useRef(null);
   const [roomId, setRoomId] = useState(null);
+
   const [chatMessages, setChatMessages] = useState([]);
   const [senderProfileImg, setSenderProfileImg] = useState('');
   const [receiverProfileImg, setReceiverProfileImg] = useState('');
@@ -36,7 +37,7 @@ const Chat = () => {
   const token = localStorage.getItem('accessToken');
   const headers = { accessToken: token };
 
-  //roomId가 있을때만 요청을 하고싶은데??
+  //roomId가 있을때 요청
   const { messages, fetchNextPage, isFetchingNextPage, __setRoomId } =
     useMessages();
 
@@ -145,7 +146,6 @@ const Chat = () => {
           getSenderProfileImg = res.data.senderProfileImg;
           getReceiverProfileImg = res.data.receiverProfileImg;
         } else {
-          console.log(res.response.data, 'resdata체크');
           getRoomId = res.response.data.roomId;
           getSenderProfileImg = res.response.data.senderProfileImg;
           getReceiverProfileImg = res.response.data.receiverProfileImg;
@@ -237,7 +237,7 @@ const Chat = () => {
                 ) : (
                   <>
                     <img
-                      src={receiverProfileImg}
+                      src={senderProfileImg}
                       alt="profileImage"
                       style={{
                         width: '2rem',
@@ -273,7 +273,7 @@ const Chat = () => {
                     chatMessages[index].nickname) ? (
                   <>
                     <img
-                      src={senderProfileImg}
+                      src={receiverProfileImg}
                       alt="profileImage"
                       style={{
                         width: '2rem',
@@ -348,6 +348,8 @@ export default Chat;
 
 const Container = styled.div`
   /* position: relative; */
+  border-right: solid 1px #ececec;
+  border-left: solid 1px #ececec;
   @media screen and (min-width: 1024px) {
     margin: 0 auto;
     width: 40%;
@@ -391,6 +393,8 @@ const SenderContainer = styled.div`
 
     max-width: 80%;
 
+    word-break: break-all;
+
     background: #ffffff;
     border: 1px solid #e5e5ea;
     border-radius: 0.813rem;
@@ -406,6 +410,7 @@ const SenderContainer = styled.div`
     gap: 0.625rem;
 
     max-width: 80%;
+    word-break: break-all;
 
     background: #ffffff;
     border: 1px solid #e5e5ea;
@@ -426,6 +431,7 @@ const ReceiverContainer = styled.div`
     gap: 0.625rem;
 
     max-width: 80%;
+    word-break: break-all;
 
     background: #ffffff;
     border: 1px solid #e5e5ea;
@@ -469,6 +475,7 @@ const InputBox = styled.div`
     border-radius: 2rem;
     background-color: transparent;
     outline: none;
+    border: none;
   }
 `;
 const MessageButton = styled.button`
