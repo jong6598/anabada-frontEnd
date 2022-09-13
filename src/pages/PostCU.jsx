@@ -42,14 +42,14 @@ const PostCU = () => {
     if (!postId) {
       try {
         const post = await postApi.newPost(newPost);
-        alert('게시글이 등록되었습니다!');
+        // alert('게시글이 등록되었습니다!');
       } catch (err) {
         alert(err);
       }
     } else {
       try {
         const update = await postApi.updatePost(postId, newPost);
-        alert('게시글이 수정되었습니다!');
+        // alert('게시글이 수정되었습니다!');
       } catch (err) {
         alert('게시글 수정에 실패했습니다');
       }
@@ -83,7 +83,7 @@ const PostCU = () => {
   useEffect(() => {
     if (postId) {
       const setPost = async () => {
-        const postInfo = await postApi.getPost(`${postId}`);
+        const postInfo = await postApi.getPostDetail(`${postId}`);
 
         if (postInfo.data.nickname !== nickname) {
           alert('수정 권한이 없습니다.');

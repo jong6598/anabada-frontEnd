@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 const getRooms = async (pageParam) => {
   try {
     const res = await chatApi.getAllRooms(pageParam);
-    console.log(res.data, 'res.data');
+    // console.log(res.data, 'res.data');
     const data = res.data.content;
     const last = res.data.last;
     return { data, nextPage: pageParam + 1, last };
@@ -19,7 +19,6 @@ const getRooms = async (pageParam) => {
 
 export function useRooms() {
   const nickname = useSelector((state) => state.auth.nickname);
-  console.log(nickname, 'nickname체크크크');
 
   // 모임 전체 게시글 useQuery
   const {

@@ -171,12 +171,12 @@ const RightWrapper = styled.div`
 
   div {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     margin-bottom: 0.625rem;
     .dDay {
       display: flex;
       flex-direction: row;
-      align-items: flex-start;
+      align-items: center;
       padding: 0.125rem 0.25rem;
       gap: 0.625rem;
       margin-right: 0.75rem;
@@ -201,14 +201,12 @@ const RightWrapper = styled.div`
     }
     .dayClosing {
       display: flex;
+      text-align: center;
       flex-direction: row;
       align-items: flex-start;
       padding: 0.125rem 0.25rem;
       gap: 0.625rem;
       margin-right: 0.75rem;
-
-      width: 35px;
-      /* height: 21px; */
 
       background: black;
       border-radius: 4px;
@@ -255,7 +253,8 @@ const RightWrapper = styled.div`
 
   .subBox {
     display: flex;
-    align-items: center;
+    /* align-items: center; */
+    text-align: center;
     margin-bottom: 0.5rem;
     svg {
       margin-right: 0.5rem;
@@ -271,8 +270,8 @@ const RightWrapper = styled.div`
       white-space: nowrap;
     }
     p.address {
+      font-style: normal;
       display: -webkit-box;
-
       -webkit-line-clamp: 1; //원하는 라인수
       -webkit-box-orient: vertical;
       white-space: pre-wrap;

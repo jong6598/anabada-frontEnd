@@ -12,7 +12,7 @@ const GlobalStyle = createGlobalStyle`
     margin: 0px;
     padding: 0px;
     font-family: 'Pretendard-Regular';
-   
+
  }
 
  a, div {
@@ -20,6 +20,10 @@ const GlobalStyle = createGlobalStyle`
     text-decoration: none;
     color:inherit;
     -webkit-tap-highlight-color: rgba(0,0,0,.1);
+ 
+  }
+  a{
+    cursor: pointer;
   }
 
   button{
@@ -36,8 +40,11 @@ const GlobalStyle = createGlobalStyle`
   }
   
   h2,p{
+    font-family: 'Pretendard-Regular';
    margin: 0;
   }
+
+
 
   select{
    border: none;
@@ -61,9 +68,7 @@ const GlobalStyle = createGlobalStyle`
       font-family: 'Pretendard-Regular';
     }
     pre{
-    
       font-family: 'Pretendard-Regular';
-    
     }
 `;
 

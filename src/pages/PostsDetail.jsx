@@ -54,7 +54,6 @@ const PostsDetail = () => {
     }
   ).data;
 
-  console.log(postInfo, '디테일 확인🎈🎈🎈🎈🎈🎈🎈');
   const getAmenity = postInfo.amenity.split(' ');
 
   const fetchComments = async (pageParam) => {
@@ -107,7 +106,7 @@ const PostsDetail = () => {
     onSuccess: () => {
       queryClient.invalidateQueries([queryKeys.posts]);
       navigate('/posts');
-      alert('게시글이 삭제되었습니다');
+      // alert('게시글이 삭제되었습니다');
     },
     onError: (err) => {
       console.log(err.respose);
@@ -420,6 +419,7 @@ const Box = styled.div`
   }
   .chatBtn {
     color: #007aff;
+    font-size: 1.3rem;
   }
 `;
 

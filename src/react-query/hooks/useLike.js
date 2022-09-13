@@ -9,7 +9,7 @@ const postLike = async ({ setIsLiked, isLiked, thunderPostId }) => {
   if (isLiked) {
     try {
       const res = await meetsApi.deleteLike(thunderPostId);
-      alert('북마크가 취소되었습니다');
+      // alert('북마크가 취소되었습니다');
       setIsLiked((prev) => !prev);
     } catch (error) {
       console.log(error);
@@ -18,7 +18,7 @@ const postLike = async ({ setIsLiked, isLiked, thunderPostId }) => {
     try {
       const res = await meetsApi.postLike(thunderPostId);
       setIsLiked((prev) => !prev);
-      alert('북마크에 저장되었습니다');
+      // alert('북마크에 저장되었습니다');
     } catch (error) {
       console.log(error);
       alert('북마크 저장에 실패하였습니다');
