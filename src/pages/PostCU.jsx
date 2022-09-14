@@ -59,10 +59,9 @@ const PostCU = () => {
   const queryClient = new useQueryClient();
 
   const { mutate: onAdd } = useMutation(onSubmitPost, {
-    onSuccess: () => {
-      queryClient.invalidateQueries([queryKeys.posts]);
-      navigate('/posts');
-      window.location.href = 'https://ohanabada.com/posts';
+    onSuccess: async() => {
+      await queryClient.invalidateQueries([queryKeys.posts]);
+      return navigate('/posts');
     },
     onError: (err) => {
       console.log(err.respose);
