@@ -13,7 +13,7 @@ const Header = ({ notifications }) => {
   const timer = useRef(null);
   const cookies = new Cookies();
   const getCookies = cookies.get("refreshToken");
-  const [valueY, setValueY] = useState(null);
+  const [, setValueY] = useState(null);
   const gapY = useRef(0);
 
   // alert 메시지 커스텀

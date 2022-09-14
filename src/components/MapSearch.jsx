@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useState } from "react";
 import { useRef } from "react";
 import { useOutletContext } from "react-router-dom";
@@ -75,7 +74,7 @@ const beachname = [
   "흥남 해수욕장",
 ];
 
-const MapSearch = ({ setLatlng }) => {
+const MapSearch = ({ setPicker, data }) => {
   const inputRef = useRef();
   const [inputName, setInputName] = useState("");
   const [searchResult, setSearchResult] = useState([]);
@@ -87,22 +86,31 @@ const MapSearch = ({ setLatlng }) => {
    */
   const handleOnSubmit = (event) => {
     event.preventDefault();
-    // 검색 창이 비었을 때
+    // 검색 창이 비었을 때 ""
     if (inputName === "") {
       return alertHandler("해변을 입력해주세요!");
     }
-    // 일부만 입력했을 때
+
+    // 일부만 입력했을 때 "해운대" || 검색결과가 없을 때 "대운해"
     if (!beachname.includes(inputName)) {
       // 검색 결과도 없으면 custom alert를 띄워주기
       if (searchResult.length === 0) {
         return alertHandler("일치하는 해변이 없습니다!");
       }
       // 완전히 일치하는 해변이 없으면 searchResult의 가장 첫 번째로 검색
+      const result = data.data.find((el) => el.beachName === searchResult[0]);
       setInputName(searchResult[0]);
-      setLatlng(searchResult[0]);
+      setPicker((prev) => {
+        return { ...prev, ...result };
+      });
       return setSearchResult([]);
     }
-    return setLatlng(inputName);
+    // "해운대 해수욕장"
+    const result = data.data.find((el) => el.beachName === inputName);
+    setPicker((prev) => {
+      return { ...prev, ...result };
+    });
+    return setSearchResult([]);
   };
 
   /**

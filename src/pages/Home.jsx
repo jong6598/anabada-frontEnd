@@ -1,11 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import KakaoMap from "../components/Map";
 import MapSearch from "../components/MapSearch";
 
 const Home = () => {
-  const [latlng, setLatlng] = useState("init");
   const [picker, setPicker] = useState({
     beachId: -1,
     beachName: "",
@@ -33,18 +32,9 @@ const Home = () => {
     },
   });
 
-  useEffect(() => {
-    if (latlng !== "init") {
-      const result = data.data.find((el) => el.beachName === latlng);
-      setPicker((prev) => {
-        return { ...prev, ...result };
-      });
-    }
-  }, [data.data, latlng, picker]);
-
   return (
     <>
-      <MapSearch setLatlng={setLatlng} />
+      <MapSearch setPicker={setPicker} data={data} />
       <KakaoMap data={data} picker={picker} setPicker={setPicker} />
     </>
   );

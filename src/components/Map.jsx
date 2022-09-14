@@ -116,7 +116,7 @@ const KakaoMap = ({ data, picker, setPicker }) => {
             <ExtraInfoContainer className="extra__info">
               <ExtraInfo>
                 <div>
-                  <span class="material-symbols-outlined">waves</span>
+                  <span className="material-symbols-outlined">waves</span>
                 </div>
                 <div>
                   <span>예상파고 : {picker.wav}M</span>
@@ -124,7 +124,7 @@ const KakaoMap = ({ data, picker, setPicker }) => {
               </ExtraInfo>
               <ExtraInfo>
                 <div>
-                  <span class="material-symbols-outlined">air</span>
+                  <span className="material-symbols-outlined">air</span>
                 </div>
                 <div>
                   <span>풍속 : {picker.wsd}m/s</span>
@@ -132,7 +132,7 @@ const KakaoMap = ({ data, picker, setPicker }) => {
               </ExtraInfo>
               <ExtraInfo>
                 <div>
-                  <span class="material-symbols-outlined">water_drop</span>
+                  <span className="material-symbols-outlined">water_drop</span>
                 </div>
                 <div>
                   <span>강수확률 : {picker.pop}%</span>
@@ -140,7 +140,7 @@ const KakaoMap = ({ data, picker, setPicker }) => {
               </ExtraInfo>
               <ExtraInfo>
                 <div>
-                  <span class="material-symbols-outlined">umbrella</span>
+                  <span className="material-symbols-outlined">umbrella</span>
                 </div>
                 <div>
                   {picker.pcp === "강수없음" ? (
