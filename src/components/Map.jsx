@@ -11,7 +11,10 @@ const KakaoMap = ({ data, picker, setPicker }) => {
 
   return (
     <>
-      <MapWrapper center={{ lat: 36.350701, lng: 127.600667 }} level={13}>
+      <MapWrapper
+        center={{ lat: picker.x, lng: picker.y }}
+        level={picker.beachId === -1 ? 13 : 5}
+      >
         <MarkerClusterer
           averageCenter={true} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
           minLevel={10} // 클러스터 할 최소 지도 레벨
@@ -25,15 +28,12 @@ const KakaoMap = ({ data, picker, setPicker }) => {
               backgroundImage: 'url("/assets/c3.png")',
               borderRadius: "50%",
               fontSize: "0.7rem",
+              padding: "0.3rem",
               color: "white",
-
+              fontWeight: "bold",
               display: "flex",
               justifyContent: "flex-end",
-              padding: "0.3rem",
               alignItems: "center",
-              textAlign: "center",
-
-              fontWeight: "bold",
             },
             {
               width: "3.125rem",
@@ -42,29 +42,24 @@ const KakaoMap = ({ data, picker, setPicker }) => {
               backgroundImage: 'url("/assets/c2.png")',
               borderRadius: "50%",
               color: "white",
+              padding: "0.4rem",
+              fontWeight: "bold",
               display: "flex",
               justifyContent: "flex-end",
-              padding: "0.4rem",
               alignItems: "center",
-              textAlign: "center",
-              fontWeight: "bold",
             },
             {
               width: "4.375rem",
               height: "4.375rem",
-
               fontSize: "0.9rem",
               backgroundImage: 'url("/assets/c1.png")',
               borderRadius: "50%",
-
               color: "white",
+              padding: "0.5rem",
+              fontWeight: "bold",
               display: "flex",
               justifyContent: "flex-end",
-              padding: "0.5rem",
               alignItems: "center",
-              textAlign: "center",
-              fontWeight: "bold",
-              lineHeight: "3.1875rem",
             },
           ]}
         >
@@ -110,7 +105,7 @@ const KakaoMap = ({ data, picker, setPicker }) => {
                 </div>
                 <ExtraInfo>
                   <div>
-                    <img src="/weatherIcons/map_pin.svg"></img>
+                    <img src="/weatherIcons/map_pin.svg" alt=""></img>
                   </div>
                   <div>
                     <span>{picker.beachName}</span>

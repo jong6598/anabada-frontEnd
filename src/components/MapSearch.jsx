@@ -1,84 +1,85 @@
 import { useEffect } from "react";
 import { useState } from "react";
 import { useRef } from "react";
+import { useOutletContext } from "react-router-dom";
 import styled from "styled-components";
 
 const beachname = [
-  "사계해안",
-  "한담해변",
-  "월정리해변",
-  "구름포 해수욕장",
-  "천리포 해수욕장",
-  "의항 해수욕장",
-  "만리포 해수욕장",
-  "격포 해수욕장",
-  "남열해돋이 해수욕장",
-  "강문 해수욕장",
-  "사근진 해수욕장",
-  "순긋 해수욕장",
-  "주문진 해수욕장",
-  "금진 해수욕장",
-  "사천 해수욕장",
-  "연곡 해수욕장",
-  "어달 해수욕장",
-  "망상 해수욕장",
-  "등대 해수욕장",
-  "속초 해수욕장",
-  "외옹치 해수욕장",
-  "송지호 해수욕장",
-  "봉수대 해수욕장",
+  "38해변",
   "가진리 해수욕장",
-  "삼포 해수욕장",
+  "강문 해수욕장",
+  "갯마을 해수욕장",
+  "격포 해수욕장",
+  "곽지과물 해수욕장",
+  "광안리 해수욕장",
+  "광진리 해수욕장",
+  "교암리 해수욕장",
+  "구름포 해수욕장",
+  "금능으뜸원 해수욕장",
+  "금진 해수욕장",
+  "남애3리 해수욕장",
+  "남열해돋이 해수욕장",
+  "다대포 해수욕장",
+  "동산 해수욕장",
+  "등대 해수욕장",
+  "만리포 해수욕장",
+  "망상 해수욕장",
+  "물치 해수욕장",
   "백도 해수욕장",
+  "봉수대 해수욕장",
+  "봉포 해수욕장",
+  "북분리 해수욕장",
+  "사계해안",
+  "사근진 해수욕장",
+  "사천 해수욕장",
+  "사천진 해수욕장",
+  "사촌 해수욕장",
+  "삼양검은모래 해수욕장",
+  "삼포 해수욕장",
+  "설악 해수욕장",
+  "속초 해수욕장",
+  "송정 해수욕장",
+  "송지호 해수욕장",
+  "순긋 해수욕장",
+  "신양섭지코지 해수욕장",
+  "아야진 해수욕장",
+  "어달 해수욕장",
+  "연곡 해수욕장",
+  "옥계 해수욕장",
+  "외옹치 해수욕장",
+  "원포리 해수욕장",
+  "월정리해변",
+  "월포 해수욕장",
+  "의항 해수욕장",
+  "이호테우 해수욕장",
+  "인구 해수욕장",
   "자작도 해수욕장",
+  "장사 해수욕장",
+  "정암 해수욕장",
+  "종달 해수욕장",
+  "주문진 해수욕장",
+  "죽도 해수욕장",
+  "중문 해수욕장",
+  "진하 해수욕장",
+  "천리포 해수욕장",
   "천진 해수욕장",
   "청간 해수욕장",
-  "아야진 해수욕장",
-  "교암리 해수욕장",
-  "봉포 해수욕장",
-  "하조대 해수욕장",
-  "죽도 해수욕장",
-  "갯마을 해수욕장",
-  "인구 해수욕장",
-  "동산 해수욕장",
-  "광진리 해수욕장",
-  "원포리 해수욕장",
-  "남애3리 해수욕장",
-  "물치 해수욕장",
-  "정암 해수욕장",
-  "설악 해수욕장",
-  "사천진 해수욕장",
-  "월포 해수욕장",
-  "장사 해수욕장",
-  "해운대 해수욕장",
-  "송정 해수욕장",
-  "광안리 해수욕장",
-  "다대포 해수욕장",
-  "진하 해수욕장",
-  "흥남 해수욕장",
-  "함목 해수욕장",
-  "사촌 해수욕장",
   "표선해비치",
-  "신양섭지코지 해수욕장",
-  "곽지과물 해수욕장",
-  "협재 해수욕장",
-  "중문 해수욕장",
-  "이호테우 해수욕장",
-  "삼양검은모래 해수욕장",
-  "함덕서우봉 해수욕장",
-  "금능으뜸원 해수욕장",
   "하도 해수욕장",
-  "종달 해수욕장",
-  "옥계 해수욕장",
-  "북분리 해수욕장",
-  "38해변",
-].sort();
+  "하조대 해수욕장",
+  "한담해변",
+  "함덕서우봉 해수욕장",
+  "함목 해수욕장",
+  "해운대 해수욕장",
+  "협재 해수욕장",
+  "흥남 해수욕장",
+];
 
 const MapSearch = ({ setLatlng }) => {
-  const inputRef = useRef(null);
-  const debounceRef = useRef(null);
+  const inputRef = useRef();
   const [inputName, setInputName] = useState("");
   const [searchResult, setSearchResult] = useState([]);
+  const { alertHandler } = useOutletContext();
 
   /**
    * 검색 버튼 눌렀을 때, 해당 해수욕장 위치를 지도 가운데로 가져오고 확대해주기 아마도 부모 컴포넌트에서 state 만들어서 받아와야 할 듯
@@ -86,6 +87,21 @@ const MapSearch = ({ setLatlng }) => {
    */
   const handleOnSubmit = (event) => {
     event.preventDefault();
+    // 검색 창이 비었을 때
+    if (inputName === "") {
+      return alertHandler("해변을 입력해주세요!");
+    }
+    // 일부만 입력했을 때
+    if (!beachname.includes(inputName)) {
+      // 검색 결과도 없으면 custom alert를 띄워주기
+      if (searchResult.length === 0) {
+        return alertHandler("일치하는 해변이 없습니다!");
+      }
+      // 완전히 일치하는 해변이 없으면 searchResult의 가장 첫 번째로 검색
+      setInputName(searchResult[0]);
+      setLatlng(searchResult[0]);
+      return setSearchResult([]);
+    }
     return setLatlng(inputName);
   };
 
@@ -99,12 +115,11 @@ const MapSearch = ({ setLatlng }) => {
   };
 
   /**
-   * debouncing function으로부터 Input value를 이어받아서 이름이 일치하는 해수욕장을 검색해주기
+   * 이름이 일치하는 해수욕장을 검색해서 미리 보기 보여주기
    * @param {String} searchValue
    * @returns
    */
   const searchBeach = (searchValue) => {
-    console.log("test");
     setSearchResult([]);
     if (searchValue === "") return;
 
@@ -113,37 +128,14 @@ const MapSearch = ({ setLatlng }) => {
   };
 
   /**
-   * debouncing을 해서 setState이 과도하게 일어나지 않도록 하기
-   * @param {String} searchValue
-   */
-  const handleDebouce = (searchValue) => {
-    // timeout이 있으면,
-    if (debounceRef.current || debounceRef.current === null) {
-      // 기존의 이벤트를 해제하고 새로운 setTimeout 지정
-      clearTimeout(debounceRef.current);
-      return (debounceRef.current = setTimeout(
-        () => searchBeach(searchValue),
-        1000
-      ));
-    }
-  };
-
-  /**
    * 입력을 할 때 debounce함수를 이용해서 일정 시간 마다 검색 결과를 setState해서 list태그에 map 메소드로 브라우저에 표현해주기
    * @param {Event} event
    * @returns
    */
   const handleOnChange = (event) => {
-    handleDebouce(event.target.value);
+    searchBeach(event.target.value);
     return setInputName(event.target.value);
   };
-
-  useEffect(() => {
-    return () => {
-      // unmount 시에 타임아웃 남아있으면 clear해주기
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, []);
 
   return (
     <>
@@ -154,8 +146,8 @@ const MapSearch = ({ setLatlng }) => {
             type="text"
             className="search__input"
             placeholder="해수욕장 이름을 검색해주세요."
-            ref={inputRef}
             onChange={handleOnChange}
+            ref={inputRef}
             value={inputName}
           ></input>
           <button
@@ -189,6 +181,9 @@ const SearchForm = styled.form`
   left: 0;
   right: 0;
   width: 30rem;
+  @media screen and (max-width: 700px) {
+    width: 80vw;
+  } ;
 `;
 
 const SearchWrapper = styled.form`
@@ -198,6 +193,9 @@ const SearchWrapper = styled.form`
   width: 100%;
   height: 3.5rem;
   margin: 0 auto;
+  @media screen and (max-width: 700px) {
+    height: 3rem;
+  }
 
   span {
     position: absolute;
@@ -259,6 +257,13 @@ const SearchResultLi = styled.li`
   background-color: rgba(255, 255, 255, 0.6);
   padding: 1.25rem 0.8rem;
   margin-bottom: 1px;
+  @media screen and (max-width: 700px) {
+    height: 2.7rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    padding-left: 1.25rem;
+  }
 
   border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.5) 0px 0.3px;

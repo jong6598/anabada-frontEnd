@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Cookies } from "react-cookie";
 import AlertToast from "./AlertToast";
 import { GrNotification } from "react-icons/gr";

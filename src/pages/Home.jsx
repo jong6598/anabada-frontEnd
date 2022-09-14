@@ -5,7 +5,7 @@ import KakaoMap from "../components/Map";
 import MapSearch from "../components/MapSearch";
 
 const Home = () => {
-  const [latlng, setLatlng] = useState("");
+  const [latlng, setLatlng] = useState("init");
   const [picker, setPicker] = useState({
     beachId: -1,
     beachName: "",
@@ -17,8 +17,8 @@ const Home = () => {
     tmp: "",
     wav: "",
     wsd: "",
-    x: 0,
-    y: 0,
+    x: 36.350701,
+    y: 127.600667,
   });
 
   // fetcher
@@ -34,8 +34,13 @@ const Home = () => {
   });
 
   useEffect(() => {
-    console.log(data);
-  }, [latlng]);
+    if (latlng !== "init") {
+      const result = data.data.find((el) => el.beachName === latlng);
+      setPicker((prev) => {
+        return { ...prev, ...result };
+      });
+    }
+  }, [data.data, latlng, picker]);
 
   return (
     <>
