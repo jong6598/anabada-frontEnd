@@ -1,4 +1,4 @@
-name: Deploy to S3
+name: S3 deploy with cloud front
 on:
   push:
     branches:
