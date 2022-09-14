@@ -3,11 +3,11 @@ import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { InView, useInView } from 'react-intersection-observer';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { myApi } from '../shared/api';
-import { queryKeys } from '../react-query/constants';
-import Loading from '../layout/Loading';
-import Post from '../components/Post';
-import { NoDataMyPage } from '../layout/NoData';
+import { myApi } from '../../shared/api';
+import { queryKeys } from '../../react-query/constants';
+import Loading from '../../layout/Loading';
+import Post from '../../components/Posts/Post';
+import { NoDataMyPage } from '../../layout/NoData';
 import Masonry from 'react-masonry-css';
 
 const MyPosts = () => {

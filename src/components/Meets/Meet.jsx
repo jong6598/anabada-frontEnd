@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { useDetailMeet } from '../react-query/hooks/useDetailMeet';
+import { useDetailMeet } from '../../react-query/hooks/useDetailMeet';
 
 const Meet = ({ meet }) => {
   const navigate = useNavigate();

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { postApi } from '../shared/api';
+import { postApi } from '../../shared/api';
 import {
   useQuery,
   useQueryClient,
@@ -11,17 +11,17 @@ import {
 } from '@tanstack/react-query';
 import { Viewer } from '@toast-ui/react-editor';
 import '@toast-ui/editor/dist/toastui-editor-viewer.css';
-import Comment from '../components/Comment';
+import Comment from '../../components/Comments/Comment';
 import { useInView } from 'react-intersection-observer';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import { FiEdit2 } from 'react-icons/fi';
 import { RiDeleteBin5Line } from 'react-icons/ri';
-import { queryKeys } from '../react-query/constants';
+import { queryKeys } from '../../react-query/constants';
 import { FiInbox } from 'react-icons/fi';
 import { BsFillChatDotsFill } from 'react-icons/bs';
-import Navigate from '../layout/Navigate';
+import Navigate from '../../layout/Navigate';
 
-const PostsDetail = () => {
+const PostDetail = () => {
   const navigate = useNavigate();
   const params = useParams();
   const postId = params.postId;
@@ -412,7 +412,7 @@ const PostsDetail = () => {
   );
 };
 
-export default PostsDetail;
+export default PostDetail;
 
 const Container = styled.div``;
 

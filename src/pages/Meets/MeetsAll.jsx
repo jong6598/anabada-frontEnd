@@ -1,16 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import Meet from '../components/Meet';
+import Meet from '../../components/Meets/Meet';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
-import { meetsApi } from '../shared/api';
-import Loading, { InfiniteLoading } from '../layout/Loading';
+import { meetsApi } from '../../shared/api';
+import Loading, { InfiniteLoading } from '../../layout/Loading';
 
-import { queryKeys } from '../react-query/constants';
-import Navigate from '../layout/Navigate';
+import { queryKeys } from '../../react-query/constants';
+import Navigate from '../../layout/Navigate';
 import { TbPencil } from 'react-icons/tb';
 import { Link } from 'react-router-dom';
-import NoData from '../layout/NoData';
+import NoData from '../../layout/NoData';
 
 const MeetsAll = () => {
   const [search, setSearch] = useState(null);

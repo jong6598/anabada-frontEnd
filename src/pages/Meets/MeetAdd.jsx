@@ -1,14 +1,13 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-
-import { storage } from '../firebase';
+import { storage } from '../../shared/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useForm } from 'react-hook-form';
-import { meetsApi } from '../shared/api';
+import { meetsApi } from '../../shared/api';
 import { useSelector } from 'react-redux';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
-import { queryKeys } from '../react-query/constants';
+import { queryKeys } from '../../react-query/constants';
 
 const MeetAdd = () => {
   const nickname = useSelector((state) => state.auth.nickname);
@@ -70,13 +69,13 @@ const MeetAdd = () => {
   const onSubmitMeet = async (newMeet) => {
     if (!thunderPostId) {
       try {
-        const post = await meetsApi.postMeetPost(newMeet);
+        await meetsApi.postMeetPost(newMeet);
       } catch (err) {
         alert('모임 등록에 실패하였습니다');
       }
     } else {
       try {
-        const update = await meetsApi.editMeetPost(thunderPostId, newMeet);
+        await meetsApi.editMeetPost(thunderPostId, newMeet);
       } catch (err) {
         console.log(err);
         alert('모임 수정에 실패하였습니다');

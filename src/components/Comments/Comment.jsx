@@ -1,13 +1,13 @@
 import styled from 'styled-components';
 import { useQueryClient, useMutation } from '@tanstack/react-query';
-import { postApi } from '../shared/api';
+import { postApi } from '../../shared/api';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import { FiMoreHorizontal } from 'react-icons/fi';
 import { FiEdit2 } from 'react-icons/fi';
 import { RiDeleteBin5Line } from 'react-icons/ri';
-import { queryKeys } from '../react-query/constants';
+import { queryKeys } from '../../react-query/constants';
 import { BsFillChatDotsFill } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 
@@ -130,10 +130,12 @@ const Comment = ({ comment }) => {
             >
               <BsFillChatDotsFill />
             </button>
-          ) : (accessToken &&
-            <button className="moreBtn" onClick={onShowModal}>
-              <FiMoreHorizontal />
-            </button>
+          ) : (
+            accessToken && (
+              <button className="moreBtn" onClick={onShowModal}>
+                <FiMoreHorizontal />
+              </button>
+            )
           )}
           {showModal && (
             <SelectContainer>
@@ -176,7 +178,6 @@ const UpdateContent = styled.input`
 `;
 
 const ViewComments = styled.div`
-  
   display: flex;
   position: relative;
   height: auto;

@@ -1,7 +1,7 @@
-import { LoginWelcome } from "./Login";
-import styled from "styled-components";
-import { useEffect, useRef, useState } from "react";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { LoginWelcome } from './Login';
+import styled from 'styled-components';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 
 const Welcome = () => {
   const timer = useRef(null);
@@ -13,7 +13,7 @@ const Welcome = () => {
     interval = setInterval(() => {
       if (timer.current === null) {
         timer.current = setTimeout(() => {
-          navigate("/login");
+          navigate('/login');
         }, 2000);
       }
       return setIntervalSeconds((prev) => (prev -= 1));
@@ -26,9 +26,9 @@ const Welcome = () => {
 
   // 로그인한 상태에서 접근 시 차단
   useEffect(() => {
-    if (localStorage.getItem("accessToken")) {
-      alertHandler("비정상적인 접근입니다.");
-      return navigate("/");
+    if (localStorage.getItem('accessToken')) {
+      alertHandler('비정상적인 접근입니다.');
+      return navigate('/');
     }
   }, []);
   return (

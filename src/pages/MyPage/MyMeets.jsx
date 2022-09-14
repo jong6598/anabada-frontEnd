@@ -1,14 +1,14 @@
 import styled from 'styled-components';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Meet from '../components/Meet';
+import Meet from '../../components/Meets/Meet';
 import { InView, useInView } from 'react-intersection-observer';
 import { useState, useEffect } from 'react';
-import { myApi } from '../shared/api';
-import { queryKeys } from '../react-query/constants';
-import Loading from '../layout/Loading';
+import { myApi } from '../../shared/api';
+import { queryKeys } from '../../react-query/constants';
+import Loading from '../../layout/Loading';
 import { css } from 'styled-components';
-import { NoDataMyPage } from '../layout/NoData';
+import { NoDataMyPage } from '../../layout/NoData';
 
 const MyMeets = () => {
   const { ref, inView } = useInView();
@@ -36,8 +36,6 @@ const MyMeets = () => {
         !lastPage.last ? lastPage.nextPage : undefined
     }
   );
-
-  console.log(data, '🎈🎈🎈🎈🎈');
 
   useEffect(() => {
     if (inView) {

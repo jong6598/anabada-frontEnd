@@ -3,16 +3,16 @@ import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import Post from '../components/Post';
-import { postApi } from '../shared/api';
+import Post from '../../components/Posts/Post';
+import { postApi } from '../../shared/api';
 import { useInView } from 'react-intersection-observer';
-import { queryKeys } from '../react-query/constants';
+import { queryKeys } from '../../react-query/constants';
 
-import Loading from '../layout/Loading';
-import NoData from '../layout/NoData';
+import Loading from '../../layout/Loading';
+import NoData from '../../layout/NoData';
 
 import Masonry from 'react-masonry-css';
-import SkeletonItem from '../layout/SkeletonItem';
+import SkeletonItem from '../../layout/SkeletonItem';
 import { TbPencil } from 'react-icons/tb';
 
 const Posts = () => {
