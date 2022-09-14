@@ -152,7 +152,7 @@ const MeetDetail = () => {
             fill="#FFFBFF"
           />
           <path
-           fillRule="evenodd"
+            fillRule="evenodd"
             clipRule="evenodd"
             d="M5.5 6.33301C5.5 4.9523 6.61929 3.83301 8 3.83301C9.38071 3.83301 10.5 4.9523 10.5 6.33301C10.5 7.71372 9.38071 8.83301 8 8.83301C6.61929 8.83301 5.5 7.71372 5.5 6.33301ZM8 4.83301C7.17158 4.83301 6.5 5.50458 6.5 6.33301C6.5 7.16143 7.17158 7.83301 8 7.83301C8.82842 7.83301 9.5 7.16143 9.5 6.33301C9.5 5.50458 8.82842 4.83301 8 4.83301Z"
             fill="#FFFBFF"
@@ -355,7 +355,7 @@ const MeetDetail = () => {
           </div>
           {meet.members.map((member) => {
             return (
-              <div className="memberLists" key={member.email} >
+              <div className="memberLists" key={member.email}>
                 <img src={member.profileImg} alt="profileImg" />
                 <div>
                   <p>{member.nickname}</p>

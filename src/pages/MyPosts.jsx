@@ -7,7 +7,7 @@ import { myApi } from '../shared/api';
 import { queryKeys } from '../react-query/constants';
 import Loading from '../layout/Loading';
 import Post from '../components/Post';
-import {NoDataMyPage} from '../layout/NoData';
+import { NoDataMyPage } from '../layout/NoData';
 import Masonry from 'react-masonry-css';
 
 const MyPosts = () => {
@@ -37,6 +37,8 @@ const MyPosts = () => {
     }
   );
 
+  console.log(data, 'data');
+
   useEffect(() => {
     if (inView) {
       fetchNextPage();
@@ -46,6 +48,8 @@ const MyPosts = () => {
   const onClickFilter = (data) => {
     setFilter(data);
   };
+
+  // console.log(data, 'data');
 
   const breakpoints = {
     default: 3,

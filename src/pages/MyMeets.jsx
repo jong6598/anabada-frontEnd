@@ -15,9 +15,6 @@ const MyMeets = () => {
   const location = useLocation();
   const [filter, setFilter] = useState(location.state);
   const [tab, setTab] = useState(location.state);
-  // console.log(filter,'filter');
-  
-  
 
   const getMyMeets = async (pageParam = 0, filter) => {
     try {
@@ -39,6 +36,8 @@ const MyMeets = () => {
         !lastPage.last ? lastPage.nextPage : undefined
     }
   );
+
+  console.log(data, '🎈🎈🎈🎈🎈');
 
   useEffect(() => {
     if (inView) {
@@ -84,12 +83,11 @@ const MyMeets = () => {
 
       <MeetAllContainer>
         {data.pages[0].data.length === 0 && (
-          <NoDataMyPage text={filter}  meet={true}/>
+          <NoDataMyPage text={filter} meet={true} />
         )}
         {data &&
           data.pages.map((page) => {
             return page.data.map((meet) => (
-             
               <Meet key={meet.thunderpostId} meet={meet} />
             ));
           })}

@@ -35,7 +35,7 @@ const Meets = () => {
           <option value="제주">제주</option>
         </select>
       </CategoryContainer>
-      {/* TODO: Slider, 분기, CSS 수정 */}
+
       <div className="scrollTest">
         <PopularMeets popularPosts={popularPosts} />
       </div>

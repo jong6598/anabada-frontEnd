@@ -4,7 +4,6 @@ import { queryKeys } from '../constants';
 import { meetsApi } from '../../shared/api';
 import { useNavigate } from 'react-router-dom';
 
-
 const postLike = async ({ setIsLiked, isLiked, thunderPostId }) => {
   if (isLiked) {
     try {
@@ -30,12 +29,14 @@ export function useLike() {
   const queryClient = useQueryClient();
 
   const { mutate: onLike } = useMutation(postLike, {
-    onSuccess: async() => {
-      await queryClient.invalidateQueries([queryKeys.detailMeet]);
-      await queryClient.invalidateQueries([queryKeys.myMeetsList]);
+    onSuccess: () => {
+      queryClient.invalidateQueries([queryKeys.detailMeet]);
+      queryClient.invalidateQueries([queryKeys.myMeetsList], {
+        refetchType: 'all'
+      });
     },
-    onError: () => {
-   
+    onError: (error) => {
+      console.log(error);
     }
   });
 

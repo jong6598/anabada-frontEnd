@@ -25,6 +25,7 @@ const MeetsAll = () => {
           areaSelected,
           search
         );
+
         const data = res.data.content;
         const last = res.data.last;
         return { data, nextPage: pageParam + 1, last };
@@ -105,6 +106,7 @@ const MeetsAll = () => {
           </Link>
         </PostBtn>
       )}
+
       {data.pages[0].data.length === 0 && (
         <NoData text={'모임'} content={'모임'} />
       )}
