@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { meetsApi } from '../shared/api';
-import { useQuery } from '@tanstack/react-query';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import { BsFillChatDotsFill } from 'react-icons/bs';
 import { FiEdit2 } from 'react-icons/fi';
 import { RiDeleteBin5Line } from 'react-icons/ri';
-import { useDetailMeet } from '../react-query/hooks/useDetailMeet';
+import { useDetailMeet } from '../../react-query/hooks/useDetailMeet';
 import { useSelector } from 'react-redux';
-import { useAddMeet } from '../react-query/hooks/useDeleteMeet';
-import { useLike } from '../react-query/hooks/useLike';
-import { useJoin } from '../react-query/hooks/useJoin';
-import Navigate from '../layout/Navigate';
-import Divider from '../layout/Divider';
+import { useAddMeet } from '../../react-query/hooks/useDeleteMeet';
+import { useLike } from '../../react-query/hooks/useLike';
+import { useJoin } from '../../react-query/hooks/useJoin';
+import Navigate from '../../layout/Navigate';
 
 const MeetDetail = () => {
   const [showModal, setShowModal] = useState(false);

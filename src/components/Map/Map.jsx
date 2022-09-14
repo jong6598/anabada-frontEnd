@@ -1,5 +1,5 @@
 import styled, { keyframes } from 'styled-components';
-import checkedWeather from '../styles/weather';
+import checkedWeather from '../../styles/weather';
 import { Map, CustomOverlayMap, MarkerClusterer } from 'react-kakao-maps-sdk';
 
 const KakaoMap = ({ data, picker, setPicker }) => {

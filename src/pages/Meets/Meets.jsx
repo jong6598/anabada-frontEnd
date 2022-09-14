@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Link, useNavigate } from 'react-router-dom';
-import Meet from '../components/Meet';
-import { useMeets } from '../react-query/hooks/useMeets';
-import { usePopularMeets } from '../react-query/hooks/usePopularMeets';
-import PopularMeets from '../components/PopularMeets';
-import NoData from '../layout/NoData';
+import Meet from '../../components/Meets/Meet';
+import { useMeets } from '../../react-query/hooks/useMeets';
+import { usePopularMeets } from '../../react-query/hooks/usePopularMeets';
+import PopularMeets from '../../components/Meets/PopularMeets';
+import NoData from '../../layout/NoData';
 import { TbPencil } from 'react-icons/tb';
 
 const Meets = () => {

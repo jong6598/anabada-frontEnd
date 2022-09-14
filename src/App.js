@@ -3,33 +3,33 @@ import { ThemeProvider } from 'styled-components';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import theme from './styles/theme';
 import GlobalStyle from './styles/global';
-import Meets from './pages/Meets';
-import AddMeet from './pages/MeetAdd';
-import MeetDetail from './pages/MeetDetail';
-import Header from './components/Header';
-import MeetsAll from './pages/MeetsAll';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Signup from './pages/SignUp';
-import NotFound from './pages/NotFound';
-import PostCU from './pages/PostCU';
-import PostsDetail from './pages/PostsDetail';
-import Posts from './pages/Posts';
-import Welcome from './pages/Welcome';
-import Mypage from './pages/Mypage';
-import MyPosts from './pages/MyPosts';
-import MyMeets from './pages/MyMeets';
+import Meets from './pages/Meets/Meets';
+import MeetAdd from './pages/Meets/MeetAdd';
+import MeetDetail from './pages/Meets/MeetDetail';
+import Header from './layout/Header';
+import MeetsAll from './pages/Meets/MeetsAll';
+import Home from './pages/Home/Home';
+import Login from './pages/Auth/Login';
+import Signup from './pages/Auth/SignUp';
+import NotFound from './pages/NotFound/NotFound';
+import PostDetail from './pages/Posts/PostDetail';
+import Posts from './pages/Posts/Posts';
+import Welcome from './pages/Auth/Welcome';
+import Mypage from './pages/MyPage/Mypage';
+import MyPosts from './pages/MyPage/MyPosts';
+import MyMeets from './pages/MyPage/MyMeets';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNotification } from './shared/hooks/notificationHook';
 import { useEffect } from 'react';
 import { Cookies } from 'react-cookie';
-import Notification from './pages/Notification';
+import Notification from './pages/Notification/Notification';
 import { api } from './shared/api';
 import Chat from './pages/Chat/Chat';
 import ChatRoom from './pages/Chat/ChatRoom';
 import { userThunk } from './redux/auth-slice';
-import Container from './components/Container';
-import Intro from './pages/Intro';
+import Container from './layout/Container';
+import Intro from './pages/Intro/Intro';
+import PostAdd from './pages/Posts/PostAdd';
 
 function App() {
   const cookies = new Cookies();
@@ -100,16 +100,16 @@ function App() {
             <Route path="/meets" element={<Meets />} />
             <Route path="/meetsAll" element={<MeetsAll />} />
             <Route path="/meets/:thunderPostId" element={<MeetDetail />} />
-            <Route path="/posts/:postId" element={<PostsDetail />} />
+            <Route path="/posts/:postId" element={<PostDetail />} />
             {accessToken && getCookies && (
               <>
-                <Route path="/posts/upload" element={<PostCU />} />
-                <Route path="/posts/:postId/edit" element={<PostCU />} />
+                <Route path="/posts/upload" element={<PostAdd />} />
+                <Route path="/posts/:postId/edit" element={<PostAdd />} />
                 <Route
                   path="/meetAdd/:thunderPostId/edit"
-                  element={<AddMeet />}
+                  element={<MeetAdd />}
                 />
-                <Route path="/meetAdd" element={<AddMeet />} />
+                <Route path="/meetAdd" element={<MeetAdd />} />
                 <Route path="/mypage" element={<Mypage />} />
                 <Route path="/mymeets" element={<MyMeets />} />
                 <Route path="/myposts" element={<MyPosts />} />

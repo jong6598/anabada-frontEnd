@@ -1,8 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import styled from "styled-components";
-import { api } from "../shared/api";
-import { queryKeys } from "../react-query/constants";
-import { useNavigate } from "react-router-dom";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import styled from 'styled-components';
+import { api } from '../../shared/api';
+import { queryKeys } from '../../react-query/constants';
+import { useNavigate } from 'react-router-dom';
 
 const NotificationCompo = ({
   notificationType,
@@ -10,7 +10,7 @@ const NotificationCompo = ({
   post,
   user,
   read,
-  refValue,
+  refValue
 }) => {
   // 삭제 버튼 눌렀을 때 mutation
   const navigate = useNavigate();
@@ -20,7 +20,6 @@ const NotificationCompo = ({
     try {
       return await api.delete(`notifications/${notificationId}`);
     } catch (err) {
-
       return console.log(err);
     }
   };
@@ -28,7 +27,7 @@ const NotificationCompo = ({
   const mutation = useMutation(handleDeleteMutation, {
     onSuccess() {
       return queryClient.invalidateQueries([queryKeys.notifications]);
-    },
+    }
   });
 
   const handleDelete = () => {
@@ -44,7 +43,7 @@ const NotificationCompo = ({
     <>
       <NotiWrapper ref={refValue} onClick={handleNotiWrapper}>
         <NotiContainer>
-          {notificationType === "like" ? (
+          {notificationType === 'like' ? (
             <NotiType>
               <img src="/assets/noti_isliked.svg"></img>
             </NotiType>
@@ -55,7 +54,7 @@ const NotificationCompo = ({
           )}
 
           <NotiInfo>
-            {notificationType === "like" ? (
+            {notificationType === 'like' ? (
               <NotiWho
                 isRead={read}
               >{`${user?.nickname}님이 좋아요를 했습니다.`}</NotiWho>
@@ -86,7 +85,7 @@ const NotiWrapper = styled.div`
 
   box-shadow: 1px 1px 8px rgba(198, 198, 198, 0.42);
   border-radius: 6px;
-  cursor:pointer;
+  cursor: pointer;
 `;
 
 const NotiContainer = styled.div`
@@ -124,7 +123,7 @@ const NotiWho = styled.div`
   font-size: 0.875rem;
   margin-bottom: 0.25rem;
   width: 100%;
-  color: ${(props) => (props.isRead ? "#8e8e93" : "black")};
+  color: ${(props) => (props.isRead ? '#8e8e93' : 'black')};
 `;
 
 const NotiWhat = styled.div`

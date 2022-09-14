@@ -3,22 +3,22 @@ import { useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { css } from 'styled-components';
 import styled from 'styled-components';
-import { postApi } from '../shared/api';
+import { postApi } from '../../shared/api';
 import { useSelector } from 'react-redux';
-import { storage } from '../firebase';
+import { storage } from '../../shared/firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import 'tui-color-picker/dist/tui-color-picker.css';
 import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css';
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
-import '../App.css';
+import '../../App.css';
 import { Editor } from '@toast-ui/react-editor';
 
-import { amenityInfo } from '../shared/data';
+import { amenityInfo } from '../../shared/data';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { queryKeys } from '../react-query/constants';
+import { queryKeys } from '../../react-query/constants';
 
-const PostCU = () => {
+const PostAdd = () => {
   const navigate = useNavigate();
   const postId = useParams().postId;
   const nickname = useSelector((state) => state.auth.nickname);
@@ -319,7 +319,7 @@ const PostCU = () => {
   );
 };
 
-export default PostCU;
+export default PostAdd;
 
 const PostForm = styled.form`
   display: flex;

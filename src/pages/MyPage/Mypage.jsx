@@ -4,14 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { Cookies } from 'react-cookie';
 import React, { useState, useRef } from 'react';
 
-import { storage } from '../firebase';
+import { storage } from '../../shared/firebase';
 import {
   ref,
   uploadBytes,
   getDownloadURL,
   deleteObject
 } from 'firebase/storage';
-import { myApi } from '../shared/api';
+import { myApi } from '../../shared/api';
 
 const Mypage = () => {
   const profileImg = useSelector((state) => state.auth.profileImg);
