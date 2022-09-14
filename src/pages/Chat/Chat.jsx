@@ -120,19 +120,6 @@ const Chat = () => {
     scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   };
 
-  // TODO: 역방향 스크롤
-  const onFetchMessages = useCallback(() => {
-    // 1. 스크롤이 최상단에 닿여서 데이터를 불러오기전에 현재 scrollHeight를 저장한다
-    // 2. 새로운 데이터를 불러왔을때 scrollHeight에서 저장해둔 scrollHeight를 뺀값이 현재 스크롤 위치
-    setPrevScrollHeight(scrollRef.current?.scrollHeight);
-
-    fetchNextPage();
-  }, []);
-
-  const onScrollTo = (y) => {
-    scrollRef.current.scrollTop = y;
-  };
-
   useEffect(() => {
     async function getRoomId() {
       try {
@@ -178,6 +165,19 @@ const Chat = () => {
     scrollToBottom();
   }, [chatMessages]);
 
+  // TODO: 역방향 스크롤
+  const onFetchMessages = useCallback(() => {
+    // 1. 스크롤이 최상단에 닿여서 데이터를 불러오기전에 현재 scrollHeight를 저장한다
+    // 2. 새로운 데이터를 불러왔을때 scrollHeight에서 저장해둔 scrollHeight를 뺀값이 현재 스크롤 위치
+    setPrevScrollHeight(scrollRef.current?.scrollHeight);
+
+    fetchNextPage();
+  }, []);
+
+  const onScrollTo = (y) => {
+    scrollRef.current.scrollTop = y;
+  };
+
   useEffect(() => {
     // 화면에 노출되면, 데이터를 불러오는 함수를 실행
     if (inView && messages) {
@@ -186,17 +186,10 @@ const Chat = () => {
   }, [inView]);
 
   useEffect(() => {
-    //  useEffect를 이용해 messages의 변화를 관찰 page가 변화했다는 것은 메세지가 더 요청이 되었다.
     if (prevScrollHeight) {
-      // (무한스크롤을 통해 새로운 데이터를 가져오는 경우)
-      // 스크롤 위치를 현재 scrollHeight - 과거 scrollHeight(prevScrollHeight)로 유지하고
-      // 없을경우(새로운 채팅을 보내거나 첫 렌더링시)에는 에는 스크롤을 맨아래로 이동.
-      // 새로운 데이터를 불러오기 전 마지막 채팅이 있던 곳에 스크롤 위치를 유지
       onScrollTo(scrollRef.current?.scrollHeight - prevScrollHeight);
-      // 스크롤 위치 이동 후 과거 스크롤 위치는 null로 바꿔줍니다
       return setPrevScrollHeight(null);
     }
-
     onScrollTo(
       scrollRef.current?.scrollHeight - scrollRef.current?.clientHeight
     );

@@ -33,6 +33,7 @@ function App() {
   const cookies = new Cookies();
   const getCookies = cookies.get('refreshToken');
   const dispatch = useDispatch();
+  const accessToken = localStorage.getItem('accessToken');
 
   // 새로고침 시 유저정보 리덕스에 재설정
   useEffect(() => {
@@ -41,8 +42,8 @@ function App() {
       return;
     } else {
       // 로그인 한 유저가 유저이면 새로고침 시 유저정보를 요청함
-      const getAccess = localStorage.getItem('accessToken');
-      dispatch(userThunk(getAccess));
+
+      dispatch(userThunk(accessToken));
     }
   }, []);
 
@@ -57,7 +58,6 @@ function App() {
   useEffect(() => {
     // 로그인을 했을 때 최초 쌓인 뱃지 요청하기(이후는 소캣 이용해서 업데이트 된다)
     if (getCookies !== undefined) {
-      const accessToken = localStorage.getItem('accessToken');
       api
         .get(`/notifications`, {
           headers: {
@@ -86,20 +86,26 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/signup/welcome" element={<Welcome />} />
             <Route path="/posts" element={<Posts />} />
-            <Route path="/posts/upload" element={<PostCU />} />
-            <Route path="/posts/:postId/edit" element={<PostCU />} />
-            <Route path="*" element={<NotFound />} />
             <Route path="/meets" element={<Meets />} />
-            <Route path="/meetAdd/:thunderPostId/edit" element={<AddMeet />} />
-            <Route path="/meetAdd" element={<AddMeet />} />
-            <Route path="/mypage" element={<Mypage />} />
-            <Route path="/mymeets" element={<MyMeets />} />
-            <Route path="/myposts" element={<MyPosts />} />
             <Route path="/meetsAll" element={<MeetsAll />} />
             <Route path="/meets/:thunderPostId" element={<MeetDetail />} />
             <Route path="/posts/:postId" element={<PostsDetail />} />
+            {accessToken && (
+              <>
+                <Route path="/posts/upload" element={<PostCU />} />
+                <Route path="/posts/:postId/edit" element={<PostCU />} />
+                <Route
+                  path="/meetAdd/:thunderPostId/edit"
+                  element={<AddMeet />}
+                />
+                <Route path="/meetAdd" element={<AddMeet />} />
+                <Route path="/mypage" element={<Mypage />} />
+                <Route path="/mymeets" element={<MyMeets />} />
+                <Route path="/myposts" element={<MyPosts />} />
+              </>
+            )}
+            <Route path="*" element={<NotFound />} />
           </Route>
-
           <Route path="/chat/:nickname" element={<Chat />} />
           <Route path="/room" element={<ChatRoom />} />
           <Route
