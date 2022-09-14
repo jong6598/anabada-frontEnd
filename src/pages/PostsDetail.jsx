@@ -105,6 +105,9 @@ const PostsDetail = () => {
   const { mutate: onDelete } = useMutation(postDelete, {
     onSuccess: async () => {
       await queryClient.invalidateQueries([queryKeys.posts]);
+      await queryClient.invalidateQueries([queryKeys.myPostsList], {
+        refetchType: 'all'
+      });
       return navigate('/posts');
       // alert('게시글이 삭제되었습니다');
     },

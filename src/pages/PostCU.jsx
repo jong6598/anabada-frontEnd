@@ -59,8 +59,11 @@ const PostCU = () => {
   const queryClient = new useQueryClient();
 
   const { mutate: onAdd } = useMutation(onSubmitPost, {
-    onSuccess: async() => {
+    onSuccess: async () => {
       await queryClient.invalidateQueries([queryKeys.posts]);
+      await queryClient.invalidateQueries([queryKeys.myPostsList], {
+        refetchType: 'all'
+      });
       return navigate('/posts');
     },
     onError: (err) => {
