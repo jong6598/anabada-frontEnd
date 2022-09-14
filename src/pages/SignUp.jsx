@@ -136,10 +136,11 @@ const SignUp = () => {
 
   // 로그인한 상태에서 접근 시 차단
   useEffect(() => {
-    if (localStorage.getItem("accessToken") || cookies.get("refreshToken")) {
+    if (localStorage.getItem("accessToken") && cookies.get("refreshToken")) {
       alertHandler("비정상적인 접근입니다.");
       return navigate("/");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

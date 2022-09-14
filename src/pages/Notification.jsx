@@ -7,14 +7,12 @@ import { useCallback, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { api } from "../shared/api";
 import NotificationCompo from "../components/NotificationCompo";
-import { useNavigate } from "react-router-dom";
 import { queryKeys } from "../react-query/constants";
 import Navigate from "../layout/Navigate";
 import NoData from "../layout/NoData";
 
 const Notification = ({ setNotifications }) => {
   const lastNotiRef = useRef();
-  const navigate = useNavigate();
   // fetcher
   const getNotifications = async (pageParam) => {
     const res = await api.patch(`/notifications?page=${pageParam}&size=10`);
@@ -64,6 +62,7 @@ const Notification = ({ setNotifications }) => {
     return () => {
       observer.disconnect();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleIntersect, data]);
 
   // 전체 삭제 버튼 눌렀을 때 mutation

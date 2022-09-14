@@ -47,6 +47,7 @@ function App() {
       // 로그인 한 유저가 유저이면 새로고침 시 유저정보를 요청함
       dispatch(userThunk(accessToken));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /* ::: notification 연결 관련 로직 ::: */
@@ -125,6 +126,7 @@ function App() {
               />
             </>
           )}
+          <Route path="/*" element={<NotFound />} />
         </Routes>
       </ThemeProvider>
     </>
