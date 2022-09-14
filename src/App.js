@@ -91,7 +91,7 @@ function App() {
             <Route path="/meetsAll" element={<MeetsAll />} />
             <Route path="/meets/:thunderPostId" element={<MeetDetail />} />
             <Route path="/posts/:postId" element={<PostsDetail />} />
-            {accessToken && (
+            {accessToken && getCookies  &&(
               <>
                 <Route path="/posts/upload" element={<PostCU />} />
                 <Route path="/posts/:postId/edit" element={<PostCU />} />
@@ -105,7 +105,7 @@ function App() {
                 <Route path="/myposts" element={<MyPosts />} />
               </>
             )}
-            <Route path="*" element={<NotFound />} />
+          
           </Route>
           <Route path="/intro" element={<Intro />} />
           <Route path="/chat/:nickname" element={<Chat />} />
@@ -114,6 +114,7 @@ function App() {
             path="/notifications"
             element={<Notification setNotifications={setNotifications} />}
           />
+            <Route path="*" element={<NotFound />} />
         </Routes>
       </ThemeProvider>
     </>

@@ -16,6 +16,7 @@ const Comment = ({ comment }) => {
   const [editing, setEditing] = useState(false);
   const queryClient = useQueryClient();
   const nickname = useSelector((state) => state.auth.nickname);
+  const accessToken = localStorage.getItem('accessToken');
 
   const [isValid, setIsValid] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -122,14 +123,14 @@ const Comment = ({ comment }) => {
             <CommentsCreateAt>{comment.createdAt}</CommentsCreateAt>
             <CommentsContent>{comment.content}</CommentsContent>
           </Comments>
-          {comment.nickname !== nickname ? (
+          {accessToken && comment.nickname !== nickname ? (
             <button
               className="chatBtn"
               onClick={() => onRequestChat(comment.nickname)}
             >
               <BsFillChatDotsFill />
             </button>
-          ) : (
+          ) : (accessToken &&
             <button className="moreBtn" onClick={onShowModal}>
               <FiMoreHorizontal />
             </button>
@@ -175,6 +176,7 @@ const UpdateContent = styled.input`
 `;
 
 const ViewComments = styled.div`
+  
   display: flex;
   position: relative;
   height: auto;
