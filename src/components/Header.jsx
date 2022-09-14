@@ -1,9 +1,8 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Cookies } from "react-cookie";
-import AlertToast from "./AlertToast";
 import { GrNotification } from "react-icons/gr";
 import { BsFillChatDotsFill } from "react-icons/bs";
 
@@ -13,29 +12,8 @@ const Header = ({ notifications }) => {
   const timer = useRef(null);
   const cookies = new Cookies();
   const getCookies = cookies.get("refreshToken");
-  const [valueY, setValueY] = useState(null);
+  const [, setValueY] = useState(null);
   const gapY = useRef(0);
-
-  // alert 메시지 커스텀
-  /**
-   * 사용할 컴포넌트에서 const { alertHandler } = useOutletContext(); 로 호출해서 alertHandler("여기에 메시지를 넣으면 된다.")
-   */
-  const refErrorTimer = useRef(null);
-  const refErrorMessage = useRef("");
-  const [stateErrTimer, setStateErrTiemr] = useState(false);
-  const alertHandler = useCallback(
-    (errorMessage = "") => {
-      if (refErrorTimer.current === null) {
-        setStateErrTiemr(true);
-        refErrorMessage.current = errorMessage;
-        refErrorTimer.current = setTimeout(() => {
-          setStateErrTiemr(false);
-          return (refErrorTimer.current = null);
-        }, 3500);
-      }
-    },
-    [refErrorTimer]
-  );
 
   // 헤더에 넣을 유저정보 받아오기
   const userInfo = useSelector((state) => state.auth);
@@ -152,11 +130,6 @@ const Header = ({ notifications }) => {
           </NavElement>
         </MainNav>
       </HeaderWrapper>
-
-      <Layout>
-        {stateErrTimer && <AlertToast errorMsg={refErrorMessage.current} />}
-        <Outlet context={{ alertHandler }} />
-      </Layout>
     </>
   );
 };
@@ -306,17 +279,6 @@ const NavElement = styled.nav`
         ? "0.15rem solid #2756FF"
         : "inherit";
     }};
-  }
-`;
-
-const Layout = styled.div`
-  padding: 5.5rem 1rem;
-
-  @media screen and (min-width: 1024px) {
-    width: 40vw;
-    margin: 0 auto;
-    left: 0;
-    right: 0;
   }
 `;
 

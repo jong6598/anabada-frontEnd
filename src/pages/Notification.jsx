@@ -1,27 +1,25 @@
 import {
   useInfiniteQuery,
   useMutation,
-  useQueryClient
-} from '@tanstack/react-query';
-import { useCallback, useEffect, useRef } from 'react';
-import styled from 'styled-components';
-import { api } from '../shared/api';
-import NotificationCompo from '../components/NotificationCompo';
-import { useNavigate } from 'react-router-dom';
-import { queryKeys } from '../react-query/constants';
-import Navigate from '../layout/Navigate';
-import NoData from '../layout/NoData';
+  useQueryClient,
+} from "@tanstack/react-query";
+import { useCallback, useEffect, useRef } from "react";
+import styled from "styled-components";
+import { api } from "../shared/api";
+import NotificationCompo from "../components/NotificationCompo";
+import { queryKeys } from "../react-query/constants";
+import Navigate from "../layout/Navigate";
+import NoData from "../layout/NoData";
 
 const Notification = ({ setNotifications }) => {
   const lastNotiRef = useRef();
-  const navigate = useNavigate();
   // fetcher
   const getNotifications = async (pageParam) => {
     const res = await api.patch(`/notifications?page=${pageParam}&size=10`);
     return {
       data: res.data,
       nextPage: pageParam + 1,
-      lastPage: res.data.last
+      lastPage: res.data.last,
     };
   };
 
@@ -37,9 +35,9 @@ const Notification = ({ setNotifications }) => {
         return undefined;
       },
       onError(err) {
-        return console.log('데이터를 fetch에 실패했습니다.', err);
+        return console.log("데이터를 fetch에 실패했습니다.", err);
       },
-      suspense: true
+      suspense: true,
     }
   );
 
@@ -58,12 +56,13 @@ const Notification = ({ setNotifications }) => {
     });
     const observer = new IntersectionObserver(handleIntersect, {
       threshold: 0.8,
-      root: null
+      root: null,
     });
     lastNotiRef.current && observer.observe(lastNotiRef.current);
     return () => {
       observer.disconnect();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleIntersect, data]);
 
   // 전체 삭제 버튼 눌렀을 때 mutation
@@ -81,11 +80,11 @@ const Notification = ({ setNotifications }) => {
   const mutation = new useMutation(handleAllDeleteMutation, {
     onSuccess() {
       return queryClient.invalidateQueries([queryKeys.notifications]);
-    }
+    },
   });
 
   const handleAllDelete = () => {
-    const res = window.confirm('전체 알림을 삭제하시겠습니까?');
+    const res = window.confirm("전체 알림을 삭제하시겠습니까?");
     if (res) {
       return mutation.mutate();
     }
@@ -94,9 +93,9 @@ const Notification = ({ setNotifications }) => {
   return (
     <Container>
       <NotificationWrapper>
-        <Navigate text={'알림'} />
+        <Navigate text={"알림"} />
         {data.pages[0].data.content.length === 0 && (
-          <NoData text={'알림'} notification={true} />
+          <NoData text={"알림"} notification={true} />
         )}
         <NotificationContainer>
           {isSuccess &&
@@ -134,6 +133,7 @@ const Notification = ({ setNotifications }) => {
 export default Notification;
 
 const Container = styled.div`
+  padding: 0rem 1rem;
   @media screen and (min-width: 1024px) {
     margin: 0 auto;
     width: 40vw;

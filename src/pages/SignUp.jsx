@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { userAuth } from "../shared/api";
 import { FormWrapper, FormDiv, FormInput, FormBtn } from "./Login";
+import { Cookies } from "react-cookie";
 
 const SignUp = () => {
   //password type 변경용 state
@@ -26,11 +27,13 @@ const SignUp = () => {
   const [emailState, setEmailState] = useState(false);
   const [nicknameState, setNicknameState] = useState(false);
   const { alertHandler } = useOutletContext();
+  const cookies = new Cookies();
 
   const navigate = useNavigate();
 
   const onSumbit = (signupData) => {
     try {
+      // eslint-disable-next-line no-unused-vars
       const getResponse = (async () => await userAuth.signup(signupData))();
       return navigate("/signup/welcome");
     } catch (err) {
@@ -133,10 +136,11 @@ const SignUp = () => {
 
   // 로그인한 상태에서 접근 시 차단
   useEffect(() => {
-    if (localStorage.getItem("accessToken")) {
+    if (localStorage.getItem("accessToken") && cookies.get("refreshToken")) {
       alertHandler("비정상적인 접근입니다.");
       return navigate("/");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
