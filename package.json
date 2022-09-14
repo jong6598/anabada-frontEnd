@@ -40,6 +40,7 @@
     "sockjs": "^0.3.24",
     "sockjs-client": "^1.6.1",
     "styled-components": "^5.3.5",
+    "swiper": "^8.3.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

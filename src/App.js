@@ -28,6 +28,7 @@ import { api } from './shared/api';
 import Chat from './pages/Chat/Chat';
 import ChatRoom from './pages/Chat/ChatRoom';
 import { userThunk } from './redux/auth-slice';
+import Intro from './pages/Intro';
 
 function App() {
   const cookies = new Cookies();
@@ -106,6 +107,7 @@ function App() {
             )}
             <Route path="*" element={<NotFound />} />
           </Route>
+          <Route path="/intro" element={<Intro />} />
           <Route path="/chat/:nickname" element={<Chat />} />
           <Route path="/room" element={<ChatRoom />} />
           <Route
