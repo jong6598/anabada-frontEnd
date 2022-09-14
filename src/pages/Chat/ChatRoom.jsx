@@ -8,6 +8,8 @@ import { useRooms } from '../../react-query/hooks/chat/useRooms';
 import { useInView } from 'react-intersection-observer';
 import Loading from '../../layout/Loading';
 import NoData from '../../layout/NoData';
+import { useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '../../react-query/constants';
 
 const ChatRoom = () => {
   const navigate = useNavigate();
@@ -16,7 +18,12 @@ const ChatRoom = () => {
 
   const { rooms, isFetchingNextPage, fetchNextPage } = useRooms();
   const { ref, inView } = useInView();
- 
+
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    queryClient.invalidateQueries([queryKeys.rooms, nickname]);
+  }, []);
 
   useEffect(() => {
     if (inView) {
@@ -25,65 +32,73 @@ const ChatRoom = () => {
   }, [inView]);
 
   return (
-    <>
+    <Container>
       <Navigate text={'채팅'} padding={true} />
-      <Divider />
+      {/* <Divider /> */}
       {rooms.pages[0].data.length === 0 && (
         <NoData text={'받은 메세지'} chat={true} />
       )}
       {/* rooms.pages[0].data.length !== 0 && */}
-      <Container>
-        {rooms.pages.map((page) => {
-          return page.data.map((room) => {
-            let roomName;
-            roomName =
-              nickname === room.receiverNickname
-                ? room.senderNickname
-                : room.receiverNickname;
+      {rooms.pages.map((page) => {
+        return page.data.map((room) => {
+          let roomName;
+          roomName =
+            nickname === room.receiverNickname
+              ? room.senderNickname
+              : room.receiverNickname;
 
-            let roomProfileImg;
-            roomProfileImg =
-              profileImg === room.receiverProfileImg
-                ? room.senderProfileImg
-                : room.receiverProfileImg;
+          let roomProfileImg;
+          roomProfileImg =
+            profileImg === room.receiverProfileImg
+              ? room.senderProfileImg
+              : room.receiverProfileImg;
 
-            return (
-              <div
-                key={room.roomId}
-                className="chatContainer"
-                onClick={() => navigate(`/chat/${roomName}`)}
-              >
-                <LeftBox>
-                  <img
-                    src={roomProfileImg}
-                    alt=""
-                    style={{ width: '36px', height: '36px' }}
-                  />
-                  <div className="leftBox">
-                    <p className="nickname">{roomName}</p>
-                    <p className="lastMessage">{room.lastMsg}</p>
-                  </div>
-                </LeftBox>
-                <p className="messageLength">12</p>
-              </div>
-            );
-          });
-        })}
-        {isFetchingNextPage ? <Loading /> : <div ref={ref}></div>}
-      </Container>
-    </>
+          return (
+            <div
+              key={room.roomId}
+              className="chatContainer"
+              onClick={() => navigate(`/chat/${roomName}`)}
+            >
+              <LeftBox>
+                <img
+                  src={roomProfileImg}
+                  alt=""
+                  style={{ width: '36px', height: '36px' }}
+                />
+                <div className="leftBox">
+                  <p className="nickname">{roomName}</p>
+                  <p className="lastMessage">{room.lastMsg}</p>
+                </div>
+              </LeftBox>
+              {/* <p className="messageLength">12</p> */}
+            </div>
+          );
+        });
+      })}
+      {isFetchingNextPage ? <Loading /> : <div ref={ref}></div>}
+    </Container>
   );
 };
 
 const Container = styled.div`
   /* padding: 0 1rem; */
 
+  @media screen and (min-width: 1024px) {
+    margin: 0 auto;
+    width: 40vw;
+  }
+
   div.chatContainer {
+    &:hover {
+      background: #f7faff;
+    }
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 1rem;
-    border-bottom: 1px solid #ececec;
+    margin-top: 0.5rem;
+    box-shadow: rgb(0 0 0 / 15%) 0px 2px 4px 0px;
   }
 
   img {

@@ -4,18 +4,20 @@ import Meet from '../components/Meet';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useInView } from 'react-intersection-observer';
 import { meetsApi } from '../shared/api';
-import Loading from '../layout/Loading';
-
+import Loading, { InfiniteLoading } from '../layout/Loading';
 
 import { queryKeys } from '../react-query/constants';
 import Navigate from '../layout/Navigate';
+import { TbPencil } from 'react-icons/tb';
+import { Link } from 'react-router-dom';
+import NoData from '../layout/NoData';
 
 const MeetsAll = () => {
   const [search, setSearch] = useState(null);
   const [areaSelected, setAreaSelected] = useState('ALL');
+  const accesstoken = localStorage.getItem('accessToken');
 
   const fetchPosts = async (pageParam, areaSelected, search) => {
-  
     if (search) {
       try {
         const res = await meetsApi.getSearchPosts(
@@ -76,10 +78,9 @@ const MeetsAll = () => {
 
   return (
     <MeetAllContainer>
-      <Navigate text={'오픈 모임 리스트'} />
       <CategoryContainer>
         <select id="area" onChange={onChangeArea} value={areaSelected}>
-        <option value="ALL">전국</option>
+          <option value="ALL">전국</option>
           <option value="서울·경기·인천">서울·경기·인천</option>
           <option value="강원">강원</option>
           <option value="대구·경북">대구·경북</option>
@@ -97,12 +98,22 @@ const MeetsAll = () => {
           onKeyPress={onKeyPress}
         />
       </CategoryContainer>
-
+      {accesstoken && (
+        <PostBtn>
+          <Link to="/meetAdd">
+            <TbPencil />
+          </Link>
+        </PostBtn>
+      )}
+      {data.pages[0].data.length === 0 && (
+        <NoData text={'모임'} content={'모임'} />
+      )}
       {data.pages.map((page) => {
         return page.data.map((meet) => (
           <Meet key={meet.thunderPostId} meet={meet} />
         ));
       })}
+
       {isFetchingNextPage ? <Loading /> : <div ref={ref}></div>}
     </MeetAllContainer>
   );
@@ -116,7 +127,7 @@ const CategoryContainer = styled.div`
   align-items: center;
   padding: 0.875rem 0;
   select {
-    padding: 0.625rem 0;
+    padding: 0.625rem;
     background: #ffffff;
     border: 1px solid #c7c7cc;
     border-radius: 4px;
@@ -134,6 +145,29 @@ const CategoryContainer = styled.div`
     padding: 0.625rem 1rem;
     background-color: #f2f2f7;
     border-radius: 0.75rem;
+  }
+`;
+
+const PostBtn = styled.div`
+  position: fixed;
+  bottom: 1.7rem;
+  right: 2.3rem;
+  z-index: 300;
+  cursor: pointer;
+  width: 60px;
+  height: 60px;
+
+  background-color: #007aff;
+  border-radius: 50%;
+  opacity: 0.9;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  svg {
+    font-size: 2rem;
+    color: white;
+    font-weight: 200;
   }
 `;
 

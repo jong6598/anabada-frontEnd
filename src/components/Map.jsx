@@ -1,51 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { memo, useCallback, useState } from "react";
 import styled, { keyframes } from "styled-components";
 import checkedWeather from "../styles/weather";
 import { Map, CustomOverlayMap, MarkerClusterer } from "react-kakao-maps-sdk";
 
-const KakaoMap = memo(() => {
-  const [picker, setPicker] = useState({
-    beachId: -1,
-    beachName: "",
-    beachNum: "",
-    pcp: "",
-    pop: "",
-    pty: "",
-    sky: "",
-    tmp: "",
-    wav: "",
-    wsd: "",
-    x: 0,
-    y: 0,
-  });
-
-  const handlePicker = useCallback((pickerInfo) => {
+const KakaoMap = ({ data, picker, setPicker }) => {
+  const handlePicker = (pickerInfo) => {
     setPicker((prev) => {
       return { ...prev, ...pickerInfo };
     });
-  }, []);
-
-  // fetcher
-  const fetchingSpot = () =>
-    axios.get(`http://${process.env.REACT_APP_API_SERVER}/api/beach`);
-  // react-query
-  const { data } = useQuery(
-    ["spotData"],
-    fetchingSpot,
-    {
-      staleTime: 1000 * 60 * 30,
-      refetchOnWindowFocus: false,
-      onError(err) {
-        console.log("에러가 발생했습니다!! ::: ", err);
-      },
-    }
-  );
+  };
 
   return (
     <>
-      <MapWrapper center={{ lat: 36.350701, lng: 127.400667 }} level={13}>
+      <MapWrapper
+        center={{ lat: picker.x, lng: picker.y }}
+        level={picker.beachId === -1 ? 13 : 5}
+      >
         <MarkerClusterer
           averageCenter={true} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
           minLevel={10} // 클러스터 할 최소 지도 레벨
@@ -58,16 +27,13 @@ const KakaoMap = memo(() => {
               background: "transparent",
               backgroundImage: 'url("/assets/c3.png")',
               borderRadius: "50%",
-              fontSize: '0.7rem',
+              fontSize: "0.7rem",
+              padding: "0.3rem",
               color: "white",
-
+              fontWeight: "bold",
               display: "flex",
               justifyContent: "flex-end",
-              padding: "0.3rem",
               alignItems: "center",
-              textAlign: "center",
-              
-              fontWeight: "bold",
             },
             {
               width: "3.125rem",
@@ -76,29 +42,24 @@ const KakaoMap = memo(() => {
               backgroundImage: 'url("/assets/c2.png")',
               borderRadius: "50%",
               color: "white",
+              padding: "0.4rem",
+              fontWeight: "bold",
               display: "flex",
               justifyContent: "flex-end",
-              padding: "0.4rem",
               alignItems: "center",
-              textAlign: "center",
-              fontWeight: "bold",
             },
             {
               width: "4.375rem",
               height: "4.375rem",
-              
-              fontSize: '0.9rem',
+              fontSize: "0.9rem",
               backgroundImage: 'url("/assets/c1.png")',
               borderRadius: "50%",
-              
               color: "white",
+              padding: "0.5rem",
+              fontWeight: "bold",
               display: "flex",
               justifyContent: "flex-end",
-              padding: "0.5rem",
               alignItems: "center",
-              textAlign: "center",
-              fontWeight: "bold",
-              lineHeight: "3.1875rem",
             },
           ]}
         >
@@ -144,7 +105,7 @@ const KakaoMap = memo(() => {
                 </div>
                 <ExtraInfo>
                   <div>
-                    <img src="/weatherIcons/map_pin.svg"></img>
+                    <img src="/weatherIcons/map_pin.svg" alt=""></img>
                   </div>
                   <div>
                     <span>{picker.beachName}</span>
@@ -155,7 +116,7 @@ const KakaoMap = memo(() => {
             <ExtraInfoContainer className="extra__info">
               <ExtraInfo>
                 <div>
-                  <span class="material-symbols-outlined">waves</span>
+                  <span className="material-symbols-outlined">waves</span>
                 </div>
                 <div>
                   <span>예상파고 : {picker.wav}M</span>
@@ -163,7 +124,7 @@ const KakaoMap = memo(() => {
               </ExtraInfo>
               <ExtraInfo>
                 <div>
-                  <span class="material-symbols-outlined">air</span>
+                  <span className="material-symbols-outlined">air</span>
                 </div>
                 <div>
                   <span>풍속 : {picker.wsd}m/s</span>
@@ -171,7 +132,7 @@ const KakaoMap = memo(() => {
               </ExtraInfo>
               <ExtraInfo>
                 <div>
-                  <span class="material-symbols-outlined">water_drop</span>
+                  <span className="material-symbols-outlined">water_drop</span>
                 </div>
                 <div>
                   <span>강수확률 : {picker.pop}%</span>
@@ -179,7 +140,7 @@ const KakaoMap = memo(() => {
               </ExtraInfo>
               <ExtraInfo>
                 <div>
-                  <span class="material-symbols-outlined">umbrella</span>
+                  <span className="material-symbols-outlined">umbrella</span>
                 </div>
                 <div>
                   {picker.pcp === "강수없음" ? (
@@ -195,7 +156,7 @@ const KakaoMap = memo(() => {
       </MapWrapper>
     </>
   );
-});
+};
 
 export default KakaoMap;
 

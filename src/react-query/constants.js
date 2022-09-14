@@ -6,7 +6,7 @@ export const queryKeys = {
   searchMeets: 'searchMeets',
 
   // 게시글
-  postList: 'postList',
+  posts: 'posts',
   commentList: 'commentList',
   detailPost: 'detailPost',
 

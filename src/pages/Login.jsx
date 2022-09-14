@@ -55,10 +55,11 @@ const Login = () => {
 
   // 로그인한 상태에서 접근 시 차단
   useEffect(() => {
-    if (localStorage.getItem("accessToken")) {
+    if (localStorage.getItem("accessToken") && cookies.get("refreshToken")) {
       alertHandler("비정상적인 접근입니다.");
       return navigate("/");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -66,7 +67,7 @@ const Login = () => {
       <FormWrapper>
         <LoginWelcome>
           <div>
-            <img src="/assets/logo_big.svg"></img>
+            <img src="/assets/logo_big.svg" alt=""></img>
           </div>
         </LoginWelcome>
         <FormDiv>
@@ -94,13 +95,13 @@ const Login = () => {
             <FormBtn>로그인</FormBtn>
           </form>
           <FormSection>
-            <div className="login__wrapper-extra__btn__find">
+            {/* <div className="login__wrapper-extra__btn__find">
               <span className="login__wrapper-extra__btn">아이디 찾기</span>
               <div className="header__user__divider">
                 <div></div>
               </div>
               <span className="login__wrapper-extra__btn">비밀번호 찾기</span>
-            </div>
+            </div> */}
             <div className="login__wrapper-extra__btn__signup">
               <Link to="/signup">
                 <span className="login__wrapper-extra__btn">회원가입</span>
@@ -134,6 +135,11 @@ export const LoginWelcome = styled.section`
 export const FormDiv = styled.div`
   margin-top: 2.1875rem;
   padding: 0 2.625rem;
+  @media screen and (min-width: 1024px) {
+    width: 23rem;
+    margin: 0 auto;
+    margin-top: 1rem;
+  }
   .login__wrapper-form {
     display: flex;
     flex-direction: column;

@@ -1,50 +1,61 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 const Post = ({ data }) => {
+  const navigate = useNavigate();
+
   return (
-    <PostInfoBox>
+    <PostInfoBox
+      onClick={() => {
+        navigate(`/posts/${data.postId}`);
+      }}
+    >
       <ImageBox>
         <img src={data.thumbnailUrl} alt="thumbnailimage" />
-        <div>
+        <div className="infoBox">
           {data.liked === true ? (
             <>
               <span>{data.likeCount}</span>
               <svg
-                width="19"
-                height="18"
-                viewBox="0 0 19 18"
-                fill="none"
+                viewBox="0 0 32 32"
                 xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+                role="presentation"
+                focusable="false"
+                style={{
+                  display: 'block',
+                  fill: 'red',
+                  height: '24px',
+                  width: '24px',
+                  overflow: 'visible',
+                  strokeWidth: '2',
+                  stroke: 'red'
+                }}
               >
-                <path
-                  d="M6.375 3C4.09683 3 2.25 4.84684 2.25 7.125C2.25 11.25 7.125 15 9.75 15.8723C12.375 15 17.25 11.25 17.25 7.125C17.25 4.84684 15.4032 3 13.125 3C11.7299 3 10.4965 3.69259 9.75 4.75268C9.00349 3.69259 7.77011 3 6.375 3Z"
-                  fill="#FF2D55"
-                />
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  d="M1.6875 7.125C1.6875 4.53618 3.78617 2.4375 6.375 2.4375C7.70079 2.4375 8.89792 2.98828 9.75 3.87203C10.6021 2.98828 11.7992 2.4375 13.125 2.4375C15.7138 2.4375 17.8125 4.53618 17.8125 7.125C17.8125 9.40357 16.4751 11.5075 14.8841 13.1142C13.2876 14.7265 11.3393 15.9369 9.92739 16.4061C9.81223 16.4444 9.68777 16.4444 9.57261 16.4061C8.16068 15.9369 6.21241 14.7265 4.61593 13.1142C3.02492 11.5075 1.6875 9.40357 1.6875 7.125ZM6.375 3.5625C4.40749 3.5625 2.8125 5.1575 2.8125 7.125C2.8125 8.97144 3.91258 10.805 5.41532 12.3226C6.84122 13.7626 8.54324 14.8295 9.75 15.2762C10.9568 14.8295 12.6588 13.7626 14.0847 12.3226C15.5874 10.805 16.6875 8.97144 16.6875 7.125C16.6875 5.1575 15.0925 3.5625 13.125 3.5625C11.9206 3.5625 10.8556 4.15966 10.2099 5.07654C10.1045 5.22616 9.93299 5.31518 9.75 5.31518C9.56701 5.31518 9.39545 5.22616 9.29009 5.07654C8.64442 4.15966 7.57941 3.5625 6.375 3.5625Z"
-                  fill="#FF2D55"
-                />
+                <path d="m16 28c7-4.733 14-10 14-17 0-1.792-.683-3.583-2.05-4.95-1.367-1.366-3.158-2.05-4.95-2.05-1.791 0-3.583.684-4.949 2.05l-2.051 2.051-2.05-2.051c-1.367-1.366-3.158-2.05-4.95-2.05-1.791 0-3.583.684-4.949 2.05-1.367 1.367-2.051 3.158-2.051 4.95 0 7 7 12.267 14 17z"></path>
               </svg>
             </>
           ) : (
             <>
               <p>{data.likeCount}</p>
               <svg
-                width="22"
-                height="19"
-                viewBox="0 0 22 19"
-                fill="none"
+                viewBox="0 0 32 32"
                 xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+                role="presentation"
+                focusable="false"
+                style={{
+                  display: 'block',
+                  fill: 'rgb(51,37,21)',
+                  height: '24px',
+                  width: '24px',
+                  overflow: 'visible',
+                  strokeWidth: '2',
+                  stroke: 'white'
+                }}
               >
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  d="M0.25 6.5C0.25 3.04824 3.04822 0.25 6.5 0.25C8.26772 0.25 9.86389 0.984376 11 2.16271C12.1361 0.984376 13.7323 0.25 15.5 0.25C18.9518 0.25 21.75 3.04824 21.75 6.5C21.75 9.53809 19.9668 12.3433 17.8454 14.4856C15.7168 16.6353 13.1191 18.2492 11.2365 18.8748C11.083 18.9259 10.917 18.9259 10.7635 18.8748C8.88091 18.2492 6.28321 16.6353 4.15457 14.4856C2.03322 12.3433 0.25 9.53809 0.25 6.5ZM6.5 1.75C3.87665 1.75 1.75 3.87666 1.75 6.5C1.75 8.96191 3.21678 11.4067 5.22043 13.4302C7.12163 15.3502 9.39099 16.7727 11 17.3682C12.609 16.7727 14.8784 15.3502 16.7796 13.4302C18.7832 11.4067 20.25 8.96191 20.25 6.5C20.25 3.87666 18.1233 1.75 15.5 1.75C13.8941 1.75 12.4741 2.54621 11.6132 3.76872C11.4727 3.96821 11.244 4.0869 11 4.0869C10.756 4.0869 10.5273 3.96821 10.3868 3.76872C9.52589 2.54621 8.10588 1.75 6.5 1.75Z"
-                  fill="white"
-                />
+                <path d="m16 28c7-4.733 14-10 14-17 0-1.792-.683-3.583-2.05-4.95-1.367-1.366-3.158-2.05-4.95-2.05-1.791 0-3.583.684-4.949 2.05l-2.051 2.051-2.05-2.051c-1.367-1.366-3.158-2.05-4.95-2.05-1.791 0-3.583.684-4.949 2.05-1.367 1.367-2.051 3.158-2.051 4.95 0 7 7 12.267 14 17z"></path>
               </svg>
             </>
           )}
@@ -65,9 +76,17 @@ export default Post;
 
 const PostInfoBox = styled.div`
   display: inline-block;
+
   border-radius: 0.8125rem;
   margin-bottom: 1.25rem;
-  /* border: 1px solid #ececec; */
+  box-shadow: rgb(0 0 0 / 15%) 0px 2px 4px 0px;
+  display: grid;
+
+  /* place-items: center; */
+  transition: 0.5s;
+  &:hover {
+    background: #f7faff;
+  }
 `;
 
 const ImageBox = styled.div`
@@ -102,16 +121,30 @@ const ImageBox = styled.div`
     object-fit: contain;
     border-radius: 0.8125rem;
     margin-bottom: 0.875rem;
+
     width: 100%;
-    /* border: 1px solid #ececec; */
+
+    /* FIXME: 스켈레톤으로 바꿔야함 */
+    min-height: 50px;
   }
 `;
 
 const PostInfo = styled.div`
   display: flex;
   flex-direction: column;
+
+  padding: 0 0.5rem;
   h2 {
-    font-size: 0.9375rem;
+    display: block;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2; //원하는 라인수
+    -webkit-box-orient: vertical;
+    white-space: pre-wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    font-size: 0.9rem;
     font-weight: 600;
     text-align: left;
   }
@@ -130,5 +163,9 @@ const UserInfo = styled.div`
   h3 {
     font-size: 0.75rem;
     font-weight: 300;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 `;

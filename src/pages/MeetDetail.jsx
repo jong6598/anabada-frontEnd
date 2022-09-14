@@ -13,6 +13,7 @@ import { useAddMeet } from '../react-query/hooks/useDeleteMeet';
 import { useLike } from '../react-query/hooks/useLike';
 import { useJoin } from '../react-query/hooks/useJoin';
 import Navigate from '../layout/Navigate';
+import Divider from '../layout/Divider';
 
 const MeetDetail = () => {
   const [showModal, setShowModal] = useState(false);
@@ -46,7 +47,8 @@ const MeetDetail = () => {
 
   return (
     <Container>
-      <Navigate text={'포스트'} padding={true} />
+      <Navigate text={'모임'} />
+      {/* <Divider /> */}
       <div className="postTopInfo">
         <p className="title">{meet.title}</p>
         <div className="postUserInfoContainer">
@@ -89,7 +91,7 @@ const MeetDetail = () => {
               <FiMoreHorizontal />
             </button>
           )}
-          {nickname !== meet.nickname && (
+          {nickname && nickname !== meet.nickname && (
             <button
               className="chatBtn"
               onClick={() => onRequestChat(meet.nickname)}
@@ -156,7 +158,7 @@ const MeetDetail = () => {
             fill="#FFFBFF"
           />
         </svg>
-
+        <p className="area">{meet.area}</p>
         <p>{meet.address}</p>
       </AddressContainer>
       <PostDetailInfo>
@@ -224,7 +226,7 @@ const MeetDetail = () => {
         </div>
       </PostDetailInfo>
       <PostDescription>{meet.content}</PostDescription>
-      {nickname !== meet.nickname && (
+      {nickname && nickname !== meet.nickname && (
         <ButtonContainer>
           <button
             className="likeBtn"
@@ -274,8 +276,40 @@ const MeetDetail = () => {
             )}
             좋아요
           </button>
-
-          {isJoined ? (
+          {isJoined && meet.goalMember - meet.currentMember === 0 && (
+            <button
+              className="requestedBtn"
+              style={{ backgroundColor: '#007AFF', color: 'white' }}
+              onClick={() => {
+                const state = {
+                  setIsJoined,
+                  isJoined,
+                  thunderPostId: meet.thunderPostId
+                };
+                onJoin(state);
+              }}
+            >
+              마감 (참가 취소)
+            </button>
+          )}
+          {!isJoined && meet.goalMember - meet.currentMember === 0 && (
+            <button
+              disabled
+              className="requestedBtn"
+              style={{ backgroundColor: '#007AFF', color: 'white' }}
+              onClick={() => {
+                const state = {
+                  setIsJoined,
+                  isJoined,
+                  thunderPostId: meet.thunderPostId
+                };
+                onJoin(state);
+              }}
+            >
+              마감
+            </button>
+          )}
+          {meet.goalMember - meet.currentMember > 0 && isJoined && (
             <button
               className="requestedBtn"
               style={{ backgroundColor: '#007AFF', color: 'white' }}
@@ -290,7 +324,8 @@ const MeetDetail = () => {
             >
               참가 취소
             </button>
-          ) : (
+          )}
+          {meet.goalMember - meet.currentMember > 0 && !isJoined && (
             <button
               className="requestBtn"
               onClick={() => {
@@ -309,7 +344,7 @@ const MeetDetail = () => {
       )}
       {meet.members?.length > 0 && (
         <MembersContainer>
-          <Divider />
+          <DividerMembers />
           <p className="title">참여 인원 목록</p>
           <div className="memberLists">
             <img src={meet.profileImg} alt="profileImg" />
@@ -324,9 +359,7 @@ const MeetDetail = () => {
                 <img src={member.profileImg} alt="profileImg" />
                 <div>
                   <p>{member.nickname}</p>
-                  {nickname !== member.nickname && (
-                    <p className="participant">참여자</p>
-                  )}
+                  {member.nickname && <p className="participant">참여자</p>}
                 </div>
               </div>
             );
@@ -338,8 +371,15 @@ const MeetDetail = () => {
 };
 
 const Container = styled.div`
+  /* border-left: 1px solid #ececee;
+  border-right: 1px solid #ececee;
+  border-bottom: 1px solid #ececee; */
+  @media screen and (min-width: 1024px) {
+    margin: 0 auto;
+    width: 100%;
+  }
   .postTopInfo {
-    padding: 1rem;
+    padding: 1rem 0;
     .title {
       font-style: normal;
       font-weight: 600;
@@ -369,7 +409,7 @@ const Container = styled.div`
       }
     }
     svg {
-      font-size: 1rem;
+      font-size: 1.3rem;
     }
   }
 
@@ -446,14 +486,18 @@ const SelectContainer = styled.div`
 `;
 
 const ImageWrapper = styled.div`
+  display: flex;
+  justify-content: center;
   width: 100%;
   img {
-    width: 100%;
+    min-width: 100px;
+    max-width: 800px;
+    object-fit: cover;
   }
 `;
 
 const AddressContainer = styled.div`
-  padding: 0.938rem 1rem;
+  padding: 0.938rem 0;
   display: flex;
   align-items: center;
   p {
@@ -467,10 +511,14 @@ const AddressContainer = styled.div`
 
     color: #8e8e93;
   }
+  p.area {
+    color: black;
+    font-weight: 600;
+  }
 `;
 
 const PostDetailInfo = styled.div`
-  padding: 0 1rem;
+  /* padding: 0 1rem; */
   h2 {
     font-style: normal;
     font-weight: 600;
@@ -506,12 +554,18 @@ const PostDetailInfo = styled.div`
   }
 `;
 
-const PostDescription = styled.div`
-  padding: 1.625rem 1rem;
+const PostDescription = styled.pre`
+  padding: 1.1625rem 0;
+  font-size: 0.875rem;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 `;
 
 const ButtonContainer = styled.div`
-  padding: 1rem;
+  padding: 1rem 0;
   display: flex;
   gap: 0.5rem;
   button {
@@ -523,7 +577,7 @@ const ButtonContainer = styled.div`
     padding: 0.375rem 0.625rem;
 
     background-color: #eff7ff;
-    border-radius: 4px;
+    border-radius: 0.25rem;
 
     /* Inside auto layout */
 
@@ -543,13 +597,12 @@ const ButtonContainer = styled.div`
   }
 `;
 
-const Divider = styled.div`
-  background-color: #ececec;
-  height: 0.5rem;
-`;
+const DividerMembers = styled.div``;
 
 const MembersContainer = styled.div`
-  padding: 1rem;
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  border-radius: 0.25rem;
+  padding: 0 1rem;
   p.title {
     font-size: 1rem;
     padding-top: 0.75rem;
@@ -559,7 +612,6 @@ const MembersContainer = styled.div`
     flex-direction: row;
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
-    border-bottom: 0.1rem solid #ececec;
   }
   img {
     width: 2rem;

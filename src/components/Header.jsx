@@ -1,51 +1,40 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Cookies } from "react-cookie";
-import AlertToast from "./AlertToast";
 import { GrNotification } from "react-icons/gr";
 import { BsFillChatDotsFill } from "react-icons/bs";
 
-const Header = memo(({ notifications }) => {
+const Header = ({ notifications }) => {
   const location = useLocation();
   const { pathname } = location;
   const timer = useRef(null);
   const cookies = new Cookies();
   const getCookies = cookies.get("refreshToken");
-  const [valueY, setValueY] = useState(null);
+  const [, setValueY] = useState(null);
   const gapY = useRef(0);
-
-  // alert 메시지 커스텀
-  /**
-   * 사용할 컴포넌트에서 const { alertHandler } = useOutletContext(); 로 호출해서 alertHandler("여기에 메시지를 넣으면 된다.")
-   */
-  const refErrorTimer = useRef(null);
-  const refErrorMessage = useRef("");
-  const [stateErrTimer, setStateErrTiemr] = useState(false);
-  const alertHandler = useCallback(
-    (errorMessage = "") => {
-      if (refErrorTimer.current === null) {
-        setStateErrTiemr(true);
-        refErrorMessage.current = errorMessage;
-        refErrorTimer.current = setTimeout(() => {
-          setStateErrTiemr(false);
-          return (refErrorTimer.current = null);
-        }, 3500);
-      }
-    },
-    [refErrorTimer]
-  );
 
   // 헤더에 넣을 유저정보 받아오기
   const userInfo = useSelector((state) => state.auth);
 
   // scroll 이벤트 핸들러
   const handleScroll = () => {
-    const { scrollY } = window;
+    const { scrollY, visualViewport } = window;
+    const { scrollHeight } = document.getElementById("root");
     setValueY((prev) => {
-      // 스크롤이 올라갈 때
+      // safari에서 bounce scroll 처리하기
+      // 최상단
+      if (scrollY < 20) {
+        return (gapY.current = 0);
+      }
+      // 최하단
+      if (scrollHeight <= scrollY + visualViewport.height + 20) {
+        return (gapY.current = -50);
+      }
+
       if (prev - scrollY > 0) {
+        // 스크롤이 올라갈 때
         // gapY.current가 0이면 더 더하지 말기
         if (gapY.current >= 0) {
           timer.current = null;
@@ -86,12 +75,12 @@ const Header = memo(({ notifications }) => {
   }, []);
 
   return (
-   <>
+    <>
       <HeaderWrapper style={{ marginTop: `${gapY.current}px` }}>
         <MainHeader pathname={pathname}>
           <Link to="/">
             <div>
-              <img src="/assets/logo_small.svg"></img>
+              <img src="/assets/logo_small.svg" alt=""></img>
             </div>
           </Link>
           <div className="header__user">
@@ -141,18 +130,11 @@ const Header = memo(({ notifications }) => {
           </NavElement>
         </MainNav>
       </HeaderWrapper>
-
-      <Layout>
-        {stateErrTimer && <AlertToast errorMsg={refErrorMessage.current} />}
-        <Outlet context={{ alertHandler }} />
-      </Layout>
-   </>
+    </>
   );
-});
+};
 
 export default Header;
-
-
 
 const HeaderWrapper = styled.div`
   background-color: white;
@@ -160,7 +142,7 @@ const HeaderWrapper = styled.div`
   z-index: 999;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 1px;
 
-  @media screen and (min-width: 1100px) {
+  @media screen and (min-width: 1024px) {
     width: 100vw;
     margin: 0 auto;
     left: 0;
@@ -169,8 +151,8 @@ const HeaderWrapper = styled.div`
 `;
 
 const MainHeader = styled.div`
-@media screen and (min-width: 1100px) {
-    width: 60vw;
+  @media screen and (min-width: 1024px) {
+    width: 40vw;
     margin: 0 auto;
     left: 0;
     right: 0;
@@ -195,7 +177,6 @@ const MainHeader = styled.div`
     letter-spacing: 0em;
     text-align: left;
 
-
     display: flex;
     justify-content: center;
     align-items: center;
@@ -204,7 +185,6 @@ const MainHeader = styled.div`
       a {
         margin-left: 1.2rem;
       }
-      
     }
 
     svg {
@@ -224,7 +204,6 @@ const MainHeader = styled.div`
   .header__user__signup,
   .header__user__info {
     cursor: pointer;
-    
   }
   .header__user__signup {
     color: ${(props) => (props.pathname === "/signup" ? "#6486FF" : "inherit")};
@@ -253,8 +232,8 @@ const MainNav = styled.div`
   padding: 0rem 1.375rem;
   font-size: 0.9375rem;
 
-  @media screen and (min-width: 1100px) {
-    width: 60vw;
+  @media screen and (min-width: 1024px) {
+    width: 40vw;
     margin: 0 auto;
     left: 0;
     right: 0;
@@ -279,30 +258,28 @@ const NavElement = styled.nav`
     display: flex;
     align-items: center;
     height: 100%;
-    color: ${(props) => (props.pathname === "/posts" ? "#2756FF" : "inherit")};
-    border-bottom: ${(props) =>
-      props.pathname === "/posts" ? "0.15rem solid #2756FF" : "inherit"};
+    color: ${(props) => {
+      return props.pathname.startsWith("/posts") ? "#2756FF" : "inherit";
+    }};
+    border-bottom: ${(props) => {
+      return props.pathname.startsWith("/posts")
+        ? "0.15rem solid #2756FF"
+        : "inherit";
+    }};
   }
   .header__nav__open {
     display: flex;
     align-items: center;
     height: 100%;
-    color: ${(props) => (props.pathname === "/meets" ? "#2756FF" : "inherit")};
-    border-bottom: ${(props) =>
-      props.pathname === "/meets" ? "0.15rem solid #2756FF" : "inherit"};
+    color: ${(props) => {
+      return props.pathname.startsWith("/meets") ? "#2756FF" : "inherit";
+    }};
+    border-bottom: ${(props) => {
+      return props.pathname.startsWith("/meets")
+        ? "0.15rem solid #2756FF"
+        : "inherit";
+    }};
   }
-`;
-
-const Layout = styled.div`
-  padding: 5.5rem 1rem;
-
-  @media screen and (min-width: 1100px) {
-    width: 60vw;
-    margin: 0 auto;
-    left: 0;
-    right: 0;
-  }
-  
 `;
 
 const NotificationContainer = styled.div`

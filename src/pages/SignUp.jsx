@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { userAuth } from "../shared/api";
 import { FormWrapper, FormDiv, FormInput, FormBtn } from "./Login";
+import { Cookies } from "react-cookie";
 
 const SignUp = () => {
   //password type 변경용 state
@@ -21,16 +22,18 @@ const SignUp = () => {
     getValues,
     formState: { errors, dirtyFields },
   } = useForm({
-    mode: "onBlur",
+    mode: "all",
   });
   const [emailState, setEmailState] = useState(false);
   const [nicknameState, setNicknameState] = useState(false);
   const { alertHandler } = useOutletContext();
+  const cookies = new Cookies();
 
   const navigate = useNavigate();
 
   const onSumbit = (signupData) => {
     try {
+      // eslint-disable-next-line no-unused-vars
       const getResponse = (async () => await userAuth.signup(signupData))();
       return navigate("/signup/welcome");
     } catch (err) {
@@ -117,6 +120,14 @@ const SignUp = () => {
       if (response.response.status === 409) {
         return alertHandler("존재하는 닉네임 입니다!");
       }
+      // 공백 예외처리
+      else if (response.response.data === "닉네임은 8자 이하로 설정해 주세요") {
+        return alertHandler("닉네임은 8자 이하로 설정해 주세요");
+      } else if (
+        response.response.data === "닉네임에 빈 칸을 사용할 수 없습니다."
+      ) {
+        return alertHandler("닉네임에 빈 칸을 사용할 수 없습니다.");
+      }
     } catch (err) {
       console.log(err);
       return alertHandler("서버와 통신에 실패했습니다. 다시 시도해주세요.");
@@ -125,10 +136,11 @@ const SignUp = () => {
 
   // 로그인한 상태에서 접근 시 차단
   useEffect(() => {
-    if (localStorage.getItem("accessToken")) {
+    if (localStorage.getItem("accessToken") && cookies.get("refreshToken")) {
       alertHandler("비정상적인 접근입니다.");
       return navigate("/");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -261,6 +273,9 @@ const SignUp = () => {
             {errors.nickname?.type === "validate" && (
               <ErrorSpan>{errors.nickname.message}</ErrorSpan>
             )}
+            {errors.nickname?.type === "maxLength" && (
+              <ErrorSpan>{errors.nickname.message}</ErrorSpan>
+            )}
             <FormInput
               errors={errors?.nickname}
               type="text"
@@ -268,6 +283,10 @@ const SignUp = () => {
               {...register("nickname", {
                 required: "닉네임을 입력해주세요!",
                 validate: () => nicknameState || "닉네임 중복확인을 해주세요!",
+                maxLength: {
+                  value: 8,
+                  message: "8글자 이하로 작성해주세요.",
+                },
               })}
             ></FormInput>
             <div
@@ -288,11 +307,17 @@ export default SignUp;
 
 const SignupWrapper = styled(FormWrapper)`
   margin-top: 4.375rem;
+  display: flex;
+  justify-content: center;
 `;
 
 const SignupForm = styled(FormDiv)`
   padding: 0;
   margin-top: 0.5rem;
+
+  @media screen and (min-width: 1024px) {
+    width: 23rem;
+  }
 
   .login__wrapper-verification {
     margin-bottom: 1.125rem;
@@ -319,7 +344,8 @@ const SignupForm = styled(FormDiv)`
   }
   .login__wrapper__password {
     color: black;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
   }
 `;
 

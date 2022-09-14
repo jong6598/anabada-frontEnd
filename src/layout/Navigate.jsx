@@ -1,6 +1,6 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 
 const Navigate = ({ text, padding, profileImg }) => {
   const navigate = useNavigate();
@@ -34,7 +34,7 @@ const Navigate = ({ text, padding, profileImg }) => {
 const Container = styled.div`
   display: flex;
   align-items: center;
-  padding: 0.7rem ${(props) => (props.padding ? '1rem' : '0')};
+  padding: 0.7rem ${(props) => (props.padding ? "1rem" : "0")};
 
   button {
     padding: 0;
@@ -46,7 +46,6 @@ const Container = styled.div`
     border-radius: 50%;
     margin-right: 0.5rem;
   }
-
 `;
 
 const Title = styled.h2`
@@ -55,10 +54,9 @@ const Title = styled.h2`
   line-height: 1.5rem;
 `;
 
-const Divider = styled.div`
-  background-color: #ececec;
-  height: 1px;
-`;
+// const Divider = styled.div`
+//   background-color: #ececec;
+//   height: 1px;
+// `;
 
 export default Navigate;
-

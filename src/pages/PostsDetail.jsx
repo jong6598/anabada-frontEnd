@@ -16,7 +16,7 @@ import { useInView } from 'react-intersection-observer';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import { FiEdit2 } from 'react-icons/fi';
 import { RiDeleteBin5Line } from 'react-icons/ri';
-import { queryKeys } from "../react-query/constants";
+import { queryKeys } from '../react-query/constants';
 import { FiInbox } from 'react-icons/fi';
 import { BsFillChatDotsFill } from 'react-icons/bs';
 import Navigate from '../layout/Navigate';
@@ -24,6 +24,7 @@ import Navigate from '../layout/Navigate';
 const PostsDetail = () => {
   const navigate = useNavigate();
   const params = useParams();
+  const postId = params.postId;
   const nickname = useSelector((state) => state.auth.nickname);
   const [liked, setLiked] = useState();
   const queryClient = useQueryClient();
@@ -35,10 +36,9 @@ const PostsDetail = () => {
 
   const [showModal, setShowModal] = useState(false);
 
-  const getPost = async () => {
+  const getPostDetail = async () => {
     try {
-      const res = await postApi.getPost(`${params.postId}`);
-      console.log(res.data.liked, 'liked 확인해보자');
+      const res = await postApi.getPostDetail(`${postId}`);
       return res.data;
     } catch (err) {
       console.log(err);
@@ -46,9 +46,13 @@ const PostsDetail = () => {
     }
   };
 
-  const postInfo = useQuery(['post', liked], getPost, {
-    refetchOnWindowFocus: false
-  }).data;
+  const postInfo = useQuery(
+    [queryKeys.detailPost, liked, postId],
+    getPostDetail,
+    {
+      refetchOnWindowFocus: false
+    }
+  ).data;
 
   const getAmenity = postInfo.amenity.split(' ');
 
@@ -100,10 +104,9 @@ const PostsDetail = () => {
 
   const { mutate: onDelete } = useMutation(postDelete, {
     onSuccess: () => {
-      queryClient.invalidateQueries([queryKeys.postList])
+      queryClient.invalidateQueries([queryKeys.posts]);
       navigate('/posts');
-      alert('게시글이 삭제되었습니다')
-      
+      // alert('게시글이 삭제되었습니다');
     },
     onError: (err) => {
       console.log(err.respose);
@@ -114,7 +117,7 @@ const PostsDetail = () => {
   const toggleLike = async (postId) => {
     if (postInfo.liked === false) {
       try {
-       const res =  await postApi.postLike(postId);
+        const res = await postApi.postLike(postId);
         setLiked(true);
       } catch (err) {
         console.log(err);
@@ -132,7 +135,7 @@ const PostsDetail = () => {
 
   const { mutate: onToggleLike } = useMutation(toggleLike, {
     onSuccess: () => {
-      return queryClient.invalidateQueries([queryKeys.postList])
+      return queryClient.invalidateQueries([queryKeys.posts]);
     },
     onError: (err) => {
       console.log(err.respose);
@@ -156,23 +159,22 @@ const PostsDetail = () => {
     onError: (err) => {
       console.log(err.respose);
     }
-  })
+  });
 
   const onRequestChat = (nickname) => {
     navigate(`/chat/${nickname}`);
   };
 
-
   return (
     <Container>
-    <Navigate text={'포스트'} padding={true}/>
-      <TitleDiv >
+      <Navigate text={'포스트'} />
+      <TitleDiv>
         <span>{postInfo.title}</span>
       </TitleDiv>
       <Box>
         <UserBox>
           <img src={postInfo.profileImg} alt="" />
-          <span className='nickname'>{postInfo.nickname}</span>
+          <span className="nickname">{postInfo.nickname}</span>
           <svg
             width="2"
             height="10"
@@ -182,7 +184,6 @@ const PostsDetail = () => {
           >
             <path d="M1 1V9" stroke="#C7C7CC" stroke-linecap="round" />
           </svg>
-          {/* FIXME:dm페이지로 링크수정 */}
 
           <span>{postInfo.createdAt}</span>
           <svg
@@ -206,17 +207,18 @@ const PostsDetail = () => {
           </svg>
           <span>조회 {postInfo.viewCount}</span>
         </UserBox>
-        {nickname === postInfo.nickname ? (
+        {nickname === postInfo.nickname && (
           <button className="moreBtn" onClick={onShowModal}>
             <FiMoreHorizontal />
           </button>
-        ) : (
+        )}
+        {nickname && nickname !== postInfo.nickname && (
           <button
-          className="chatBtn"
-          onClick={() => onRequestChat(postInfo.nickname)}
-        >
-          <BsFillChatDotsFill />
-        </button>
+            className="chatBtn"
+            onClick={() => onRequestChat(postInfo.nickname)}
+          >
+            <BsFillChatDotsFill />
+          </button>
         )}
         {showModal && (
           <SelectContainer>
@@ -276,12 +278,12 @@ const PostsDetail = () => {
           />
         </svg>
 
-        <span>{postInfo.area}</span>
+        <span className="area">{postInfo.area}</span>
         <span>{postInfo.address}</span>
       </AddressBox>
 
       <Amenity>
-        <label>시설정보</label>
+        <label>주변정보</label>
         <div>
           {getAmenity[0] === 'true' ? <p>💨 에어건이 있어요</p> : null}
           {getAmenity[1] === 'true' ? <p>🏄 서핑샵이 있어요</p> : null}
@@ -296,55 +298,55 @@ const PostsDetail = () => {
         <Viewer initialValue={postInfo.content} />
       </PostBox>
       <ButtonContainer>
-      {postInfo.nickname !== nickname ? (
-        <HeartBtn
-          onClick={() => {
-            onToggleLike(postInfo.postId);
-          }}
-        >
-          {postInfo.liked === true ? (
-            <>
-              <svg
-                width="19"
-                height="18"
-                viewBox="0 0 19 18"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M6.375 3C4.09683 3 2.25 4.84684 2.25 7.125C2.25 11.25 7.125 15 9.75 15.8723C12.375 15 17.25 11.25 17.25 7.125C17.25 4.84684 15.4032 3 13.125 3C11.7299 3 10.4965 3.69259 9.75 4.75268C9.00349 3.69259 7.77011 3 6.375 3Z"
-                  fill="#FF2D55"
-                />
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  d="M1.6875 7.125C1.6875 4.53618 3.78617 2.4375 6.375 2.4375C7.70079 2.4375 8.89792 2.98828 9.75 3.87203C10.6021 2.98828 11.7992 2.4375 13.125 2.4375C15.7138 2.4375 17.8125 4.53618 17.8125 7.125C17.8125 9.40357 16.4751 11.5075 14.8841 13.1142C13.2876 14.7265 11.3393 15.9369 9.92739 16.4061C9.81223 16.4444 9.68777 16.4444 9.57261 16.4061C8.16068 15.9369 6.21241 14.7265 4.61593 13.1142C3.02492 11.5075 1.6875 9.40357 1.6875 7.125ZM6.375 3.5625C4.40749 3.5625 2.8125 5.1575 2.8125 7.125C2.8125 8.97144 3.91258 10.805 5.41532 12.3226C6.84122 13.7626 8.54324 14.8295 9.75 15.2762C10.9568 14.8295 12.6588 13.7626 14.0847 12.3226C15.5874 10.805 16.6875 8.97144 16.6875 7.125C16.6875 5.1575 15.0925 3.5625 13.125 3.5625C11.9206 3.5625 10.8556 4.15966 10.2099 5.07654C10.1045 5.22616 9.93299 5.31518 9.75 5.31518C9.56701 5.31518 9.39545 5.22616 9.29009 5.07654C8.64442 4.15966 7.57941 3.5625 6.375 3.5625Z"
-                  fill="#FF2D55"
-                />
-              </svg>
-              <label htmlFor="heart">좋아요</label>
-            </>
-          ) : (
-            <>
-              <svg
-                width="17"
-                height="15"
-                viewBox="0 0 17 15"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  d="M0.4375 5.125C0.4375 2.53618 2.53617 0.4375 5.125 0.4375C6.45079 0.4375 7.64792 0.988282 8.5 1.87203C9.35208 0.988282 10.5492 0.4375 11.875 0.4375C14.4638 0.4375 16.5625 2.53618 16.5625 5.125C16.5625 7.40357 15.2251 9.50746 13.6341 11.1142C12.0376 12.7265 10.0893 13.9369 8.67739 14.4061C8.56223 14.4444 8.43777 14.4444 8.32261 14.4061C6.91068 13.9369 4.96241 12.7265 3.36593 11.1142C1.77492 9.50746 0.4375 7.40357 0.4375 5.125ZM5.125 1.5625C3.15749 1.5625 1.5625 3.1575 1.5625 5.125C1.5625 6.97144 2.66258 8.80503 4.16532 10.3226C5.59122 11.7626 7.29324 12.8295 8.5 13.2762C9.70676 12.8295 11.4088 11.7626 12.8347 10.3226C14.3374 8.80503 15.4375 6.97144 15.4375 5.125C15.4375 3.1575 13.8425 1.5625 11.875 1.5625C10.6706 1.5625 9.60558 2.15966 8.95991 3.07654C8.85455 3.22616 8.68299 3.31518 8.5 3.31518C8.31701 3.31518 8.14545 3.22616 8.04009 3.07654C7.39442 2.15966 6.32941 1.5625 5.125 1.5625Z"
-                  fill="#FF2D55"
-                />
-              </svg>
-              <label htmlFor="heart">좋아요</label>
-            </>
-          )}
-        </HeartBtn>
-      ) : null}
+        {nickname && postInfo.nickname !== nickname ? (
+          <HeartBtn
+            onClick={() => {
+              onToggleLike(postInfo.postId);
+            }}
+          >
+            {postInfo.liked === true ? (
+              <>
+                <svg
+                  width="19"
+                  height="18"
+                  viewBox="0 0 19 18"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6.375 3C4.09683 3 2.25 4.84684 2.25 7.125C2.25 11.25 7.125 15 9.75 15.8723C12.375 15 17.25 11.25 17.25 7.125C17.25 4.84684 15.4032 3 13.125 3C11.7299 3 10.4965 3.69259 9.75 4.75268C9.00349 3.69259 7.77011 3 6.375 3Z"
+                    fill="#FF2D55"
+                  />
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M1.6875 7.125C1.6875 4.53618 3.78617 2.4375 6.375 2.4375C7.70079 2.4375 8.89792 2.98828 9.75 3.87203C10.6021 2.98828 11.7992 2.4375 13.125 2.4375C15.7138 2.4375 17.8125 4.53618 17.8125 7.125C17.8125 9.40357 16.4751 11.5075 14.8841 13.1142C13.2876 14.7265 11.3393 15.9369 9.92739 16.4061C9.81223 16.4444 9.68777 16.4444 9.57261 16.4061C8.16068 15.9369 6.21241 14.7265 4.61593 13.1142C3.02492 11.5075 1.6875 9.40357 1.6875 7.125ZM6.375 3.5625C4.40749 3.5625 2.8125 5.1575 2.8125 7.125C2.8125 8.97144 3.91258 10.805 5.41532 12.3226C6.84122 13.7626 8.54324 14.8295 9.75 15.2762C10.9568 14.8295 12.6588 13.7626 14.0847 12.3226C15.5874 10.805 16.6875 8.97144 16.6875 7.125C16.6875 5.1575 15.0925 3.5625 13.125 3.5625C11.9206 3.5625 10.8556 4.15966 10.2099 5.07654C10.1045 5.22616 9.93299 5.31518 9.75 5.31518C9.56701 5.31518 9.39545 5.22616 9.29009 5.07654C8.64442 4.15966 7.57941 3.5625 6.375 3.5625Z"
+                    fill="#FF2D55"
+                  />
+                </svg>
+                <label htmlFor="heart">좋아요</label>
+              </>
+            ) : (
+              <>
+                <svg
+                  width="17"
+                  height="15"
+                  viewBox="0 0 17 15"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M0.4375 5.125C0.4375 2.53618 2.53617 0.4375 5.125 0.4375C6.45079 0.4375 7.64792 0.988282 8.5 1.87203C9.35208 0.988282 10.5492 0.4375 11.875 0.4375C14.4638 0.4375 16.5625 2.53618 16.5625 5.125C16.5625 7.40357 15.2251 9.50746 13.6341 11.1142C12.0376 12.7265 10.0893 13.9369 8.67739 14.4061C8.56223 14.4444 8.43777 14.4444 8.32261 14.4061C6.91068 13.9369 4.96241 12.7265 3.36593 11.1142C1.77492 9.50746 0.4375 7.40357 0.4375 5.125ZM5.125 1.5625C3.15749 1.5625 1.5625 3.1575 1.5625 5.125C1.5625 6.97144 2.66258 8.80503 4.16532 10.3226C5.59122 11.7626 7.29324 12.8295 8.5 13.2762C9.70676 12.8295 11.4088 11.7626 12.8347 10.3226C14.3374 8.80503 15.4375 6.97144 15.4375 5.125C15.4375 3.1575 13.8425 1.5625 11.875 1.5625C10.6706 1.5625 9.60558 2.15966 8.95991 3.07654C8.85455 3.22616 8.68299 3.31518 8.5 3.31518C8.31701 3.31518 8.14545 3.22616 8.04009 3.07654C7.39442 2.15966 6.32941 1.5625 5.125 1.5625Z"
+                    fill="#FF2D55"
+                  />
+                </svg>
+                <label htmlFor="heart">좋아요</label>
+              </>
+            )}
+          </HeartBtn>
+        ) : null}
       </ButtonContainer>
 
       <CommentBox>
@@ -352,48 +354,52 @@ const PostsDetail = () => {
           <span>댓글 {postInfo.totalComment}개</span>
           <span>좋아요 {postInfo.likeCount}개</span>
         </CountBox>
-        <WriteComment>
-          <img src={profileImg} alt="" />
-          <input
-            type="text"
-            placeholder="댓글 내용을 입력하세요."
-            ref={write_ref}
-            onChange={(e) => {
-              setNewComment(e.currentTarget.value);
-            }}
-            onKeyUp={(e) => {
-              e.currentTarget.value.length > 0
-                ? setIsValid(true)
-                : setIsValid(false);
-            }}
-          />
-          <button
-            type="submit"
-            disabled={isValid === false}
-            onClick={() => {
-              const postComment = {
-                content: newComment
-              };
-              submitCommentsMutation.mutate(postComment);
-            }}
-          >
-            게시
-          </button>
-        </WriteComment>
-        {comments.pages.map((page) => page.data.map((comment) => { return <Comment comment={comment} key={comment.commentId} /> }))
+        {nickname && (
+          <WriteComment>
+            <img src={profileImg} alt="" />
+            <input
+              type="text"
+              placeholder="댓글 내용을 입력하세요."
+              ref={write_ref}
+              onChange={(e) => {
+                setNewComment(e.currentTarget.value);
+              }}
+              onKeyUp={(e) => {
+                e.currentTarget.value.length > 0
+                  ? setIsValid(true)
+                  : setIsValid(false);
+              }}
+            />
+            <button
+              type="submit"
+              disabled={isValid === false}
+              onClick={() => {
+                const postComment = {
+                  content: newComment
+                };
+                submitCommentsMutation.mutate(postComment);
+              }}
+            >
+              게시
+            </button>
+          </WriteComment>
+        )}
+        {comments.pages.map((page) =>
+          page.data.map((comment) => {
+            return <Comment comment={comment} key={comment.commentId} />;
+          })
+        )}
 
-        }
-        
         {isFetchingNextPage ? <p>스피너</p> : <div ref={ref} />}
-        {comments.pages[0].data.length === 0 && 
-        <NoDataDiv>
-        <FiInbox />
-        <div>
-          <p>아직 댓글이 없습니다.</p>
-          <p>첫 댓글을 작성해 보세요.</p>
-        </div>
-      </NoDataDiv> }
-        
+        {comments.pages[0].data.length === 0 && (
+          <NoDataDiv>
+            <div>
+              <FiInbox />
+              <p>아직 댓글이 없습니다.</p>
+              <p>첫 댓글을 작성해 보세요.</p>
+            </div>
+          </NoDataDiv>
+        )}
       </CommentBox>
     </Container>
   );
@@ -401,20 +407,19 @@ const PostsDetail = () => {
 
 export default PostsDetail;
 
-const Container = styled.div`
-  
-`
+const Container = styled.div``;
 
 const Box = styled.div`
   display: flex;
   position: relative;
   justify-content: space-between;
-  padding: 0 1rem;
+
   .moreBtn {
     padding: 0;
   }
-  .chatBtn{
-    color: #007AFF
+  .chatBtn {
+    color: #007aff;
+    font-size: 1.3rem;
   }
 `;
 
@@ -423,20 +428,21 @@ const TitleDiv = styled.div`
   font-size: 1.3rem;
   font-weight: 600;
   margin-bottom: 1rem;
-  padding: 0 1rem;
+  padding: 0;
 `;
 
 const UserBox = styled.div`
+  @media screen and (max-width: 430px) {
+  }
   display: flex;
   align-items: center;
-  font-size: 0.9375rem;
-  font-weight: 400;
 
   img {
     height: 1.5rem;
     width: 1.5rem;
-    border-radius: 1rem;
-    margin-right: 0.5rem;
+    border-radius: 50%;
+    margin-right: 0.33rem;
+    border: 1px solid #ececee;
   }
   span {
     font-style: normal;
@@ -448,26 +454,28 @@ const UserBox = styled.div`
     margin: 0;
   }
   .nickname {
-      font-style: normal;
-      font-weight: 600;
-      font-size: 0.938rem;
-      line-height: 1.125rem;
-      margin-right: 0.3125rem;
-      margin-left: 0;
-      color: #000000;
-    }
+    font-style: normal;
+    font-weight: 600;
+    font-size: 0.938rem;
+    line-height: 1.125rem;
+    margin-right: 0.3125rem;
+    margin-left: 0;
+    color: #000000;
+  }
 `;
 
 const ThumbnailDiv = styled.div`
   display: flex;
   align-items: center;
   margin-top: 1rem;
-  background-color: aliceblue;
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
+
+  display: flex;
+  justify-content: center;
+  width: 100%;
   img {
-    width: 100%;
+    min-width: 100px;
+    max-width: 800px;
+    object-fit: cover;
   }
 `;
 
@@ -476,8 +484,7 @@ const AddressBox = styled.div`
   align-items: center;
   height: 2.875rem;
   width: 100%;
-  padding: 0 1rem;
-
+  padding: 0;
   span {
     font-size: 0.875rem;
     font-weight: 400;
@@ -485,6 +492,12 @@ const AddressBox = styled.div`
     color: #8e8e93;
     padding: 0.53rem;
   }
+
+  .area {
+    font-weight: 600;
+    color: black;
+  }
+
   svg {
     height: 0.895833rem;
     width: 0.6875rem;
@@ -494,22 +507,23 @@ const AddressBox = styled.div`
 const Amenity = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0 1rem;
+  padding: 0;
 
   label {
     height: 2.375rem;
     width: 100%;
     top: 44.4375rem;
+    font-weight: 600;
     border-radius: none;
-    padding: 0.625rem, 1rem, 0.625rem, 1rem;
   }
   div {
     display: grid;
+    text-align: center;
     grid-template-columns: 1fr 1fr;
     gap: 0.5rem;
   }
+
   p {
-    align-items: center;
     font-size: 0.875rem;
     font-weight: 600;
     padding: 0.625rem 0.875rem;
@@ -522,7 +536,7 @@ const PostBox = styled.div`
   margin-top: 0.5rem;
   width: 100%;
   top: 55.625rem;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0;
   font-size: 0.9375rem;
   font-weight: 400;
 `;
@@ -530,7 +544,7 @@ const PostBox = styled.div`
 const CommentBox = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0 1rem;
+  padding: 0;
 `;
 
 const CountBox = styled.div`
@@ -555,10 +569,11 @@ const WriteComment = styled.div`
   align-items: center;
   height: 3.125rem;
   width: 100%;
+  position: relative;
   div {
     display: flex;
-    align-items: center;
     position: relative;
+    align-items: center;
     flex-grow: 1;
     justify-content: space-between;
     background-color: #f2f2f7;
@@ -583,10 +598,11 @@ const WriteComment = styled.div`
     padding-left: 0.625rem;
     font-size: 0.75rem;
     font-weight: 300;
+    width: 100%;
   }
   button {
     position: absolute;
-    right: 1.625rem;
+    right: 1rem;
     border-radius: 1rem;
     border: none;
     font-size: 0.75rem;
@@ -595,20 +611,22 @@ const WriteComment = styled.div`
 `;
 
 const ButtonContainer = styled.div`
-padding: 0 1rem;
-`
+  /* padding: 0 1rem; */
+  display: flex;
+  justify-content: center;
+`;
 
 const HeartBtn = styled.button`
   display: flex;
   align-items: center;
   cursor: pointer;
   justify-content: center;
-  height: 2rem;
+  padding: 0.4rem 0;
   width: 100%;
-  
-  border-radius: 0.8rem;
+
+  border-radius: 0.25rem;
   background-color: #eff7ff;
-  padding: 0.0625rem, 0.625rem, 0.0625rem, 0.625rem;
+
   label {
     font-size: 0.8125rem;
     font-weight: 500;
@@ -658,22 +676,24 @@ const SelectContainer = styled.div`
   }
 `;
 
-
 const NoDataDiv = styled.div`
+  padding: 1rem 0;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 2rem;
-  svg{
-    font-size: 4rem;
-    color: #8E8E93;
+  justify-content: center;
+  div {
+    justify-content: center;
+    text-align: center;
+    color: #8e8e93;
   }
-  div{
-    text-align:center;
-    color: #8E8E93;
-    p{
-      font-weight: 400;
-      font-size: 0.8rem;
-    }
+  p {
+    margin: 0.3rem 0;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 1.063rem;
+    line-height: 1.5rem;
   }
-`
+  svg {
+    color: #d9d9d9;
+    font-size: 3rem;
+  }
+`;
