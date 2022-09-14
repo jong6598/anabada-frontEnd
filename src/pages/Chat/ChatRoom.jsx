@@ -134,6 +134,14 @@ const LeftBox = styled.div`
     line-height: 1.125rem;
     /* identical to box height */
     color: #8e8e93;
+
+    display: -webkit-box;
+    word-break: break-all;
+    -webkit-line-clamp: 1; //원하는 라인수
+    -webkit-box-orient: vertical;
+    white-space: pre-wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 `;
 

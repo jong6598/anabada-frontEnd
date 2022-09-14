@@ -52,7 +52,7 @@ const Posts = () => {
     }
   };
 
-  const { data, fetchNextPage, isFetchingNextPage, isLoading } =
+  const { data, fetchNextPage, isFetchingNextPage, isFetching } =
     useInfiniteQuery(
       [queryKeys.posts, areaSelected, search],
       ({ pageParam = 0 }) => fetchPosts(pageParam, areaSelected, search),
@@ -126,7 +126,7 @@ const Posts = () => {
             {data.pages.map((page) => {
               return page.data.map((post) => (
                 <PostContainer key={post.postId} style={{ cursor: 'pointer' }}>
-                  {/* {!post && <SkeletonItem />} */}
+                  {isFetching && <SkeletonItem />}
                   <Post data={post} />
                 </PostContainer>
               ));

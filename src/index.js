@@ -22,12 +22,11 @@ const queryClient = new QueryClient({
     queries: {
       suspense: true, // React.Suspense를 쓰기위한 옵션 전달
       onError: queryErrorHandler // error 전체 핸들링
-      
     },
     mutations: {
+      suspense: true,
       onError: queryErrorHandler
-    },
-    
+    }
   }
 });
 
