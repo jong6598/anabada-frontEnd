@@ -7,7 +7,7 @@ import { myApi } from '../shared/api';
 import { queryKeys } from '../react-query/constants';
 import Loading from '../layout/Loading';
 import Post from '../components/Post';
-import NoData from '../layout/NoData';
+import { NoDataMyPage } from '../layout/NoData';
 import Masonry from 'react-masonry-css';
 
 const MyPosts = () => {
@@ -15,9 +15,9 @@ const MyPosts = () => {
   const { ref, inView } = useInView();
   const location = useLocation();
   const [filter, setFilter] = useState(location.state);
-  const [tab, setTab] = useState();
+  const [tab, setTab] = useState(location.state);
 
-  const getMyPosts = async (pageParam = 0, filter) => {
+  const getMyPosts = async (pageParam, filter) => {
     try {
       const res = await myApi.getMyPosts(filter, pageParam);
       const data = res.data.content;
@@ -37,6 +37,8 @@ const MyPosts = () => {
     }
   );
 
+  console.log(data, 'data');
+
   useEffect(() => {
     if (inView) {
       fetchNextPage();
@@ -46,6 +48,8 @@ const MyPosts = () => {
   const onClickFilter = (data) => {
     setFilter(data);
   };
+
+  // console.log(data, 'data');
 
   const breakpoints = {
     default: 3,
@@ -57,19 +61,19 @@ const MyPosts = () => {
     <>
       <BtnDiv>
         <button
-          className={`btn ${tab === '1' ? 'active' : ''} `}
+          className={`btn ${tab === 'myWritePost' ? 'active' : ''} `}
           onClick={() => {
             onClickFilter('myWritePost');
-            setTab('1');
+            setTab('myWritePost');
           }}
         >
           <label>작성 피드</label>
         </button>
         <button
-          className={`btn ${tab === '2' ? 'active' : ''} `}
+          className={`btn ${tab === 'myLikePost' ? 'active' : ''} `}
           onClick={() => {
             onClickFilter('myLikePost');
-            setTab('2');
+            setTab('myLikePost');
           }}
         >
           <label>좋아요 피드</label>
@@ -78,7 +82,7 @@ const MyPosts = () => {
 
       <PostDiv>
         {data.pages[0].data.length === 0 && (
-          <NoData text={'게시물'} content={'게시물'} />
+          <NoDataMyPage text={filter} post={true} />
         )}
         <Masonry
           breakpointCols={breakpoints}

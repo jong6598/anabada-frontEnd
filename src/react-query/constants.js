@@ -13,7 +13,11 @@ export const queryKeys = {
   // 채팅
   rooms: 'rooms',
   messages: 'messages',
-  myMeetsList: 'myMeetsList',
 
-  notifications: 'notifications'
+  // 알림
+  notifications: 'notifications',
+
+  // 마이페이지
+  myPostsList : 'myPostsList',
+  myMeetsList : 'myMeetsList'
 };

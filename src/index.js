@@ -22,10 +22,12 @@ const queryClient = new QueryClient({
     queries: {
       suspense: true, // React.Suspense를 쓰기위한 옵션 전달
       onError: queryErrorHandler // error 전체 핸들링
+      
     },
     mutations: {
       onError: queryErrorHandler
-    }
+    },
+    
   }
 });
 
@@ -38,7 +40,7 @@ root.render(
           <ScrollToTop />
           <App />
         </Provider>
-        {/* <ReactQueryDevtools position="top-left" /> */}
+        <ReactQueryDevtools position="top-left" />
       </QueryClientProvider>
     </Suspense>
   </BrowserRouter>

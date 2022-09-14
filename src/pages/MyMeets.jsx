@@ -8,13 +8,13 @@ import { myApi } from '../shared/api';
 import { queryKeys } from '../react-query/constants';
 import Loading from '../layout/Loading';
 import { css } from 'styled-components';
-import NoData from '../layout/NoData';
+import { NoDataMyPage } from '../layout/NoData';
 
 const MyMeets = () => {
   const { ref, inView } = useInView();
   const location = useLocation();
   const [filter, setFilter] = useState(location.state);
-  const [tab, setTab] = useState();
+  const [tab, setTab] = useState(location.state);
 
   const getMyMeets = async (pageParam = 0, filter) => {
     try {
@@ -37,6 +37,8 @@ const MyMeets = () => {
     }
   );
 
+  console.log(data, '🎈🎈🎈🎈🎈');
+
   useEffect(() => {
     if (inView) {
       fetchNextPage();
@@ -51,28 +53,28 @@ const MyMeets = () => {
     <>
       <BtnDiv>
         <button
-          className={`btn ${tab === '1' ? 'active' : ''} `}
+          className={`btn ${tab === 'myHostMeet' ? 'active' : ''} `}
           onClick={() => {
             onClickFilter('myHostMeet');
-            setTab('1');
+            setTab('myHostMeet');
           }}
         >
           <label>주최 모임</label>
         </button>
         <button
-          className={`btn ${tab === '2' ? 'active' : ''} `}
+          className={`btn ${tab === 'myJoinMeet' ? 'active' : ''} `}
           onClick={() => {
             onClickFilter('myJoinMeet');
-            setTab('2');
+            setTab('myJoinMeet');
           }}
         >
           <label>참석 모임</label>
         </button>
         <button
-          className={`btn ${tab === '3' ? 'active' : ''} `}
+          className={`btn ${tab === 'myLikeMeet' ? 'active' : ''} `}
           onClick={() => {
             onClickFilter('myLikeMeet');
-            setTab('3');
+            setTab('myLikeMeet');
           }}
         >
           <label>좋아요 모임</label>
@@ -81,7 +83,7 @@ const MyMeets = () => {
 
       <MeetAllContainer>
         {data.pages[0].data.length === 0 && (
-          <NoData text={'모임'} content={'모임'} />
+          <NoDataMyPage text={filter} meet={true} />
         )}
         {data &&
           data.pages.map((page) => {

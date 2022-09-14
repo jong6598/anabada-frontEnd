@@ -7,6 +7,7 @@ import { queryKeys } from '../constants';
 const fetchMeetsList = async (pageParam, areaSelected) => {
   try {
     const res = await meetsApi.getMeetsPosts(pageParam, areaSelected);
+
     return res.data;
   } catch (error) {
     console.log(error.response);

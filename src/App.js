@@ -1,40 +1,41 @@
-import "./App.css";
-import { ThemeProvider } from "styled-components";
-import { Routes, Route, useLocation } from "react-router-dom";
-import theme from "./styles/theme";
-import GlobalStyle from "./styles/global";
-import Meets from "./pages/Meets";
-import AddMeet from "./pages/MeetAdd";
-import MeetDetail from "./pages/MeetDetail";
-import Header from "./components/Header";
-import MeetsAll from "./pages/MeetsAll";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Signup from "./pages/SignUp";
-import NotFound from "./pages/NotFound";
-import PostCU from "./pages/PostCU";
-import PostsDetail from "./pages/PostsDetail";
-import Posts from "./pages/Posts";
-import Welcome from "./pages/Welcome";
-import Mypage from "./pages/Mypage";
-import MyPosts from "./pages/MyPosts";
-import MyMeets from "./pages/MyMeets";
-import { useSelector, useDispatch } from "react-redux";
-import { useNotification } from "./shared/hooks/notificationHook";
-import { useEffect } from "react";
-import { Cookies } from "react-cookie";
-import Notification from "./pages/Notification";
-import { api } from "./shared/api";
-import Chat from "./pages/Chat/Chat";
-import ChatRoom from "./pages/Chat/ChatRoom";
-import { userThunk } from "./redux/auth-slice";
-import Container from "./components/Container";
+import './App.css';
+import { ThemeProvider } from 'styled-components';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import theme from './styles/theme';
+import GlobalStyle from './styles/global';
+import Meets from './pages/Meets';
+import AddMeet from './pages/MeetAdd';
+import MeetDetail from './pages/MeetDetail';
+import Header from './components/Header';
+import MeetsAll from './pages/MeetsAll';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Signup from './pages/SignUp';
+import NotFound from './pages/NotFound';
+import PostCU from './pages/PostCU';
+import PostsDetail from './pages/PostsDetail';
+import Posts from './pages/Posts';
+import Welcome from './pages/Welcome';
+import Mypage from './pages/Mypage';
+import MyPosts from './pages/MyPosts';
+import MyMeets from './pages/MyMeets';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNotification } from './shared/hooks/notificationHook';
+import { useEffect } from 'react';
+import { Cookies } from 'react-cookie';
+import Notification from './pages/Notification';
+import { api } from './shared/api';
+import Chat from './pages/Chat/Chat';
+import ChatRoom from './pages/Chat/ChatRoom';
+import { userThunk } from './redux/auth-slice';
+import Container from './components/Container';
+import Intro from './pages/Intro';
 
 function App() {
   const cookies = new Cookies();
-  const getCookies = cookies.get("refreshToken");
+  const getCookies = cookies.get('refreshToken');
   const dispatch = useDispatch();
-  const accessToken = localStorage.getItem("accessToken");
+  const accessToken = localStorage.getItem('accessToken');
 
   const location = useLocation();
 
@@ -64,14 +65,14 @@ function App() {
       api
         .get(`/notifications`, {
           headers: {
-            Authorization: accessToken,
-          },
+            Authorization: accessToken
+          }
         })
         .then((res) => {
           return setNotifications((prev) => {
             return {
               ...prev,
-              isBadge: res.data?.badge,
+              isBadge: res.data?.badge
             };
           });
         });
@@ -79,7 +80,7 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getCookies]);
 
-  const test = ["/notifications", "/room", "/chat"];
+  const test = ['/notifications', '/room', '/chat'];
 
   return (
     <>
@@ -115,17 +116,13 @@ function App() {
               </>
             )}
           </Route>
-
-          {accessToken && getCookies && (
-            <>
-              <Route path="/chat/:nickname" element={<Chat />} />
-              <Route path="/room" element={<ChatRoom />} />
-              <Route
-                path="/notifications"
-                element={<Notification setNotifications={setNotifications} />}
-              />
-            </>
-          )}
+          <Route path="/intro" element={<Intro />} />
+          <Route path="/chat/:nickname" element={<Chat />} />
+          <Route path="/room" element={<ChatRoom />} />
+          <Route
+            path="/notifications"
+            element={<Notification setNotifications={setNotifications} />}
+          />
           <Route path="/*" element={<NotFound />} />
         </Routes>
       </ThemeProvider>

@@ -1,6 +1,6 @@
-import styled, { keyframes } from "styled-components";
-import checkedWeather from "../styles/weather";
-import { Map, CustomOverlayMap, MarkerClusterer } from "react-kakao-maps-sdk";
+import styled, { keyframes } from 'styled-components';
+import checkedWeather from '../styles/weather';
+import { Map, CustomOverlayMap, MarkerClusterer } from 'react-kakao-maps-sdk';
 
 const KakaoMap = ({ data, picker, setPicker }) => {
   const handlePicker = (pickerInfo) => {
@@ -22,45 +22,54 @@ const KakaoMap = ({ data, picker, setPicker }) => {
           styles={[
             {
               // calculator 각 사이 값 마다 적용될 스타일을 지정한다
-              width: "1.875rem",
-              height: "1.875rem",
-              background: "transparent",
-              backgroundImage: 'url("/assets/c3.png")',
-              borderRadius: "50%",
-              fontSize: "0.7rem",
-              padding: "0.3rem",
-              color: "white",
-              fontWeight: "bold",
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "center",
+              width: '1.875rem',
+              height: '1.875rem',
+              background: '#007AFF',
+              backgroundImage: 'url("/assets/icon3.png")',
+              borderRadius: '50%',
+              fontSize: '0.7rem',
+              color: 'white',
+
+              display: 'flex',
+              justifyContent: 'flex-end',
+              paddingRight: '1.1rem',
+              alignItems: 'center',
+              textAlign: 'center',
+
+              fontWeight: 'bold'
             },
             {
-              width: "3.125rem",
-              height: "3.125rem",
-              background: "transparent",
-              backgroundImage: 'url("/assets/c2.png")',
-              borderRadius: "50%",
-              color: "white",
-              padding: "0.4rem",
-              fontWeight: "bold",
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "center",
+              width: '3.125rem',
+              height: '3.125rem',
+              background: '#007AFF',
+              backgroundImage: 'url("/assets/icon2.png")',
+              borderRadius: '50%',
+              color: 'white',
+              display: 'flex',
+              justifyContent: 'flex-end',
+              paddingRight: '1.8rem',
+              alignItems: 'center',
+              textAlign: 'center',
+              fontWeight: 'bold'
             },
             {
-              width: "4.375rem",
-              height: "4.375rem",
-              fontSize: "0.9rem",
-              backgroundImage: 'url("/assets/c1.png")',
-              borderRadius: "50%",
-              color: "white",
-              padding: "0.5rem",
-              fontWeight: "bold",
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "center",
-            },
+              width: '4.375rem',
+              height: '4.375rem',
+
+              fontSize: '0.9rem',
+              backgroundImage: 'url("/assets/icon1.png")',
+              borderRadius: '50%',
+
+              background: '007AFF',
+
+              color: 'white',
+              display: 'flex',
+              justifyContent: 'flex-end',
+              paddingRight: '2.4rem',
+              alignItems: 'center',
+              textAlign: 'center',
+              fontWeight: 'bold'
+            }
           ]}
         >
           {data.data.map((el) => {
@@ -71,7 +80,7 @@ const KakaoMap = ({ data, picker, setPicker }) => {
                 key={el.beachId}
                 position={{
                   lat: el.x,
-                  lng: el.y,
+                  lng: el.y
                 }}
                 xAnchor={0.3}
                 yAnchor={0.5}
@@ -143,7 +152,7 @@ const KakaoMap = ({ data, picker, setPicker }) => {
                   <span className="material-symbols-outlined">umbrella</span>
                 </div>
                 <div>
-                  {picker.pcp === "강수없음" ? (
+                  {picker.pcp === '강수없음' ? (
                     <span>강수량 : {picker.pcp}</span>
                   ) : (
                     <span>강수량 : {picker.pcp}mm</span>
