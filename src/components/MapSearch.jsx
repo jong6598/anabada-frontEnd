@@ -235,6 +235,9 @@ const SearchWrapper = styled.form`
 
     transition: all 0.3s ease-in-out;
 
+    color: white;
+    font-weight: 600;
+
     &:active {
       background-color: #7cbbff;
     }

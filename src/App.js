@@ -1,6 +1,6 @@
 import "./App.css";
 import { ThemeProvider } from "styled-components";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import theme from "./styles/theme";
 import GlobalStyle from "./styles/global";
 import Meets from "./pages/Meets";
@@ -36,10 +36,12 @@ function App() {
   const dispatch = useDispatch();
   const accessToken = localStorage.getItem("accessToken");
 
+  const location = useLocation();
+
   // 새로고침 시 유저정보 리덕스에 재설정
   useEffect(() => {
     // 로그인 한 유저가 아니면 유저정보를 요청하지 않음
-    if (getCookies === undefined) {
+    if (getCookies === undefined || accessToken === undefined) {
       return;
     } else {
       // 로그인 한 유저가 유저이면 새로고침 시 유저정보를 요청함
@@ -76,13 +78,18 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getCookies]);
 
+  const test = ["/notifications", "/room", "/chat"];
+
   return (
     <>
       <ThemeProvider theme={theme}>
         <GlobalStyle />
-        <Header />
+        {test.filter((el) => location.pathname.startsWith(el)).length === 0 && (
+          <Header notifications={notifications} />
+        )}
+
         <Routes>
-          <Route path="/" element={<Container notifications={notifications} />}>
+          <Route path="/" element={<Container />}>
             <Route index element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
@@ -92,7 +99,7 @@ function App() {
             <Route path="/meetsAll" element={<MeetsAll />} />
             <Route path="/meets/:thunderPostId" element={<MeetDetail />} />
             <Route path="/posts/:postId" element={<PostsDetail />} />
-            {accessToken && (
+            {accessToken && getCookies && (
               <>
                 <Route path="/posts/upload" element={<PostCU />} />
                 <Route path="/posts/:postId/edit" element={<PostCU />} />
@@ -106,14 +113,18 @@ function App() {
                 <Route path="/myposts" element={<MyPosts />} />
               </>
             )}
-            <Route path="*" element={<NotFound />} />
           </Route>
-          <Route path="/chat/:nickname" element={<Chat />} />
-          <Route path="/room" element={<ChatRoom />} />
-          <Route
-            path="/notifications"
-            element={<Notification setNotifications={setNotifications} />}
-          />
+
+          {accessToken && getCookies && (
+            <>
+              <Route path="/chat/:nickname" element={<Chat />} />
+              <Route path="/room" element={<ChatRoom />} />
+              <Route
+                path="/notifications"
+                element={<Notification setNotifications={setNotifications} />}
+              />
+            </>
+          )}
         </Routes>
       </ThemeProvider>
     </>
