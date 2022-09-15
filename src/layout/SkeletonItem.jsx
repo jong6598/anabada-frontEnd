@@ -1,36 +1,25 @@
-import React from 'react';
-import styled from 'styled-components';
-import Skeleton from 'react-loading-skeleton';
-import 'react-loading-skeleton/dist/skeleton.css';
-import reactImageSize from 'react-image-size';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import React from "react";
+import styled from "styled-components";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
-const SkeletonItem = ({ data }) => {
+const SkeletonItem = () => {
   return (
     <PostInfoBox>
-      <Skeleton className="imageBox" height={'8rem'} />
-      {/* <img src={data.thumbnailUrl} alt="thumbnailimage" /> */}
-
+      <Skeleton className="imageBox" height={"8rem"} />
       <Skeleton />
-      <Skeleton className="postInfo" width={'5.625rem'}>
-        {/* <h2>{data.title}</h2> */}
-        <Skeleton className="userInfo">
-          {/* <img src={data.profileImg} alt="" />
-          <h3>{data.nickname}</h3> */}
-        </Skeleton>
+      <Skeleton className="postInfo" width={"5.625rem"}>
+        <Skeleton className="userInfo"></Skeleton>
       </Skeleton>
     </PostInfoBox>
   );
 };
 
 const PostInfoBox = styled.div`
-  /* display: inline-block; */
   border-radius: 0.8125rem;
   margin-bottom: 1.25rem;
   box-shadow: rgb(0 0 0 / 15%) 0px 2px 4px 0px;
   display: grid;
-  /* place-items: center; */
   transition: 0.5s;
   &:hover {
     background: #f7faff;
@@ -69,9 +58,6 @@ const PostInfoBox = styled.div`
       margin-bottom: 0.875rem;
 
       width: 100%;
-      /* @media screen and (min-width: 1024px) {
-      min-width: 12.5rem;
-    } */
     }
   }
 
@@ -81,7 +67,6 @@ const PostInfoBox = styled.div`
     padding: 0 0.5rem;
     h2 {
       display: block;
-      /* white-space: nowrap; */
       overflow: hidden;
       text-overflow: ellipsis;
       font-size: 0.9375rem;

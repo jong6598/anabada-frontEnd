@@ -26,7 +26,6 @@ const Navigate = ({ text, padding, profileImg }) => {
         {profileImg && <img src={profileImg} alt="" />}
         <Title>{text}</Title>
       </Container>
-      {/* <Divider /> */}
     </>
   );
 };
@@ -53,10 +52,5 @@ const Title = styled.h2`
   font-size: 1.25rem;
   line-height: 1.5rem;
 `;
-
-// const Divider = styled.div`
-//   background-color: #ececec;
-//   height: 1px;
-// `;
 
 export default Navigate;

@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
-import { chatApi } from '../../../shared/api';
-import { queryKeys } from '../../constants';
-import { useSelector } from 'react-redux';
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { chatApi } from "../../../shared/api";
+import { queryKeys } from "../../constants";
+import { useSelector } from "react-redux";
 
 // 검색 모임 게시글
 const getRooms = async (pageParam) => {
   try {
     const res = await chatApi.getAllRooms(pageParam);
-    // console.log(res.data, 'res.data');
     const data = res.data.content;
     const last = res.data.last;
     return { data, nextPage: pageParam + 1, last };
@@ -24,18 +22,18 @@ export function useRooms() {
   const {
     data: rooms,
     fetchNextPage,
-    isFetchingNextPage
+    isFetchingNextPage,
   } = useInfiniteQuery(
     [queryKeys.rooms, nickname],
     ({ pageParam = 0 }) => getRooms(pageParam),
     {
       getNextPageParam: (lastPage) =>
-        !lastPage.last ? lastPage.nextPage : undefined
+        !lastPage.last ? lastPage.nextPage : undefined,
     }
   );
   return {
     rooms,
     isFetchingNextPage,
-    fetchNextPage
+    fetchNextPage,
   };
 }
