@@ -1,17 +1,17 @@
-import { Link, useLocation } from 'react-router-dom';
-import styled from 'styled-components';
-import { useSelector } from 'react-redux';
-import { useEffect, useRef, useState } from 'react';
-import { Cookies } from 'react-cookie';
-import { GrNotification } from 'react-icons/gr';
-import { BsFillChatDotsFill } from 'react-icons/bs';
+import { Link, useLocation } from "react-router-dom";
+import styled from "styled-components";
+import { useSelector } from "react-redux";
+import { useEffect, useRef, useState } from "react";
+import { Cookies } from "react-cookie";
+import { GrNotification } from "react-icons/gr";
+import { BsFillChatDotsFill } from "react-icons/bs";
 
 const Header = ({ notifications }) => {
   const location = useLocation();
   const { pathname } = location;
   const timer = useRef(null);
   const cookies = new Cookies();
-  const getCookies = cookies.get('refreshToken');
+  const getCookies = cookies.get("refreshToken");
   const [, setValueY] = useState(null);
   const gapY = useRef(0);
 
@@ -21,7 +21,7 @@ const Header = ({ notifications }) => {
   // scroll 이벤트 핸들러
   const handleScroll = () => {
     const { scrollY, visualViewport } = window;
-    const { scrollHeight } = document.getElementById('root');
+    const { scrollHeight } = document.getElementById("root");
     setValueY((prev) => {
       // safari에서 bounce scroll 처리하기
       // 최상단
@@ -70,8 +70,8 @@ const Header = ({ notifications }) => {
 
   // 스크롤 이벤트 바인딩
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
@@ -119,7 +119,7 @@ const Header = ({ notifications }) => {
         <MainNav>
           <NavElement pathname={pathname}>
             <Link className="header__nav__home" to="/">
-              메인홈
+              서핑스팟
             </Link>
             <Link className="header__nav__posting" to="/posts">
               포스팅
@@ -160,7 +160,7 @@ const MainHeader = styled.div`
 
   width: 100vw;
   height: 3.125rem;
-  padding: 1rem 0.75rem;
+  padding: 1rem 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -206,10 +206,10 @@ const MainHeader = styled.div`
     cursor: pointer;
   }
   .header__user__signup {
-    color: ${(props) => (props.pathname === '/signup' ? '#6486FF' : 'inherit')};
+    color: ${(props) => (props.pathname === "/signup" ? "#6486FF" : "inherit")};
   }
   .header__user__login {
-    color: ${(props) => (props.pathname === '/login' ? '#6486FF' : 'inherit')};
+    color: ${(props) => (props.pathname === "/login" ? "#6486FF" : "inherit")};
   }
   .header__user__divider {
     display: flex;
@@ -250,21 +250,21 @@ const NavElement = styled.nav`
     align-items: center;
 
     height: 100%;
-    color: ${(props) => (props.pathname === '/' ? '#2756FF' : 'inherit')};
+    color: ${(props) => (props.pathname === "/" ? "#2756FF" : "inherit")};
     border-bottom: ${(props) =>
-      props.pathname === '/' ? '0.15rem solid #2756FF' : 'inherit'};
+      props.pathname === "/" ? "0.15rem solid #2756FF" : "inherit"};
   }
   .header__nav__posting {
     display: flex;
     align-items: center;
     height: 100%;
     color: ${(props) => {
-      return props.pathname.startsWith('/posts') ? '#2756FF' : 'inherit';
+      return props.pathname.startsWith("/posts") ? "#2756FF" : "inherit";
     }};
     border-bottom: ${(props) => {
-      return props.pathname.startsWith('/posts')
-        ? '0.15rem solid #2756FF'
-        : 'inherit';
+      return props.pathname.startsWith("/posts")
+        ? "0.15rem solid #2756FF"
+        : "inherit";
     }};
   }
   .header__nav__open {
@@ -272,12 +272,12 @@ const NavElement = styled.nav`
     align-items: center;
     height: 100%;
     color: ${(props) => {
-      return props.pathname.startsWith('/meets') ? '#2756FF' : 'inherit';
+      return props.pathname.startsWith("/meets") ? "#2756FF" : "inherit";
     }};
     border-bottom: ${(props) => {
-      return props.pathname.startsWith('/meets')
-        ? '0.15rem solid #2756FF'
-        : 'inherit';
+      return props.pathname.startsWith("/meets")
+        ? "0.15rem solid #2756FF"
+        : "inherit";
     }};
   }
 `;
@@ -288,7 +288,7 @@ const NotificationContainer = styled.div`
     width: 0.4rem;
     height: 0.4rem;
     z-index: 999;
-    background-color: ${(props) => (props.noti ? 'inherit' : 'red')};
+    background-color: ${(props) => (props.noti ? "inherit" : "red")};
     position: absolute;
     border-radius: 50px;
     bottom: 0;
