@@ -1,17 +1,17 @@
-import styled from 'styled-components';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { Cookies } from 'react-cookie';
-import React, { useState, useRef } from 'react';
+import styled from "styled-components";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { Cookies } from "react-cookie";
+import React, { useState, useRef } from "react";
 
-import { storage } from '../../shared/firebase';
+import { storage } from "../../shared/firebase";
 import {
   ref,
   uploadBytes,
   getDownloadURL,
-  deleteObject
-} from 'firebase/storage';
-import { myApi } from '../../shared/api';
+  deleteObject,
+} from "firebase/storage";
+import { myApi } from "../../shared/api";
 
 const Mypage = () => {
   const profileImg = useSelector((state) => state.auth.profileImg);
@@ -19,14 +19,14 @@ const Mypage = () => {
   const email = useSelector((state) => state.auth.email);
   const navigate = useNavigate();
   const fileInput = useRef(null);
-  const [imgSrc, setImgSrc] = useState('');
+  const [imgSrc, setImgSrc] = useState("");
 
   const handleLogout = () => {
-    localStorage.removeItem('accessToken');
+    localStorage.removeItem("accessToken");
     const cookies = new Cookies();
-    cookies.remove('refreshToken');
+    cookies.remove("refreshToken");
 
-    navigate('/');
+    navigate("/");
   };
 
   const updateImg = async () => {
@@ -50,21 +50,21 @@ const Mypage = () => {
     reader.readAsDataURL(image);
 
     const profileImg = {
-      profileImg: uploadUrl
+      profileImg: uploadUrl,
     };
 
-    const result = window.confirm('변경된 프로필 사진을 등록하시겠습니까?');
+    const result = window.confirm("변경된 프로필 사진을 등록하시겠습니까?");
     if (result) {
-      const res = await myApi.uploadProfile(profileImg);
+      await myApi.uploadProfile(profileImg);
     } else {
       const deleteImg = ref(storage, uploadUrl);
       deleteObject(deleteImg)
         .then(() => {
-          // alert('취소 완료!');
-          setImgSrc('');
+          setImgSrc("");
         })
         .catch((err) => {
-          alert('취소 실패!');
+          alert("취소 실패!");
+          console.log(err);
         });
     }
   };
@@ -132,7 +132,7 @@ const Mypage = () => {
       <SelectDiv>
         <h1>피드 리스트</h1>
         <BtnDiv>
-          <Btn onClick={() => navigate(`/myposts`, { state: 'myWritePost' })}>
+          <Btn onClick={() => navigate(`/myposts`, { state: "myWritePost" })}>
             <svg
               width="24"
               height="24"
@@ -153,7 +153,7 @@ const Mypage = () => {
             </svg>
             <label>작성 피드</label>
           </Btn>
-          <Btn onClick={() => navigate(`/myposts`, { state: 'myLikePost' })}>
+          <Btn onClick={() => navigate(`/myposts`, { state: "myLikePost" })}>
             <svg
               width="25"
               height="24"
@@ -175,7 +175,7 @@ const Mypage = () => {
             <label>좋아요 피드</label>
           </Btn>
         </BtnDiv>
-        <AllBtn onClick={() => navigate('/myposts', { state: 'myWritePost' })}>
+        <AllBtn onClick={() => navigate("/myposts", { state: "myWritePost" })}>
           <svg
             width="9"
             height="14"
@@ -196,7 +196,7 @@ const Mypage = () => {
         <h1>오픈 모임 리스트</h1>
 
         <BtnDiv>
-          <Btn onClick={() => navigate(`/mymeets`, { state: 'myHostMeet' })}>
+          <Btn onClick={() => navigate(`/mymeets`, { state: "myHostMeet" })}>
             <svg
               width="24"
               height="24"
@@ -215,7 +215,7 @@ const Mypage = () => {
             </svg>
             <label>주최 모임</label>
           </Btn>
-          <Btn onClick={() => navigate(`/mymeets`, { state: 'myJoinMeet' })}>
+          <Btn onClick={() => navigate(`/mymeets`, { state: "myJoinMeet" })}>
             <svg
               width="24"
               height="24"
@@ -235,7 +235,7 @@ const Mypage = () => {
             <label>참석 모임</label>
           </Btn>
 
-          <Btn onClick={() => navigate(`/mymeets`, { state: 'myLikeMeet' })}>
+          <Btn onClick={() => navigate(`/mymeets`, { state: "myLikeMeet" })}>
             <svg
               width="24"
               height="24"
@@ -257,7 +257,7 @@ const Mypage = () => {
             <label>좋아요 모임</label>
           </Btn>
         </BtnDiv>
-        <AllBtn onClick={() => navigate('/mymeets', { state: 'myHostMeet' })}>
+        <AllBtn onClick={() => navigate("/mymeets", { state: "myHostMeet" })}>
           <svg
             width="9"
             height="14"

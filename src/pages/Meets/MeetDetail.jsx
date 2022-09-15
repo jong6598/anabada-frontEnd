@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import styled from 'styled-components';
-import { FiMoreHorizontal } from 'react-icons/fi';
-import { BsFillChatDotsFill } from 'react-icons/bs';
-import { FiEdit2 } from 'react-icons/fi';
-import { RiDeleteBin5Line } from 'react-icons/ri';
-import { useDetailMeet } from '../../react-query/hooks/useDetailMeet';
-import { useSelector } from 'react-redux';
-import { useAddMeet } from '../../react-query/hooks/useDeleteMeet';
-import { useLike } from '../../react-query/hooks/useLike';
-import { useJoin } from '../../react-query/hooks/useJoin';
-import Navigate from '../../layout/Navigate';
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import styled from "styled-components";
+import { FiMoreHorizontal } from "react-icons/fi";
+import { BsFillChatDotsFill } from "react-icons/bs";
+import { FiEdit2 } from "react-icons/fi";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import { useDetailMeet } from "../../react-query/hooks/useDetailMeet";
+import { useSelector } from "react-redux";
+import { useAddMeet } from "../../react-query/hooks/useDeleteMeet";
+import { useLike } from "../../react-query/hooks/useLike";
+import { useJoin } from "../../react-query/hooks/useJoin";
+import Navigate from "../../layout/Navigate";
 
 const MeetDetail = () => {
   const [showModal, setShowModal] = useState(false);
@@ -30,6 +30,7 @@ const MeetDetail = () => {
       setIsLiked(meet.liked);
       setIsJoined(meet.joined);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const nickname = useSelector((state) => state.auth.nickname);
@@ -44,8 +45,7 @@ const MeetDetail = () => {
 
   return (
     <Container>
-      <Navigate text={'모임'} />
-      {/* <Divider /> */}
+      <Navigate text={"모임"} />
       <div className="postTopInfo">
         <p className="title">{meet.title}</p>
         <div className="postUserInfoContainer">
@@ -110,7 +110,7 @@ const MeetDetail = () => {
               <div
                 className="deleteBtn"
                 onClick={() => {
-                  const result = window.confirm('정말 삭제하시겠습니까?');
+                  const result = window.confirm("정말 삭제하시겠습니까?");
                   if (result) {
                     onDelete(meet.thunderPostId);
                   }
@@ -231,7 +231,7 @@ const MeetDetail = () => {
               const state = {
                 setIsLiked,
                 isLiked,
-                thunderPostId: meet.thunderPostId
+                thunderPostId: meet.thunderPostId,
               };
               onLike(state);
             }}
@@ -276,12 +276,12 @@ const MeetDetail = () => {
           {isJoined && meet.goalMember - meet.currentMember === 0 && (
             <button
               className="requestedBtn"
-              style={{ backgroundColor: '#007AFF', color: 'white' }}
+              style={{ backgroundColor: "#007AFF", color: "white" }}
               onClick={() => {
                 const state = {
                   setIsJoined,
                   isJoined,
-                  thunderPostId: meet.thunderPostId
+                  thunderPostId: meet.thunderPostId,
                 };
                 onJoin(state);
               }}
@@ -293,12 +293,12 @@ const MeetDetail = () => {
             <button
               disabled
               className="requestedBtn"
-              style={{ backgroundColor: '#007AFF', color: 'white' }}
+              style={{ backgroundColor: "#007AFF", color: "white" }}
               onClick={() => {
                 const state = {
                   setIsJoined,
                   isJoined,
-                  thunderPostId: meet.thunderPostId
+                  thunderPostId: meet.thunderPostId,
                 };
                 onJoin(state);
               }}
@@ -309,12 +309,12 @@ const MeetDetail = () => {
           {meet.goalMember - meet.currentMember > 0 && isJoined && (
             <button
               className="requestedBtn"
-              style={{ backgroundColor: '#007AFF', color: 'white' }}
+              style={{ backgroundColor: "#007AFF", color: "white" }}
               onClick={() => {
                 const state = {
                   setIsJoined,
                   isJoined,
-                  thunderPostId: meet.thunderPostId
+                  thunderPostId: meet.thunderPostId,
                 };
                 onJoin(state);
               }}
@@ -329,7 +329,7 @@ const MeetDetail = () => {
                 const state = {
                   setIsJoined,
                   isJoined,
-                  thunderPostId: meet.thunderPostId
+                  thunderPostId: meet.thunderPostId,
                 };
                 onJoin(state);
               }}
@@ -471,9 +471,6 @@ const SelectContainer = styled.div`
     white-space: nowrap;
     cursor: pointer;
     padding: 0.5rem 1rem;
-    /* min-width: 50px; */
-    /* height: 40px;
-    line-height: 40px; */
     font-size: 0.75rem;
     box-sizing: border-box;
     svg {
@@ -515,7 +512,6 @@ const AddressContainer = styled.div`
 `;
 
 const PostDetailInfo = styled.div`
-  /* padding: 0 1rem; */
   h2 {
     font-style: normal;
     font-weight: 600;

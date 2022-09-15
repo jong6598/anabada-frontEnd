@@ -1,26 +1,26 @@
-import axios from 'axios';
-import { Cookies } from 'react-cookie';
+import axios from "axios";
+import { Cookies } from "react-cookie";
 
 export const api = axios.create({
   baseURL: `https://${process.env.REACT_APP_API_SERVER}/api`,
   headers: {
-    'content-type': 'application/json;charset=UTF-8',
-    accept: 'application/json,'
-  }
+    "content-type": "application/json;charset=UTF-8",
+    accept: "application/json,",
+  },
 });
 
 // 로그인/회원가입용 axios(토큰 필요 X)
 const userAxios = axios.create({
   baseURL: `https://${process.env.REACT_APP_API_SERVER}/api/users`,
   headers: {
-    'content-type': 'application/json;charset=UTF-8',
-    accept: 'application/json,'
-  }
+    "content-type": "application/json;charset=UTF-8",
+    accept: "application/json,",
+  },
 });
 
 api.interceptors.request.use(function (config) {
-  const accessToken = localStorage.getItem('accessToken'); // localStorage에 TOKEN 저장
-  config.headers.common['Authorization'] = `${accessToken}`; // Header에 토큰을 넣어서 보내준다.
+  const accessToken = localStorage.getItem("accessToken"); // localStorage에 TOKEN 저장
+  config.headers.common["Authorization"] = `${accessToken}`; // Header에 토큰을 넣어서 보내준다.
   return config;
 });
 
@@ -32,35 +32,35 @@ userAxios.interceptors.response.use(
   async (err) => {
     const {
       config,
-      response: { status }
+      response: { status },
     } = err;
     // 토큰 만료됐을 때 status
     if (status === 500) {
       // userAxios를 쓰는 경우인데 리프레시 토큰 조차 없는 경우
       const cookies = new Cookies();
-      if (cookies.get('refreshToken')) {
+      if (cookies.get("refreshToken")) {
         return err;
       }
 
       // 이전 작업에 대한 config저장
       const originalReq = config;
       // Bearer제거 작업
-      const getRefresh = cookies.get('refreshToken').split(' ')[1];
-      const getAccess = localStorage.getItem('accessToken').split(' ')[1];
+      const getRefresh = cookies.get("refreshToken").split(" ")[1];
+      const getAccess = localStorage.getItem("accessToken").split(" ")[1];
 
       // refresh요청
       const response = await userAxios.post(
-        '/reissue',
+        "/reissue",
         {},
         {
           headers: {
             AccessToken: getAccess,
-            RefreshToken: getRefresh
-          }
+            RefreshToken: getRefresh,
+          },
         }
       );
       const newAccess = response.headers.authorization;
-      localStorage.setItem('accessToken', newAccess);
+      localStorage.setItem("accessToken", newAccess);
       // 새로 발급 받은 토큰으로 config 변경
       originalReq.headers.Authorization = newAccess;
       return axios(originalReq);
@@ -76,35 +76,35 @@ api.interceptors.response.use(
   async (err) => {
     const {
       config,
-      response: { status }
+      response: { status },
     } = err;
     // 토큰 만료됐을 때 status
     if (status === 500) {
       // userAxios를 쓰는 경우인데 리프레시 토큰 조차 없는 경우
       const cookies = new Cookies();
-      if (cookies.get('refreshToken')) {
+      if (cookies.get("refreshToken")) {
         return err;
       }
 
       // 이전 작업에 대한 config저장
       const originalReq = config;
       // Bearer제거 작업
-      const getRefresh = cookies.get('refreshToken').split(' ')[1];
-      const getAccess = localStorage.getItem('accessToken').split(' ')[1];
+      const getRefresh = cookies.get("refreshToken").split(" ")[1];
+      const getAccess = localStorage.getItem("accessToken").split(" ")[1];
 
       // refresh요청
       const response = await userAxios.post(
-        '/reissue',
+        "/reissue",
         {},
         {
           headers: {
             AccessToken: getAccess,
-            RefreshToken: getRefresh
-          }
+            RefreshToken: getRefresh,
+          },
         }
       );
       const newAccess = response.headers.authorization;
-      localStorage.setItem('accessToken', newAccess);
+      localStorage.setItem("accessToken", newAccess);
       // 새로 발급 받은 토큰으로 config 변경
       originalReq.headers.Authorization = newAccess;
       return axios(originalReq);
@@ -116,30 +116,29 @@ api.interceptors.response.use(
 // 로그인/회원가입 요청 객체
 export const userAuth = {
   login(loginData) {
-    return userAxios.post('/login', loginData);
+    return userAxios.post("/login", loginData);
   },
   signup(signupData) {
-    return userAxios.post('/signup', signupData);
+    return userAxios.post("/signup", signupData);
   },
   emailValidation(email) {
     return userAxios.post(`/validation/email`, {
-      email
+      email,
     });
   },
   nicknameValidation(nickname) {
-    // return userAxios.post(`/validation/nickname/${nickname}`);
     return userAxios.post(`/validation/nickname`, {
-      nickname
+      nickname,
     });
   },
   useAccess(token) {
     // 유저정보 받아오기
     return userAxios.get(`/info`, {
       headers: {
-        Authorization: token
-      }
+        Authorization: token,
+      },
     });
-  }
+  },
 };
 
 // 모임
@@ -154,7 +153,7 @@ export const meetsApi = {
       `/meets/search?area=${area}&keyword=${keyword}&page=${pageParam}&size=10`
     ),
 
-  postMeetPost: (post) => api.post('/meets', post),
+  postMeetPost: (post) => api.post("/meets", post),
 
   editMeetPost: (thunderPostId, post) =>
     api.put(`/meets/${thunderPostId}`, post),
@@ -170,17 +169,17 @@ export const meetsApi = {
     api.post(`/requests/${thunderPostId}
   `),
 
-  deleteRequest: (thunderPostId) => api.delete(`/requests/${thunderPostId}`)
+  deleteRequest: (thunderPostId) => api.delete(`/requests/${thunderPostId}`),
 };
 
 // 게시글
 export const postApi = {
   uploadImages(file) {
-    return api.post('/posts/images', file);
+    return api.post("/posts/images", file);
   },
 
   deleteImages(images) {
-    return api.delete('/images', images);
+    return api.delete("/images", images);
   },
   getPosts(pageParam, areaSelected) {
     return api.get(`/posts?area=${areaSelected}&page=${pageParam}&size=6`);
@@ -223,7 +222,7 @@ export const postApi = {
   },
   deleteComments(commentId) {
     return api.delete(`/comments/${commentId}`);
-  }
+  },
 };
 
 // 채팅
@@ -239,7 +238,7 @@ export const chatApi = {
   },
   getAllRooms(pageParam) {
     return api.get(`/rooms?page=${pageParam}&size=10`);
-  }
+  },
 };
 
 // 마이페이지
@@ -251,6 +250,6 @@ export const myApi = {
     return api.get(`mymeets?filter=${filter}&page=${pageParam}&size=6`);
   },
   uploadProfile(profileImg) {
-    return api.put('/profileimages', profileImg);
-  }
+    return api.put("/profileimages", profileImg);
+  },
 };
