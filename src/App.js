@@ -1,41 +1,41 @@
-import './App.css';
-import { ThemeProvider } from 'styled-components';
-import { Routes, Route, useLocation } from 'react-router-dom';
-import theme from './styles/theme';
-import GlobalStyle from './styles/global';
-import Meets from './pages/Meets/Meets';
-import MeetAdd from './pages/Meets/MeetAdd';
-import MeetDetail from './pages/Meets/MeetDetail';
-import Header from './layout/Header';
-import MeetsAll from './pages/Meets/MeetsAll';
-import Home from './pages/Home/Home';
-import Login from './pages/Auth/Login';
-import Signup from './pages/Auth/SignUp';
-import NotFound from './pages/NotFound/NotFound';
-import PostDetail from './pages/Posts/PostDetail';
-import Posts from './pages/Posts/Posts';
-import Welcome from './pages/Auth/Welcome';
-import Mypage from './pages/MyPage/Mypage';
-import MyPosts from './pages/MyPage/MyPosts';
-import MyMeets from './pages/MyPage/MyMeets';
-import { useSelector, useDispatch } from 'react-redux';
-import { useNotification } from './shared/hooks/notificationHook';
-import { useEffect } from 'react';
-import { Cookies } from 'react-cookie';
-import Notification from './pages/Notification/Notification';
-import { api } from './shared/api';
-import Chat from './pages/Chat/Chat';
-import ChatRoom from './pages/Chat/ChatRoom';
-import { userThunk } from './redux/auth-slice';
-import Container from './layout/Container';
-import Intro from './pages/Intro/Intro';
-import PostAdd from './pages/Posts/PostAdd';
+import "./App.css";
+import { ThemeProvider } from "styled-components";
+import { Routes, Route, useLocation } from "react-router-dom";
+import theme from "./styles/theme";
+import GlobalStyle from "./styles/global";
+import Meets from "./pages/Meets/Meets";
+import MeetAdd from "./pages/Meets/MeetAdd";
+import MeetDetail from "./pages/Meets/MeetDetail";
+import Header from "./layout/Header";
+import MeetsAll from "./pages/Meets/MeetsAll";
+import Home from "./pages/Home/Home";
+import Login from "./pages/Auth/Login";
+import Signup from "./pages/Auth/SignUp";
+import NotFound from "./pages/NotFound/NotFound";
+import PostDetail from "./pages/Posts/PostDetail";
+import Posts from "./pages/Posts/Posts";
+import Welcome from "./pages/Auth/Welcome";
+import Mypage from "./pages/MyPage/Mypage";
+import MyPosts from "./pages/MyPage/MyPosts";
+import MyMeets from "./pages/MyPage/MyMeets";
+import { useSelector, useDispatch } from "react-redux";
+import { useNotification } from "./shared/hooks/notificationHook";
+import { useEffect } from "react";
+import { Cookies } from "react-cookie";
+import Notification from "./pages/Notification/Notification";
+import { api } from "./shared/api";
+import Chat from "./pages/Chat/Chat";
+import ChatRoom from "./pages/Chat/ChatRoom";
+import { userThunk } from "./redux/auth-slice";
+import Container from "./layout/Container";
+import Intro from "./pages/Intro/Intro";
+import PostAdd from "./pages/Posts/PostAdd";
 
 function App() {
   const cookies = new Cookies();
-  const getCookies = cookies.get('refreshToken');
+  const getCookies = cookies.get("refreshToken");
   const dispatch = useDispatch();
-  const accessToken = localStorage.getItem('accessToken');
+  const accessToken = localStorage.getItem("accessToken");
 
   const location = useLocation();
 
@@ -65,14 +65,14 @@ function App() {
       api
         .get(`/notifications`, {
           headers: {
-            Authorization: accessToken
-          }
+            Authorization: accessToken,
+          },
         })
         .then((res) => {
           return setNotifications((prev) => {
             return {
               ...prev,
-              isBadge: res.data?.badge
+              isBadge: res.data?.badge,
             };
           });
         });
@@ -80,7 +80,7 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getCookies]);
 
-  const test = ['/notifications', '/room', '/chat'];
+  const test = ["/notifications", "/room", "/chat", "/intro"];
 
   return (
     <>
@@ -116,6 +116,7 @@ function App() {
               </>
             )}
           </Route>
+
           <Route path="/intro" element={<Intro />} />
           <Route path="/chat/:nickname" element={<Chat />} />
           <Route path="/room" element={<ChatRoom />} />
