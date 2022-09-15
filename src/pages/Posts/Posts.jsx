@@ -1,28 +1,26 @@
-import React, { useEffect, useState, useRef } from 'react';
-import styled from 'styled-components';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useRef } from "react";
+import styled from "styled-components";
+import { Link } from "react-router-dom";
 
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import Post from '../../components/Posts/Post';
-import { postApi } from '../../shared/api';
-import { useInView } from 'react-intersection-observer';
-import { queryKeys } from '../../react-query/constants';
+import { useInfiniteQuery } from "@tanstack/react-query";
+import Post from "../../components/Posts/Post";
+import { postApi } from "../../shared/api";
+import { useInView } from "react-intersection-observer";
+import { queryKeys } from "../../react-query/constants";
 
-import Loading from '../../layout/Loading';
-import NoData from '../../layout/NoData';
+import Loading from "../../layout/Loading";
+import NoData from "../../layout/NoData";
 
-import Masonry from 'react-masonry-css';
-import SkeletonItem from '../../layout/SkeletonItem';
-import { TbPencil } from 'react-icons/tb';
+import Masonry from "react-masonry-css";
+import SkeletonItem from "../../layout/SkeletonItem";
+import { TbPencil } from "react-icons/tb";
 
 const Posts = () => {
-  const navigate = useNavigate();
-
   const { ref, inView } = useInView();
   const searchRef = useRef();
-  const accesstoken = localStorage.getItem('accessToken');
+  const accesstoken = localStorage.getItem("accessToken");
 
-  const [areaSelected, setAreaSelected] = useState('ALL');
+  const [areaSelected, setAreaSelected] = useState("ALL");
   const [search, setSearch] = useState(null);
 
   const fetchPosts = async (pageParam, areaSelected, search) => {
@@ -52,13 +50,13 @@ const Posts = () => {
     }
   };
 
-  const { data, fetchNextPage, isFetchingNextPage, isLoading } =
+  const { data, fetchNextPage, isFetchingNextPage, isFetching, isLoading } =
     useInfiniteQuery(
       [queryKeys.posts, areaSelected, search],
       ({ pageParam = 0 }) => fetchPosts(pageParam, areaSelected, search),
       {
         getNextPageParam: (lastPage) =>
-          !lastPage.last ? lastPage.nextPage : undefined
+          !lastPage.last ? lastPage.nextPage : undefined,
       }
     );
 
@@ -66,19 +64,18 @@ const Posts = () => {
     if (inView) {
       fetchNextPage();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView]);
 
   const onKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       onSearch(e);
     }
   };
 
-  // window.location.reload();
-
   const onSearch = (e) => {
     setSearch(e.target.value);
-    searchRef.current.value = '';
+    searchRef.current.value = "";
   };
 
   const onChangeArea = (e) => {
@@ -88,7 +85,7 @@ const Posts = () => {
   const breakpoints = {
     default: 3,
     1100: 3,
-    700: 2
+    700: 2,
   };
 
   return (
@@ -116,7 +113,7 @@ const Posts = () => {
         </CategoryContainer>
         <PostDiv>
           {data.pages[0].data.length === 0 && (
-            <NoData text={'게시물'} content={'게시물'} />
+            <NoData text={"게시물"} content={"게시물"} />
           )}
           <Masonry
             breakpointCols={breakpoints}
@@ -125,9 +122,9 @@ const Posts = () => {
           >
             {data.pages.map((page) => {
               return page.data.map((post) => (
-                <PostContainer key={post.postId} style={{ cursor: 'pointer' }}>
-                  {/* {!post && <SkeletonItem />} */}
-                  <Post data={post} />
+                <PostContainer key={post.postId} style={{ cursor: "pointer" }}>
+                  {isFetching && <SkeletonItem />}
+                  {!isLoading && <Post data={post} />}
                 </PostContainer>
               ));
             })}

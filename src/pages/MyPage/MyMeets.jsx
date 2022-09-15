@@ -1,14 +1,13 @@
-import styled from 'styled-components';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate, useLocation } from 'react-router-dom';
-import Meet from '../../components/Meets/Meet';
-import { InView, useInView } from 'react-intersection-observer';
-import { useState, useEffect } from 'react';
-import { myApi } from '../../shared/api';
-import { queryKeys } from '../../react-query/constants';
-import Loading from '../../layout/Loading';
-import { css } from 'styled-components';
-import { NoDataMyPage } from '../../layout/NoData';
+import styled from "styled-components";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useLocation } from "react-router-dom";
+import Meet from "../../components/Meets/Meet";
+import { useInView } from "react-intersection-observer";
+import { useState, useEffect } from "react";
+import { myApi } from "../../shared/api";
+import { queryKeys } from "../../react-query/constants";
+import Loading from "../../layout/Loading";
+import { NoDataMyPage } from "../../layout/NoData";
 
 const MyMeets = () => {
   const { ref, inView } = useInView();
@@ -33,7 +32,7 @@ const MyMeets = () => {
     ({ pageParam = 0 }) => getMyMeets(pageParam, filter),
     {
       getNextPageParam: (lastPage) =>
-        !lastPage.last ? lastPage.nextPage : undefined
+        !lastPage.last ? lastPage.nextPage : undefined,
     }
   );
 
@@ -41,6 +40,7 @@ const MyMeets = () => {
     if (inView) {
       fetchNextPage();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView]);
 
   const onClickFilter = (data) => {
@@ -51,28 +51,28 @@ const MyMeets = () => {
     <>
       <BtnDiv>
         <button
-          className={`btn ${tab === 'myHostMeet' ? 'active' : ''} `}
+          className={`btn ${tab === "myHostMeet" ? "active" : ""} `}
           onClick={() => {
-            onClickFilter('myHostMeet');
-            setTab('myHostMeet');
+            onClickFilter("myHostMeet");
+            setTab("myHostMeet");
           }}
         >
           <label>주최 모임</label>
         </button>
         <button
-          className={`btn ${tab === 'myJoinMeet' ? 'active' : ''} `}
+          className={`btn ${tab === "myJoinMeet" ? "active" : ""} `}
           onClick={() => {
-            onClickFilter('myJoinMeet');
-            setTab('myJoinMeet');
+            onClickFilter("myJoinMeet");
+            setTab("myJoinMeet");
           }}
         >
           <label>참석 모임</label>
         </button>
         <button
-          className={`btn ${tab === 'myLikeMeet' ? 'active' : ''} `}
+          className={`btn ${tab === "myLikeMeet" ? "active" : ""} `}
           onClick={() => {
-            onClickFilter('myLikeMeet');
-            setTab('myLikeMeet');
+            onClickFilter("myLikeMeet");
+            setTab("myLikeMeet");
           }}
         >
           <label>좋아요 모임</label>

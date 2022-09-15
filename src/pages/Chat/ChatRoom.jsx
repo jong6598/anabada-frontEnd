@@ -1,15 +1,14 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import styled from 'styled-components';
-import Divider from '../../layout/Divider';
-import Navigate from '../../layout/Navigate';
-import { useRooms } from '../../react-query/hooks/chat/useRooms';
-import { useInView } from 'react-intersection-observer';
-import Loading from '../../layout/Loading';
-import NoData from '../../layout/NoData';
-import { useQueryClient } from '@tanstack/react-query';
-import { queryKeys } from '../../react-query/constants';
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import styled from "styled-components";
+import Navigate from "../../layout/Navigate";
+import { useRooms } from "../../react-query/hooks/chat/useRooms";
+import { useInView } from "react-intersection-observer";
+import Loading from "../../layout/Loading";
+import NoData from "../../layout/NoData";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "../../react-query/constants";
 
 const ChatRoom = () => {
   const navigate = useNavigate();
@@ -23,22 +22,23 @@ const ChatRoom = () => {
 
   useEffect(() => {
     queryClient.invalidateQueries([queryKeys.rooms, nickname]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (inView) {
       fetchNextPage();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView]);
 
   return (
     <Container>
-      <Navigate text={'채팅'} padding={true} />
-      {/* <Divider /> */}
+      <Navigate text={"채팅"} padding={true} />
       {rooms.pages[0].data.length === 0 && (
-        <NoData text={'받은 메세지'} chat={true} />
+        <NoData text={"받은 메세지"} chat={true} />
       )}
-      {/* rooms.pages[0].data.length !== 0 && */}
       {rooms.pages.map((page) => {
         return page.data.map((room) => {
           let roomName;
@@ -63,14 +63,13 @@ const ChatRoom = () => {
                 <img
                   src={roomProfileImg}
                   alt=""
-                  style={{ width: '36px', height: '36px' }}
+                  style={{ width: "36px", height: "36px" }}
                 />
                 <div className="leftBox">
                   <p className="nickname">{roomName}</p>
                   <p className="lastMessage">{room.lastMsg}</p>
                 </div>
               </LeftBox>
-              {/* <p className="messageLength">12</p> */}
             </div>
           );
         });
@@ -81,8 +80,6 @@ const ChatRoom = () => {
 };
 
 const Container = styled.div`
-  /* padding: 0 1rem; */
-
   @media screen and (min-width: 1024px) {
     margin: 0 auto;
     width: 40vw;
@@ -132,8 +129,15 @@ const LeftBox = styled.div`
     font-weight: 400;
     font-size: 0.938rem;
     line-height: 1.125rem;
-    /* identical to box height */
     color: #8e8e93;
+
+    display: -webkit-box;
+    word-break: break-all;
+    -webkit-line-clamp: 1; //원하는 라인수
+    -webkit-box-orient: vertical;
+    white-space: pre-wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 `;
 
