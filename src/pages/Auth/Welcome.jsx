@@ -31,7 +31,7 @@ const Welcome = () => {
   useEffect(() => {
     if (localStorage.getItem("accessToken") && cookies.get("refreshToken")) {
       alertHandler("비정상적인 접근입니다.");
-      return navigate("/");
+      return navigate("/home");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -118,7 +118,7 @@ const Header = ({ notifications }) => {
         </MainHeader>
         <MainNav>
           <NavElement pathname={pathname}>
-            <Link className="header__nav__home" to="/">
+            <Link className="header__nav__home" to="/home">
               서핑스팟
             </Link>
             <Link className="header__nav__posting" to="/posts">

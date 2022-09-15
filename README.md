@@ -32,7 +32,7 @@
 
 ## 🎬시연 영상
 
-[유튜브 시연 링크]()
+[유튜브 시연 링크](https://youtu.be/iiNQ58_z8nE)
 
 <br/>
 <br/>
@@ -218,4 +218,4 @@ inview가 화면에 노출되면 데이터를 요청하는데 이전 메세지�
 
 ## **기타**
 
-[노션링크](https://www.notion.so/503e00648f9d4e148496fb244b05be26)
+[노션 링크](https://www.notion.so/503e00648f9d4e148496fb244b05be26)
