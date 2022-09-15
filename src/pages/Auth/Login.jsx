@@ -81,7 +81,6 @@ const Login = () => {
               placeholder="이메일"
               {...register("email", {
                 required: true,
-
                 // eslint-disable-next-line no-useless-escape
                 pattern: /^[A-Za-z0-9_\.\-]+@[A-Za-z0-9\-]+\.[A-Za-z0-9\-]+/,
               })}
