@@ -180,7 +180,7 @@ const MapSearch = ({ setPicker, data }) => {
 
 export default MapSearch;
 
-const SearchForm = styled.form`
+const SearchForm = styled.div`
   z-index: 999;
   top: 130px;
   width: 25rem;

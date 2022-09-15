@@ -39,7 +39,7 @@ root.render(
           <ScrollToTop />
           <App />
         </Provider>
-        <ReactQueryDevtools position="top-left" />
+        {/* <ReactQueryDevtools position="top-left" /> */}
       </QueryClientProvider>
     </Suspense>
   </BrowserRouter>
