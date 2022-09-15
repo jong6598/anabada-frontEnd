@@ -41,7 +41,7 @@ const NotificationCompo = ({
 
   return (
     <>
-      <NotiWrapper ref={refValue} onClick={handleNotiWrapper}>
+      <NotiWrapper ref={refValue}>
         <NotiContainer>
           {notificationType === "like" ? (
             <NotiType>
@@ -53,7 +53,7 @@ const NotificationCompo = ({
             </NotiType>
           )}
 
-          <NotiInfo>
+          <NotiInfo onClick={handleNotiWrapper}>
             {notificationType === "like" ? (
               <NotiWho
                 isRead={read}
