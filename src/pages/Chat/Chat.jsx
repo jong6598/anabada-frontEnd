@@ -150,6 +150,7 @@ const Chat = () => {
 
     // unmount 될때 클라이언트 비활성화
     return () => disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -157,6 +158,7 @@ const Chat = () => {
       // 페이지가 로딩 되고 roomId가 있을때 클라이언트 활성화 & 구독
       connect();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomId]);
 
   useEffect(() => {
@@ -170,6 +172,7 @@ const Chat = () => {
     setPrevScrollHeight(scrollRef.current?.scrollHeight);
 
     fetchNextPage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onScrollTo = (y) => {
@@ -181,6 +184,7 @@ const Chat = () => {
     if (inView && messages) {
       onFetchMessages();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView]);
 
   useEffect(() => {
@@ -191,6 +195,7 @@ const Chat = () => {
     onScrollTo(
       scrollRef.current?.scrollHeight - scrollRef.current?.clientHeight
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages?.pages]);
 
   return (
@@ -356,17 +361,6 @@ const ChatContainer = styled.div`
   flex: 1;
 
   overflow-y: auto;
-`;
-
-const Time = styled.p`
-  text-align: center;
-  font-style: normal;
-  font-weight: 300;
-  font-size: 0.813rem;
-  line-height: 16px;
-
-  color: #8e8e93;
-  margin-bottom: 0.5rem;
 `;
 
 const SenderContainer = styled.div`
