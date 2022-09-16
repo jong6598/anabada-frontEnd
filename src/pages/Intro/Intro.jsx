@@ -31,7 +31,9 @@ const Intro = () => {
               <br />
               <p>이제 아나바다에서</p>
               <p>당신의 서핑 동반자를 찾으세요</p>
-              <button onClick={() => navigate("/")}>🌊서핑 즐기러 가기</button>
+              <button onClick={() => navigate("/home")}>
+                🌊서핑 즐기러 가기
+              </button>
             </div>
           </div>
         </IntroContainer>
@@ -65,7 +67,9 @@ const Intro = () => {
               <br />
               <p>채팅을 통해 함께 서핑할 사람도 찾고</p>
               <p>서핑 🍯팁도 공유해보세요!</p>
-              <button onClick={() => navigate("/")}>🌊서핑 즐기러 가기</button>
+              <button onClick={() => navigate("/home")}>
+                🌊서핑 즐기러 가기
+              </button>
             </div>
           </div>
         </IntroContainer>

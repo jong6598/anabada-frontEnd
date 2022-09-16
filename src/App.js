@@ -92,7 +92,8 @@ function App() {
 
         <Routes>
           <Route path="/" element={<Container />}>
-            <Route index element={<Home />} />
+            <Route index element={<Intro />} />
+            <Route path="/home" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/signup/welcome" element={<Welcome />} />
@@ -116,14 +117,16 @@ function App() {
               </>
             )}
           </Route>
-
-          <Route path="/intro" element={<Intro />} />
-          <Route path="/chat/:nickname" element={<Chat />} />
-          <Route path="/room" element={<ChatRoom />} />
-          <Route
-            path="/notifications"
-            element={<Notification setNotifications={setNotifications} />}
-          />
+          {accessToken && getCookies && (
+            <>
+              <Route path="/chat/:nickname" element={<Chat />} />
+              <Route path="/room" element={<ChatRoom />} />
+              <Route
+                path="/notifications"
+                element={<Notification setNotifications={setNotifications} />}
+              />
+            </>
+          )}
           <Route path="/*" element={<NotFound />} />
         </Routes>
       </ThemeProvider>

@@ -33,7 +33,7 @@ const Login = () => {
       // 유저 정보 받아오기
       const getAccessToken = localStorage.getItem("accessToken");
       dispatch(userThunk(getAccessToken));
-      navigate("/");
+      navigate("/home");
       return alertHandler("로그인에 성공했습니다!");
     } catch (err) {
       console.log(err);
@@ -57,7 +57,7 @@ const Login = () => {
   useEffect(() => {
     if (localStorage.getItem("accessToken") && cookies.get("refreshToken")) {
       alertHandler("비정상적인 접근입니다.");
-      return navigate("/");
+      return navigate("/home");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

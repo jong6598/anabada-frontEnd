@@ -26,7 +26,7 @@ const Mypage = () => {
     const cookies = new Cookies();
     cookies.remove("refreshToken");
 
-    navigate("/");
+    navigate("/home");
   };
 
   const updateImg = async () => {
