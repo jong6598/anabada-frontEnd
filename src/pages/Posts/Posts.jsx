@@ -15,6 +15,11 @@ import Masonry from 'react-masonry-css';
 import SkeletonItem from '../../layout/SkeletonItem';
 import { TbPencil } from 'react-icons/tb';
 
+// export function usePreFetch() {
+//   const queryClient = useQueryClient();
+//   queryClient.prefetchQuery(queryKeys.posts);
+// }
+
 const Posts = () => {
   const navigate = useNavigate();
 
@@ -73,8 +78,6 @@ const Posts = () => {
       onSearch(e);
     }
   };
-
-  // window.location.reload();
 
   const onSearch = (e) => {
     setSearch(e.target.value);

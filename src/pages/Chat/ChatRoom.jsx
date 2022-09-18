@@ -22,7 +22,9 @@ const ChatRoom = () => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    queryClient.invalidateQueries([queryKeys.rooms, nickname]);
+    queryClient.invalidateQueries([queryKeys.rooms], {
+      refetchType: 'all'
+    });
   }, []);
 
   useEffect(() => {
