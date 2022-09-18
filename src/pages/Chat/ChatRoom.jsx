@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import Divider from '../../layout/Divider';
 import Navigate from '../../layout/Navigate';
 import { useRooms } from '../../react-query/hooks/chat/useRooms';
 import { useInView } from 'react-intersection-observer';
@@ -22,25 +21,26 @@ const ChatRoom = () => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    queryClient.invalidateQueries([queryKeys.rooms], {
+    queryClient.invalidateQueries([queryKeys.rooms, nickname], {
       refetchType: 'all'
     });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (inView) {
       fetchNextPage();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView]);
 
   return (
     <Container>
       <Navigate text={'채팅'} padding={true} />
-      {/* <Divider /> */}
       {rooms.pages[0].data.length === 0 && (
         <NoData text={'받은 메세지'} chat={true} />
       )}
-      {/* rooms.pages[0].data.length !== 0 && */}
       {rooms.pages.map((page) => {
         return page.data.map((room) => {
           let roomName;
@@ -72,7 +72,6 @@ const ChatRoom = () => {
                   <p className="lastMessage">{room.lastMsg}</p>
                 </div>
               </LeftBox>
-              {/* <p className="messageLength">12</p> */}
             </div>
           );
         });
@@ -83,8 +82,6 @@ const ChatRoom = () => {
 };
 
 const Container = styled.div`
-  /* padding: 0 1rem; */
-
   @media screen and (min-width: 1024px) {
     margin: 0 auto;
     width: 40vw;
@@ -134,7 +131,6 @@ const LeftBox = styled.div`
     font-weight: 400;
     font-size: 0.938rem;
     line-height: 1.125rem;
-    /* identical to box height */
     color: #8e8e93;
 
     display: -webkit-box;

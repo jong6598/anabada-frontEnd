@@ -1,15 +1,15 @@
 import {
   useInfiniteQuery,
   useMutation,
-  useQueryClient
-} from '@tanstack/react-query';
-import { useCallback, useEffect, useRef } from 'react';
-import styled from 'styled-components';
-import { api } from '../../shared/api';
-import NotificationCompo from '../../components/Notification/NotificationCompo';
-import { queryKeys } from '../../react-query/constants';
-import Navigate from '../../layout/Navigate';
-import NoData from '../../layout/NoData';
+  useQueryClient,
+} from "@tanstack/react-query";
+import { useCallback, useEffect, useRef } from "react";
+import styled from "styled-components";
+import { api } from "../../shared/api";
+import NotificationCompo from "../../components/Notification/NotificationCompo";
+import { queryKeys } from "../../react-query/constants";
+import Navigate from "../../layout/Navigate";
+import NoData from "../../layout/NoData";
 
 const Notification = ({ setNotifications }) => {
   const lastNotiRef = useRef();
@@ -19,7 +19,7 @@ const Notification = ({ setNotifications }) => {
     return {
       data: res.data,
       nextPage: pageParam + 1,
-      lastPage: res.data.last
+      lastPage: res.data.last,
     };
   };
 
@@ -35,9 +35,9 @@ const Notification = ({ setNotifications }) => {
         return undefined;
       },
       onError(err) {
-        return console.log('데이터를 fetch에 실패했습니다.', err);
+        return console.log("데이터를 fetch에 실패했습니다.", err);
       },
-      suspense: true
+      suspense: true,
     }
   );
 
@@ -56,7 +56,7 @@ const Notification = ({ setNotifications }) => {
     });
     const observer = new IntersectionObserver(handleIntersect, {
       threshold: 0.8,
-      root: null
+      root: null,
     });
     lastNotiRef.current && observer.observe(lastNotiRef.current);
     return () => {
@@ -80,11 +80,11 @@ const Notification = ({ setNotifications }) => {
   const mutation = new useMutation(handleAllDeleteMutation, {
     onSuccess() {
       return queryClient.invalidateQueries([queryKeys.notifications]);
-    }
+    },
   });
 
   const handleAllDelete = () => {
-    const res = window.confirm('전체 알림을 삭제하시겠습니까?');
+    const res = window.confirm("전체 알림을 삭제하시겠습니까?");
     if (res) {
       return mutation.mutate();
     }
@@ -93,9 +93,9 @@ const Notification = ({ setNotifications }) => {
   return (
     <Container>
       <NotificationWrapper>
-        <Navigate text={'알림'} />
+        <Navigate text={"알림"} />
         {data.pages[0].data.content.length === 0 && (
-          <NoData text={'알림'} notification={true} />
+          <NoData text={"알림"} notification={true} />
         )}
         <NotificationContainer>
           {isSuccess &&
@@ -145,8 +145,6 @@ const NotificationWrapper = styled.div``;
 const NotificationContainer = styled.div`
   box-sizing: border-box;
   padding: 1rem 0;
-  /* margin: 1.25rem 1rem 2.5rem 1rem; */
-  /* padding-top: 3.5rem; */
 `;
 
 const NotiAllDelete = styled.div`

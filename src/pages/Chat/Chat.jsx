@@ -1,16 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import SockJS from 'sockjs-client';
-import { Stomp, Client } from '@stomp/stompjs';
-import { useSelector } from 'react-redux';
-import styled from 'styled-components';
-import Navigate from '../../layout/Navigate';
-import { borderRadius } from '@mui/system';
-import { MdSend } from 'react-icons/md';
-import { chatApi } from '../../shared/api';
-import { useMessages } from '../../react-query/hooks/chat/useMessages';
-import { useInView } from 'react-intersection-observer';
-import { useCallback } from 'react';
+import React, { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
+import SockJS from "sockjs-client";
+import { Client } from "@stomp/stompjs";
+import { useSelector } from "react-redux";
+import styled from "styled-components";
+import Navigate from "../../layout/Navigate";
+import { chatApi } from "../../shared/api";
+import { useMessages } from "../../react-query/hooks/chat/useMessages";
+import { useInView } from "react-intersection-observer";
+import { useCallback } from "react";
 
 const Chat = () => {
   const params = useParams();
@@ -26,15 +24,15 @@ const Chat = () => {
   const [roomId, setRoomId] = useState(null);
 
   const [chatMessages, setChatMessages] = useState([]);
-  const [senderProfileImg, setSenderProfileImg] = useState('');
-  const [receiverProfileImg, setReceiverProfileImg] = useState('');
-  const [message, setMessage] = useState('');
+  const [senderProfileImg, setSenderProfileImg] = useState("");
+  const [receiverProfileImg, setReceiverProfileImg] = useState("");
+  const [message, setMessage] = useState("");
 
-  const isMessage = message !== '';
+  const isMessage = message !== "";
 
-  const [prevScrollHeight, setPrevScrollHeight] = useState('');
+  const [prevScrollHeight, setPrevScrollHeight] = useState("");
 
-  const token = localStorage.getItem('accessToken');
+  const token = localStorage.getItem("accessToken");
   const headers = { accessToken: token };
 
   //roomId가 있을때 요청
@@ -58,7 +56,7 @@ const Chat = () => {
       webSocketFactory: () =>
         new SockJS(`https://${process.env.REACT_APP_API_SERVER}/socket`), // proxy를 통한 접속
       connectHeaders: {
-        headers // 토큰 전달
+        headers, // 토큰 전달
       },
       debug: function (str) {
         console.log(str);
@@ -74,7 +72,7 @@ const Chat = () => {
       onStompError: (frame) => {
         // error message 출력
         console.error(frame);
-      }
+      },
     });
 
     // 클라이언트 활성화
@@ -93,7 +91,7 @@ const Chat = () => {
 
       setChatMessages((_chatMessages) => [
         ..._chatMessages,
-        { nickname: getNickname, message: getMessage }
+        { nickname: getNickname, message: getMessage },
       ]);
     });
   };
@@ -108,12 +106,12 @@ const Chat = () => {
     clientRef.current.publish({
       destination: `/pub/messages/${roomId}`,
       headers: {
-        accessToken: token
+        accessToken: token,
       },
-      body: JSON.stringify({ content: message })
+      body: JSON.stringify({ content: message }),
     });
 
-    setMessage(''); // 메세지 초기화
+    setMessage(""); // 메세지 초기화
   };
 
   const scrollToBottom = () => {
@@ -152,6 +150,7 @@ const Chat = () => {
 
     // unmount 될때 클라이언트 비활성화
     return () => disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -159,6 +158,7 @@ const Chat = () => {
       // 페이지가 로딩 되고 roomId가 있을때 클라이언트 활성화 & 구독
       connect();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomId]);
 
   useEffect(() => {
@@ -172,6 +172,7 @@ const Chat = () => {
     setPrevScrollHeight(scrollRef.current?.scrollHeight);
 
     fetchNextPage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onScrollTo = (y) => {
@@ -183,6 +184,7 @@ const Chat = () => {
     if (inView && messages) {
       onFetchMessages();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView]);
 
   useEffect(() => {
@@ -193,6 +195,7 @@ const Chat = () => {
     onScrollTo(
       scrollRef.current?.scrollHeight - scrollRef.current?.clientHeight
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages?.pages]);
 
   return (
@@ -218,9 +221,9 @@ const Chat = () => {
                       src={receiverProfileImg}
                       alt="profileImage"
                       style={{
-                        width: '2rem',
-                        height: '2rem',
-                        borderRadius: '50%'
+                        width: "2rem",
+                        height: "2rem",
+                        borderRadius: "50%",
                       }}
                     />
                     <div className="firstMessageBox">
@@ -233,10 +236,10 @@ const Chat = () => {
                       src={senderProfileImg}
                       alt="profileImage"
                       style={{
-                        width: '2rem',
-                        height: '2rem',
-                        borderRadius: '50%',
-                        visibility: 'hidden'
+                        width: "2rem",
+                        height: "2rem",
+                        borderRadius: "50%",
+                        visibility: "hidden",
                       }}
                     />
                     <div className="messageBox">
@@ -269,9 +272,9 @@ const Chat = () => {
                       src={receiverProfileImg}
                       alt="profileImage"
                       style={{
-                        width: '2rem',
-                        height: '2rem',
-                        borderRadius: '50%'
+                        width: "2rem",
+                        height: "2rem",
+                        borderRadius: "50%",
                       }}
                     />
                     <div className="firstMessageBox">
@@ -284,10 +287,10 @@ const Chat = () => {
                       src={senderProfileImg}
                       alt="profileImage"
                       style={{
-                        width: '2rem',
-                        height: '2rem',
-                        borderRadius: '50%',
-                        visibility: 'hidden'
+                        width: "2rem",
+                        height: "2rem",
+                        borderRadius: "50%",
+                        visibility: "hidden",
                       }}
                     />
                     <div className="messageBox">
@@ -311,7 +314,7 @@ const Chat = () => {
           <img
             src={profileImg}
             alt="profileImage"
-            style={{ width: '2rem', height: '2rem', borderRadius: '50%' }}
+            style={{ width: "2rem", height: "2rem", borderRadius: "50%" }}
           />
           <InputBox>
             <input
@@ -320,7 +323,7 @@ const Chat = () => {
               value={message}
               onChange={onChange}
               onKeyPress={(e) =>
-                e.target.value !== '' && e.which === 13 && publish(message)
+                e.target.value !== "" && e.which === 13 && publish(message)
               }
             />
             <MessageButton
@@ -358,17 +361,6 @@ const ChatContainer = styled.div`
   flex: 1;
 
   overflow-y: auto;
-`;
-
-const Time = styled.p`
-  text-align: center;
-  font-style: normal;
-  font-weight: 300;
-  font-size: 0.813rem;
-  line-height: 16px;
-
-  color: #8e8e93;
-  margin-bottom: 0.5rem;
 `;
 
 const SenderContainer = styled.div`
@@ -478,7 +470,7 @@ const MessageButton = styled.button`
   font-size: 0.8rem;
   line-height: 14px;
   padding: 0 0.625rem;
-  color: ${(props) => (props.isMessage ? '#007aff' : 'gray')};
+  color: ${(props) => (props.isMessage ? "#007aff" : "gray")};
   /* background-color: #007aff;
     svg {
       color: white;

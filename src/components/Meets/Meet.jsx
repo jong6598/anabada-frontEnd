@@ -1,7 +1,6 @@
-import React, { useCallback } from 'react';
-import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
-import { useDetailMeet } from '../../react-query/hooks/useDetailMeet';
+import React, { useCallback } from "react";
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const Meet = ({ meet }) => {
   const navigate = useNavigate();
@@ -35,7 +34,7 @@ const Meet = ({ meet }) => {
             <p className="dDay">
               D-
               {difference(date1, new Date(meet.endDate)) === 0
-                ? 'Day'
+                ? "Day"
                 : difference(date1, new Date(meet.endDate))}
             </p>
           ) : (
@@ -280,7 +279,7 @@ const RightWrapper = styled.div`
     }
 
     svg:last-child {
-      font-family: 'Pretendard';
+      font-family: "Pretendard";
       font-style: normal;
       font-weight: 400;
       font-size: 0.8125rem;
@@ -290,7 +289,7 @@ const RightWrapper = styled.div`
       color: #8e8e93;
     }
     p:last-child {
-      font-family: 'Pretendard';
+      font-family: "Pretendard";
       font-style: normal;
       font-weight: 400;
       font-size: 0.8125rem;

@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { InView, useInView } from 'react-intersection-observer';
-import { useNavigate, useLocation } from 'react-router-dom';
-import styled from 'styled-components';
-import { myApi } from '../../shared/api';
-import { queryKeys } from '../../react-query/constants';
-import Loading from '../../layout/Loading';
-import Post from '../../components/Posts/Post';
-import { NoDataMyPage } from '../../layout/NoData';
-import Masonry from 'react-masonry-css';
+import React, { useState, useEffect } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInView } from "react-intersection-observer";
+import { useNavigate, useLocation } from "react-router-dom";
+import styled from "styled-components";
+import { myApi } from "../../shared/api";
+import { queryKeys } from "../../react-query/constants";
+import Loading from "../../layout/Loading";
+import Post from "../../components/Posts/Post";
+import { NoDataMyPage } from "../../layout/NoData";
+import Masonry from "react-masonry-css";
 
 const MyPosts = () => {
   const navigate = useNavigate();
@@ -33,47 +33,46 @@ const MyPosts = () => {
     ({ pageParam = 0 }) => getMyPosts(pageParam, filter),
     {
       getNextPageParam: (lastPage) =>
-        !lastPage.last ? lastPage.nextPage : undefined
+        !lastPage.last ? lastPage.nextPage : undefined,
     }
   );
 
-  console.log(data, 'data');
+  console.log(data, "data");
 
   useEffect(() => {
     if (inView) {
       fetchNextPage();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView]);
 
   const onClickFilter = (data) => {
     setFilter(data);
   };
 
-  // console.log(data, 'data');
-
   const breakpoints = {
     default: 3,
     1100: 3,
-    700: 2
+    700: 2,
   };
 
   return (
     <>
       <BtnDiv>
         <button
-          className={`btn ${tab === 'myWritePost' ? 'active' : ''} `}
+          className={`btn ${tab === "myWritePost" ? "active" : ""} `}
           onClick={() => {
-            onClickFilter('myWritePost');
-            setTab('myWritePost');
+            onClickFilter("myWritePost");
+            setTab("myWritePost");
           }}
         >
           <label>작성 피드</label>
         </button>
         <button
-          className={`btn ${tab === 'myLikePost' ? 'active' : ''} `}
+          className={`btn ${tab === "myLikePost" ? "active" : ""} `}
           onClick={() => {
-            onClickFilter('myLikePost');
-            setTab('myLikePost');
+            onClickFilter("myLikePost");
+            setTab("myLikePost");
           }}
         >
           <label>좋아요 피드</label>
@@ -93,7 +92,7 @@ const MyPosts = () => {
             return page.data.map((post) => (
               <PostContainer
                 key={post.postId}
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: "pointer" }}
                 onClick={() => {
                   navigate(`/posts/${post.postId}`);
                 }}
@@ -139,8 +138,6 @@ const PostDiv = styled.div`
     display: -webkit-box; /* Not needed if autoprefixing */
     display: -ms-flexbox; /* Not needed if autoprefixing */
     display: flex;
-
-    /* margin-left: -30px; */
     width: auto;
   }
   .my-masonry-grid_column {
@@ -157,7 +154,4 @@ const PostDiv = styled.div`
   }
 `;
 
-const PostContainer = styled.div`
-  /* display: inline-block; */
-  /* box-shadow: rgb(0 0 0 / 15%) 0px 2px 4px 0px; */
-`;
+const PostContainer = styled.div``;

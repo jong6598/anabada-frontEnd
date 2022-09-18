@@ -1,28 +1,28 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-import { css } from 'styled-components';
-import styled from 'styled-components';
-import { postApi } from '../../shared/api';
-import { useSelector } from 'react-redux';
-import { storage } from '../../shared/firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import '@toast-ui/editor/dist/toastui-editor.css';
-import 'tui-color-picker/dist/tui-color-picker.css';
-import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css';
-import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
-import '../../App.css';
-import { Editor } from '@toast-ui/react-editor';
+import React, { useEffect, useState, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router-dom";
+import { css } from "styled-components";
+import styled from "styled-components";
+import { postApi } from "../../shared/api";
+import { useSelector } from "react-redux";
+import { storage } from "../../shared/firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import "@toast-ui/editor/dist/toastui-editor.css";
+import "tui-color-picker/dist/tui-color-picker.css";
+import "@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css";
+import colorSyntax from "@toast-ui/editor-plugin-color-syntax";
+import "../../App.css";
+import { Editor } from "@toast-ui/react-editor";
 
-import { amenityInfo } from '../../shared/data';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { queryKeys } from '../../react-query/constants';
+import { amenityInfo } from "../../shared/data";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "../../react-query/constants";
 
 const PostAdd = () => {
   const navigate = useNavigate();
   const postId = useParams().postId;
   const nickname = useSelector((state) => state.auth.nickname);
-  const [imgSrc, setImgSrc] = useState('');
+  const [imgSrc, setImgSrc] = useState("");
 
   const [check, setCheck] = useState({
     airgun: false,
@@ -30,28 +30,24 @@ const PostAdd = () => {
     shop: false,
     cafe: false,
     park: false,
-    sleep: false
+    sleep: false,
   });
 
-  const [content, setContent] = useState('');
+  const [content, setContent] = useState("");
   const editorRef = useRef();
-
-  // const onAdd = useAddPost();
 
   const onSubmitPost = async (newPost) => {
     if (!postId) {
       try {
-        const post = await postApi.newPost(newPost);
-        // alert('게시글이 등록되었습니다!');
+        await postApi.newPost(newPost);
       } catch (err) {
         alert(err);
       }
     } else {
       try {
-        const update = await postApi.updatePost(postId, newPost);
-        // alert('게시글이 수정되었습니다!');
+        await postApi.updatePost(postId, newPost);
       } catch (err) {
-        alert('게시글 수정에 실패했습니다');
+        alert("게시글 수정에 실패했습니다");
       }
     }
   };
@@ -62,14 +58,14 @@ const PostAdd = () => {
     onSuccess: async () => {
       await queryClient.invalidateQueries([queryKeys.posts]);
       await queryClient.invalidateQueries([queryKeys.myPostsList], {
-        refetchType: 'all'
+        refetchType: "all",
       });
-      return navigate('/posts');
+      return navigate("/posts");
     },
     onError: (err) => {
       console.log(err.respose);
-      alert('게시글 등록에 실패하였습니다');
-    }
+      alert("게시글 등록에 실패하였습니다");
+    },
   });
 
   const {
@@ -77,9 +73,9 @@ const PostAdd = () => {
     handleSubmit,
 
     setValue,
-    formState: { isValid }
+    formState: { isValid },
   } = useForm({
-    mode: 'all'
+    mode: "all",
   });
 
   useEffect(() => {
@@ -88,19 +84,19 @@ const PostAdd = () => {
         const postInfo = await postApi.getPostDetail(`${postId}`);
 
         if (postInfo.data.nickname !== nickname) {
-          alert('수정 권한이 없습니다.');
+          alert("수정 권한이 없습니다.");
           navigate(-1);
           return;
         }
 
         const data = postInfo.data;
         console.log(data);
-        setValue('title', data.title);
-        setValue('area', data.area);
-        setValue('address', data.address);
-        setValue('createAt', data.createAt);
-        setValue('content', data.content);
-        setValue('amenity', data.amenity);
+        setValue("title", data.title);
+        setValue("area", data.area);
+        setValue("address", data.address);
+        setValue("createAt", data.createAt);
+        setValue("content", data.content);
+        setValue("amenity", data.amenity);
         setImgSrc(data.thumbnailUrl);
 
         const htmlString = data.content;
@@ -108,6 +104,7 @@ const PostAdd = () => {
       };
       setPost();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const previewImage = async (e) => {
@@ -126,7 +123,7 @@ const PostAdd = () => {
   const amenityCheck = (el) => {
     setCheck({
       ...check,
-      [el.value]: !check[el.value]
+      [el.value]: !check[el.value],
     });
   };
 
@@ -134,7 +131,7 @@ const PostAdd = () => {
     let thumbnailUrl;
 
     if (formData.postImg.length > 0) {
-      console.log(formData.postImg[0], 'test');
+      console.log(formData.postImg[0], "test");
       const uploaded_file = await uploadBytes(
         ref(storage, `images/post/${formData.postImg[0].name}`),
         formData.postImg[0]
@@ -143,7 +140,7 @@ const PostAdd = () => {
     } else if (postId) {
       thumbnailUrl = imgSrc;
     } else {
-      thumbnailUrl = '';
+      thumbnailUrl = "";
     }
 
     const newPost = {
@@ -152,7 +149,7 @@ const PostAdd = () => {
       address: formData.address,
       content: content,
       amenity: `${check.airgun} ${check.shower} ${check.shop} ${check.cafe} ${check.park} ${check.sleep}`,
-      thumbnailUrl: thumbnailUrl
+      thumbnailUrl: thumbnailUrl,
     };
 
     onAdd(newPost);
@@ -165,9 +162,9 @@ const PostAdd = () => {
 
   const onUploadImage = async (blob, callback) => {
     let formData = new FormData();
-    formData.append('file', blob);
+    formData.append("file", blob);
     const { data: url } = await postApi.uploadImages(formData);
-    callback(url.url, '콜백 이미지 URL');
+    callback(url.url, "콜백 이미지 URL");
   };
 
   return (
@@ -179,8 +176,8 @@ const PostAdd = () => {
             type="text"
             placeholder="제목을 입력해 주세요"
             autoComplete="off"
-            {...register('title', {
-              required: true
+            {...register("title", {
+              required: true,
             })}
           />
         </Element>
@@ -202,8 +199,8 @@ const PostAdd = () => {
                 type="file"
                 accept="image/*"
                 id="img_input"
-                {...register('postImg', {
-                  onChange: (e) => previewImage(e)
+                {...register("postImg", {
+                  onChange: (e) => previewImage(e),
                 })}
               />
               <label className="uploadBtn" htmlFor="img_input">
@@ -219,8 +216,8 @@ const PostAdd = () => {
           <select
             name="area"
             id="area"
-            {...register('area', {
-              required: true
+            {...register("area", {
+              required: true,
             })}
           >
             <option value="서울·경기·인천">서울·경기·인천</option>
@@ -240,8 +237,8 @@ const PostAdd = () => {
             type="text"
             placeholder="상세주소를 입력해 주세요"
             autoComplete="off"
-            {...register('address', {
-              required: true
+            {...register("address", {
+              required: true,
             })}
           />
         </Element>
@@ -288,16 +285,16 @@ const PostAdd = () => {
                 colorSyntax,
                 // 기본 색상 preset 적용
                 {
-                  preset: ['#1F2E3D', '#4c5864', '#ED7675']
-                }
-              ]
+                  preset: ["#1F2E3D", "#4c5864", "#ED7675"],
+                },
+              ],
             ]}
             toolbarItems={[
               // 툴바 옵션 설정
-              ['heading', 'image', 'bold', 'italic', 'strike'],
-              ['hr', 'quote'],
-              ['ul', 'ol'],
-              ['link']
+              ["heading", "image", "bold", "italic", "strike"],
+              ["hr", "quote"],
+              ["ul", "ol"],
+              ["link"],
             ]}
             //FIXME:DOMPURIFY
             // customHTMLSanitizer={
@@ -305,13 +302,13 @@ const PostAdd = () => {
             // }
             previewHighlight={false}
             hooks={{
-              addImageBlobHook: onUploadImage
+              addImageBlobHook: onUploadImage,
             }}
           ></Editor>
         </Toastdiv>
         <PostBtnDiv>
           <button type="submit" disabled={!isValid}>
-            게시글 {postId ? '수정' : '등록'} 하기
+            게시글 {postId ? "수정" : "등록"} 하기
           </button>
         </PostBtnDiv>
       </PostForm>
@@ -451,9 +448,9 @@ const AmenityButton = styled.button`
       border: none;
     `}
   &:hover {
-    color: ${(props) => (props.check ? 'white' : 'black')};
-    background-color: ${(props) => (props.check ? '#007AFF' : 'transparent')};
-    border: ${(props) => (props.check ? 'none' : '0.0625rem solid #000000')};
+    color: ${(props) => (props.check ? "white" : "black")};
+    background-color: ${(props) => (props.check ? "#007AFF" : "transparent")};
+    border: ${(props) => (props.check ? "none" : "0.0625rem solid #000000")};
   }
 `;
 

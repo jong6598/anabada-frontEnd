@@ -1,21 +1,20 @@
-import React, { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
-import Meet from '../../components/Meets/Meet';
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { useInView } from 'react-intersection-observer';
-import { meetsApi } from '../../shared/api';
-import Loading, { InfiniteLoading } from '../../layout/Loading';
+import React, { useEffect, useRef, useState } from "react";
+import styled from "styled-components";
+import Meet from "../../components/Meets/Meet";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInView } from "react-intersection-observer";
+import { meetsApi } from "../../shared/api";
+import Loading from "../../layout/Loading";
 
-import { queryKeys } from '../../react-query/constants';
-import Navigate from '../../layout/Navigate';
-import { TbPencil } from 'react-icons/tb';
-import { Link } from 'react-router-dom';
-import NoData from '../../layout/NoData';
+import { queryKeys } from "../../react-query/constants";
+import { TbPencil } from "react-icons/tb";
+import { Link } from "react-router-dom";
+import NoData from "../../layout/NoData";
 
 const MeetsAll = () => {
   const [search, setSearch] = useState(null);
-  const [areaSelected, setAreaSelected] = useState('ALL');
-  const accesstoken = localStorage.getItem('accessToken');
+  const [areaSelected, setAreaSelected] = useState("ALL");
+  const accesstoken = localStorage.getItem("accessToken");
 
   const fetchPosts = async (pageParam, areaSelected, search) => {
     if (search) {
@@ -49,7 +48,7 @@ const MeetsAll = () => {
     ({ pageParam = 0 }) => fetchPosts(pageParam, areaSelected, search),
     {
       getNextPageParam: (lastPage) =>
-        !lastPage.last ? lastPage.nextPage : undefined
+        !lastPage.last ? lastPage.nextPage : undefined,
     }
   );
 
@@ -60,17 +59,17 @@ const MeetsAll = () => {
     if (inView) {
       fetchNextPage();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inView]);
 
   const onKeyPress = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       onSearch(e);
     }
   };
 
   const onSearch = (e) => {
     setSearch(e.target.value);
-    // searchRef.current.value = '';
   };
 
   const onChangeArea = (e) => {
@@ -108,7 +107,7 @@ const MeetsAll = () => {
       )}
 
       {data.pages[0].data.length === 0 && (
-        <NoData text={'모임'} content={'모임'} />
+        <NoData text={"모임"} content={"모임"} />
       )}
       {data.pages.map((page) => {
         return page.data.map((meet) => (
