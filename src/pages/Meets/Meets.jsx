@@ -1,16 +1,16 @@
-import React from "react";
-import styled from "styled-components";
-import { Link, useNavigate } from "react-router-dom";
-import Meet from "../../components/Meets/Meet";
-import { useMeets } from "../../react-query/hooks/useMeets";
-import { usePopularMeets } from "../../react-query/hooks/usePopularMeets";
-import PopularMeets from "../../components/Meets/PopularMeets";
-import NoData from "../../layout/NoData";
-import { TbPencil } from "react-icons/tb";
+import React from 'react';
+import styled from 'styled-components';
+import { Link, useNavigate } from 'react-router-dom';
+import Meet from '../../components/Meets/Meet';
+import { useMeets } from '../../react-query/hooks/meets/useMeets';
+import { usePopularMeets } from '../../react-query/hooks/meets/usePopularMeets';
+import PopularMeets from '../../components/Meets/PopularMeets';
+import NoData from '../../layout/NoData';
+import { TbPencil } from 'react-icons/tb';
 
 const Meets = () => {
   const navigate = useNavigate();
-  const accesstoken = localStorage.getItem("accessToken");
+  const accesstoken = localStorage.getItem('accessToken');
   const { meetsPosts, areaSelected, setAreaSelected } = useMeets();
   const { popularPosts, setPopularAreaSelected } = usePopularMeets();
 
@@ -42,7 +42,7 @@ const Meets = () => {
       <MeetsPostsContainer>
         <div className="topBox">
           <h2>오픈 모임 리스트</h2>
-          <button onClick={() => navigate("/meetsAll")}>
+          <button onClick={() => navigate('/meetsAll')}>
             <svg
               width="9"
               height="14"
@@ -60,7 +60,7 @@ const Meets = () => {
           </button>
         </div>
         {meetsPosts.content.length === 0 && (
-          <NoData text={"모임"} content={"모임"} />
+          <NoData text={'모임'} content={'모임'} />
         )}
         {meetsPosts.content.map((meet) => {
           return <Meet key={meet.thunderPostId} meet={meet} />;

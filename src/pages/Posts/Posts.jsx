@@ -1,69 +1,32 @@
-import React, { useEffect, useState, useRef } from "react";
-import styled from "styled-components";
-import { Link } from "react-router-dom";
-
-import { useInfiniteQuery } from "@tanstack/react-query";
-import Post from "../../components/Posts/Post";
-import { postApi } from "../../shared/api";
-import { useInView } from "react-intersection-observer";
-import { queryKeys } from "../../react-query/constants";
-
-import Loading from "../../layout/Loading";
-import NoData from "../../layout/NoData";
-
-import Masonry from "react-masonry-css";
-import SkeletonItem from "../../layout/SkeletonItem";
-import { TbPencil } from "react-icons/tb";
-
-// export function usePreFetch() {
-//   const queryClient = useQueryClient();
-//   queryClient.prefetchQuery(queryKeys.posts);
-// }
+import React, { useEffect, useState, useRef } from 'react';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import PostContainer from '../../components/Posts/PostContainer';
+import { postApi } from '../../shared/api';
+import { useInView } from 'react-intersection-observer';
+import { queryKeys } from '../../react-query/constants';
+import Loading from '../../layout/Loading';
+import NoData from '../../layout/NoData';
+import Masonry from 'react-masonry-css';
+import { TbPencil } from 'react-icons/tb';
+import { usePosts } from '../../react-query/hooks/posts/usePosts';
 
 const Posts = () => {
   const { ref, inView } = useInView();
   const searchRef = useRef();
-  const accesstoken = localStorage.getItem("accessToken");
+  const accesstoken = localStorage.getItem('accessToken');
 
-  const [areaSelected, setAreaSelected] = useState("ALL");
-  const [search, setSearch] = useState(null);
-
-  const fetchPosts = async (pageParam, areaSelected, search) => {
-    if (search) {
-      try {
-        const res = await postApi.getSearchPosts(
-          pageParam,
-          areaSelected,
-          search
-        );
-        const data = res.data.content;
-        const last = res.data.last;
-        return { data, nextPage: pageParam + 1, last };
-      } catch (err) {
-        console.log(err);
-      }
-    } else {
-      try {
-        const res = await postApi.getPosts(pageParam, areaSelected);
-        const data = res.data.content;
-        const last = res.data.last;
-        return { data, nextPage: pageParam + 1, last };
-      } catch (err) {
-        console.log(err);
-        alert(err);
-      }
-    }
-  };
-
-  const { data, fetchNextPage, isFetchingNextPage, isFetching, isLoading } =
-    useInfiniteQuery(
-      [queryKeys.posts, areaSelected, search],
-      ({ pageParam = 0 }) => fetchPosts(pageParam, areaSelected, search),
-      {
-        getNextPageParam: (lastPage) =>
-          !lastPage.last ? lastPage.nextPage : undefined,
-      }
-    );
+  const {
+    data,
+    fetchNextPage,
+    isFetchingNextPage,
+    isFetching,
+    isLoading,
+    areaSelected,
+    setSearch,
+    setAreaSelected
+  } = usePosts();
 
   useEffect(() => {
     if (inView) {
@@ -73,14 +36,14 @@ const Posts = () => {
   }, [inView]);
 
   const onKeyPress = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       onSearch(e);
     }
   };
 
   const onSearch = (e) => {
     setSearch(e.target.value);
-    searchRef.current.value = "";
+    searchRef.current.value = '';
   };
 
   const onChangeArea = (e) => {
@@ -90,7 +53,7 @@ const Posts = () => {
   const breakpoints = {
     default: 3,
     1100: 3,
-    700: 2,
+    700: 2
   };
 
   return (
@@ -118,7 +81,7 @@ const Posts = () => {
         </CategoryContainer>
         <PostDiv>
           {data.pages[0].data.length === 0 && (
-            <NoData text={"게시물"} content={"게시물"} />
+            <NoData text={'게시물'} content={'게시물'} />
           )}
           <Masonry
             breakpointCols={breakpoints}
@@ -127,10 +90,12 @@ const Posts = () => {
           >
             {data.pages.map((page) => {
               return page.data.map((post) => (
-                <PostContainer key={post.postId} style={{ cursor: "pointer" }}>
-                  {isFetching && <SkeletonItem />}
-                  {!isLoading && <Post data={post} />}
-                </PostContainer>
+                <PostContainer
+                  key={post.postId}
+                  post={post}
+                  isFetching={isFetching}
+                  isLoading={isLoading}
+                />
               ));
             })}
           </Masonry>
@@ -139,7 +104,7 @@ const Posts = () => {
       </MainDiv>
       {accesstoken && (
         <PostBtn>
-          <Link to="/posts/upload">
+          <Link to="/postAdd">
             <TbPencil />
           </Link>
         </PostBtn>
@@ -182,6 +147,7 @@ const PostDiv = styled.div`
 
 const CategoryContainer = styled.div`
   display: flex;
+
   flex-direction: row;
   align-items: center;
   padding: 0.875rem 0;
@@ -203,8 +169,6 @@ const CategoryContainer = styled.div`
     border-radius: 0.75rem;
   }
 `;
-
-const PostContainer = styled.div``;
 
 const PostBtn = styled.div`
   position: fixed;

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { meetsApi } from '../../shared/api';
-import { queryKeys } from '../constants';
+import { meetsApi } from '../../../shared/api';
+import { queryKeys } from '../../constants';
 
 // 모임 게시글
 const fetchMeetsList = async (pageParam, areaSelected) => {

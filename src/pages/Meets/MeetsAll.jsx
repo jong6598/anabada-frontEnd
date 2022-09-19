@@ -1,59 +1,29 @@
-import React, { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
-import Meet from "../../components/Meets/Meet";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { useInView } from "react-intersection-observer";
-import { meetsApi } from "../../shared/api";
-import Loading from "../../layout/Loading";
+import React, { useEffect, useRef, useState } from 'react';
+import styled from 'styled-components';
+import Meet from '../../components/Meets/Meet';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInView } from 'react-intersection-observer';
+import Loading from '../../layout/Loading';
 
-import { queryKeys } from "../../react-query/constants";
-import { TbPencil } from "react-icons/tb";
-import { Link } from "react-router-dom";
-import NoData from "../../layout/NoData";
+import { queryKeys } from '../../react-query/constants';
+import { TbPencil } from 'react-icons/tb';
+import { Link } from 'react-router-dom';
+import NoData from '../../layout/NoData';
+import { useAllMeets } from '../../react-query/hooks/meets/useAllMeets';
 
 const MeetsAll = () => {
-  const [search, setSearch] = useState(null);
-  const [areaSelected, setAreaSelected] = useState("ALL");
-  const accesstoken = localStorage.getItem("accessToken");
-
-  const fetchPosts = async (pageParam, areaSelected, search) => {
-    if (search) {
-      try {
-        const res = await meetsApi.getSearchPosts(
-          pageParam,
-          areaSelected,
-          search
-        );
-
-        const data = res.data.content;
-        const last = res.data.last;
-        return { data, nextPage: pageParam + 1, last };
-      } catch (error) {
-        console.log(error.response);
-      }
-    } else {
-      try {
-        const res = await meetsApi.getMeetsPosts(pageParam, areaSelected);
-        const data = res.data.content;
-        const last = res.data.last;
-        return { data, nextPage: pageParam + 1, last };
-      } catch (error) {
-        console.log(error.response);
-      }
-    }
-  };
-
-  const { data, fetchNextPage, isFetchingNextPage } = useInfiniteQuery(
-    [queryKeys.allMeets, areaSelected, search],
-    ({ pageParam = 0 }) => fetchPosts(pageParam, areaSelected, search),
-    {
-      getNextPageParam: (lastPage) =>
-        !lastPage.last ? lastPage.nextPage : undefined,
-    }
-  );
-
+  const accesstoken = localStorage.getItem('accessToken');
   const searchRef = useRef();
   const { ref, inView } = useInView();
+
+  const {
+    data,
+    fetchNextPage,
+    isFetchingNextPage,
+    setSearch,
+    setAreaSelected,
+    areaSelected
+  } = useAllMeets();
 
   useEffect(() => {
     if (inView) {
@@ -63,7 +33,7 @@ const MeetsAll = () => {
   }, [inView]);
 
   const onKeyPress = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       onSearch(e);
     }
   };
@@ -107,7 +77,7 @@ const MeetsAll = () => {
       )}
 
       {data.pages[0].data.length === 0 && (
-        <NoData text={"모임"} content={"모임"} />
+        <NoData text={'모임'} content={'모임'} />
       )}
       {data.pages.map((page) => {
         return page.data.map((meet) => (

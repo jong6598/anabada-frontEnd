@@ -1,35 +1,38 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import styled from "styled-components";
-import { postApi } from "../../shared/api";
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import styled from 'styled-components';
+import { postApi } from '../../shared/api';
 import {
   useQuery,
   useQueryClient,
   useMutation,
-  useInfiniteQuery,
-} from "@tanstack/react-query";
-import { Viewer } from "@toast-ui/react-editor";
-import "@toast-ui/editor/dist/toastui-editor-viewer.css";
-import Comment from "../../components/Comments/Comment";
-import { useInView } from "react-intersection-observer";
-import { FiMoreHorizontal } from "react-icons/fi";
-import { FiEdit2 } from "react-icons/fi";
-import { RiDeleteBin5Line } from "react-icons/ri";
-import { queryKeys } from "../../react-query/constants";
-import { FiInbox } from "react-icons/fi";
-import { BsFillChatDotsFill } from "react-icons/bs";
-import Navigate from "../../layout/Navigate";
+  useInfiniteQuery
+} from '@tanstack/react-query';
+import { Viewer } from '@toast-ui/react-editor';
+import '@toast-ui/editor/dist/toastui-editor-viewer.css';
+import Comment from '../../components/Comments/Comment';
+import { useInView } from 'react-intersection-observer';
+import { FiMoreHorizontal } from 'react-icons/fi';
+import { FiEdit2 } from 'react-icons/fi';
+import { RiDeleteBin5Line } from 'react-icons/ri';
+import { queryKeys } from '../../react-query/constants';
+import { FiInbox } from 'react-icons/fi';
+import { BsFillChatDotsFill } from 'react-icons/bs';
+import Navigate from '../../layout/Navigate';
 
 const PostDetail = () => {
   const navigate = useNavigate();
+
+  const accessToken = localStorage.getItem('accessToken');
+
   const params = useParams();
   const postId = params.postId;
   const nickname = useSelector((state) => state.auth.nickname);
   const [liked, setLiked] = useState();
   const queryClient = useQueryClient();
   const profileImg = useSelector((state) => state.auth.profileImg);
-  const [newComment, setNewComment] = useState("");
+  const [newComment, setNewComment] = useState('');
   const [isValid, setIsValid] = useState(false);
   const { ref, inView } = useInView();
   const write_ref = useRef();
@@ -50,11 +53,11 @@ const PostDetail = () => {
     [queryKeys.detailPost, liked, postId],
     getPostDetail,
     {
-      refetchOnWindowFocus: false,
+      refetchOnWindowFocus: false
     }
   ).data;
 
-  const getAmenity = postInfo.amenity.split(" ");
+  const getAmenity = postInfo.amenity.split(' ');
 
   const fetchComments = async (pageParam) => {
     try {
@@ -72,13 +75,13 @@ const PostDetail = () => {
   const {
     data: comments,
     fetchNextPage,
-    isFetchingNextPage,
+    isFetchingNextPage
   } = useInfiniteQuery(
     [queryKeys.commentList],
     ({ pageParam = 0 }) => fetchComments(pageParam),
     {
       getNextPageParam: (lastPage) =>
-        !lastPage.last ? lastPage.nextPage : undefined,
+        !lastPage.last ? lastPage.nextPage : undefined
     }
   );
 
@@ -107,13 +110,13 @@ const PostDetail = () => {
     onSuccess: async () => {
       await queryClient.invalidateQueries([queryKeys.posts]);
       await queryClient.invalidateQueries([queryKeys.myPostsList], {
-        refetchType: "all",
+        refetchType: 'all'
       });
-      return navigate("/posts");
+      return navigate('/posts');
     },
     onError: (err) => {
       console.log(err.respose);
-    },
+    }
   });
 
   //좋아요 기능구현
@@ -140,12 +143,12 @@ const PostDetail = () => {
   const { mutate: onToggleLike } = useMutation(toggleLike, {
     onSuccess: async () => {
       await queryClient.invalidateQueries([queryKeys.myPostsList], {
-        refetchType: "all",
+        refetchType: 'all'
       });
     },
     onError: (err) => {
       console.log(err.respose);
-    },
+    }
   });
 
   //댓글 작성
@@ -159,12 +162,12 @@ const PostDetail = () => {
 
   const submitCommentsMutation = useMutation(submitComments, {
     onSuccess: () => {
-      write_ref.current.value = "";
+      write_ref.current.value = '';
       queryClient.invalidateQueries([queryKeys.commentList]);
     },
     onError: (err) => {
       console.log(err.respose);
-    },
+    }
   });
 
   const onRequestChat = (nickname) => {
@@ -173,7 +176,7 @@ const PostDetail = () => {
 
   return (
     <Container>
-      <Navigate text={"포스트"} />
+      <Navigate text={'포스트'} />
       <TitleDiv>
         <span>{postInfo.title}</span>
       </TitleDiv>
@@ -213,12 +216,12 @@ const PostDetail = () => {
           </svg>
           <span>조회 {postInfo.viewCount}</span>
         </UserBox>
-        {nickname === postInfo.nickname && (
+        {accessToken && nickname === postInfo.nickname && (
           <button className="moreBtn" onClick={onShowModal}>
             <FiMoreHorizontal />
           </button>
         )}
-        {nickname && nickname !== postInfo.nickname && (
+        {accessToken && nickname && nickname !== postInfo.nickname && (
           <button
             className="chatBtn"
             onClick={() => onRequestChat(postInfo.nickname)}
@@ -238,7 +241,7 @@ const PostDetail = () => {
             <div
               className="deleteBtn"
               onClick={() => {
-                const result = window.confirm("정말 삭제하시겠습니까?");
+                const result = window.confirm('정말 삭제하시겠습니까?');
                 if (result) {
                   onDelete(params.postId);
                 }
@@ -291,12 +294,12 @@ const PostDetail = () => {
       <Amenity>
         <label>주변정보</label>
         <div>
-          {getAmenity[0] === "true" ? <p>💨 에어건이 있어요</p> : null}
-          {getAmenity[1] === "true" ? <p>🏄 서핑샵이 있어요</p> : null}
-          {getAmenity[2] === "true" ? <p>🛀 샤워시설이 있어요</p> : null}
-          {getAmenity[3] === "true" ? <p>🍽 식당 카페가 있어요</p> : null}
-          {getAmenity[4] === "true" ? <p>🚘 주차장이 있어요</p> : null}
-          {getAmenity[5] === "true" ? <p>🏨 숙박시설이 있어요</p> : null}
+          {getAmenity[0] === 'true' ? <p>💨 에어건이 있어요</p> : null}
+          {getAmenity[1] === 'true' ? <p>🏄 서핑샵이 있어요</p> : null}
+          {getAmenity[2] === 'true' ? <p>🛀 샤워시설이 있어요</p> : null}
+          {getAmenity[3] === 'true' ? <p>🍽 식당 카페가 있어요</p> : null}
+          {getAmenity[4] === 'true' ? <p>🚘 주차장이 있어요</p> : null}
+          {getAmenity[5] === 'true' ? <p>🏨 숙박시설이 있어요</p> : null}
         </div>
       </Amenity>
 
@@ -304,7 +307,7 @@ const PostDetail = () => {
         <Viewer initialValue={postInfo.content} />
       </PostBox>
       <ButtonContainer>
-        {nickname && postInfo.nickname !== nickname ? (
+        {accessToken && nickname && postInfo.nickname !== nickname ? (
           <HeartBtn
             onClick={() => {
               onToggleLike(postInfo.postId);
@@ -361,7 +364,7 @@ const PostDetail = () => {
           <span>좋아요 {postInfo.likeCount}개</span>
         </CountBox>
         <Divider />
-        {nickname && (
+        {accessToken && nickname && (
           <WriteComment>
             <img src={profileImg} alt="" />
             <input
@@ -382,7 +385,7 @@ const PostDetail = () => {
               disabled={isValid === false}
               onClick={() => {
                 const postComment = {
-                  content: newComment,
+                  content: newComment
                 };
                 submitCommentsMutation.mutate(postComment);
               }}

@@ -1,28 +1,29 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import styled from "styled-components";
-import { storage } from "../../shared/firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { useForm } from "react-hook-form";
-import { meetsApi } from "../../shared/api";
-import { useSelector } from "react-redux";
-import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { queryKeys } from "../../react-query/constants";
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import styled from 'styled-components';
+import { storage } from '../../shared/firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { useForm } from 'react-hook-form';
+import { meetsApi } from '../../shared/api';
+import { useSelector } from 'react-redux';
+import { useAddMeet } from '../../react-query/hooks/meets/useAddMeet';
 
 const MeetAdd = () => {
   const nickname = useSelector((state) => state.auth.nickname);
   const navigate = useNavigate();
   const thunderPostId = useParams().thunderPostId;
-  const queryClient = useQueryClient();
-  const [imgSrc, setImgSrc] = useState("");
+
+  const onAdd = useAddMeet();
+
+  const [imgSrc, setImgSrc] = useState('');
 
   const {
     register,
     handleSubmit,
     setValue,
-    formState: { isValid },
+    formState: { isValid }
   } = useForm({
-    mode: "all",
+    mode: 'all'
   });
 
   useEffect(() => {
@@ -31,21 +32,21 @@ const MeetAdd = () => {
         const meetInfo = await meetsApi.getMeetDetail(`${thunderPostId}`);
 
         if (meetInfo.data.nickname !== nickname) {
-          alert("수정 권한이 없습니다.");
+          alert('수정 권한이 없습니다.');
           navigate(-1);
           return;
         }
 
         const data = meetInfo.data;
 
-        setValue("title", data.title);
-        setValue("area", data.area);
-        setValue("address", data.address);
-        setValue("createAt", data.createAt);
-        setValue("endDate", data.endDate);
-        setValue("meetDate", data.meetDate);
-        setValue("goalMember", data.goalMember);
-        setValue("content", data.content);
+        setValue('title', data.title);
+        setValue('area', data.area);
+        setValue('address', data.address);
+        setValue('createAt', data.createAt);
+        setValue('endDate', data.endDate);
+        setValue('meetDate', data.meetDate);
+        setValue('goalMember', data.goalMember);
+        setValue('content', data.content);
         setImgSrc(data.thumbnailUrl);
       };
       setMeet();
@@ -66,35 +67,6 @@ const MeetAdd = () => {
     });
   };
 
-  const onSubmitMeet = async (newMeet) => {
-    if (!thunderPostId) {
-      try {
-        await meetsApi.postMeetPost(newMeet);
-      } catch (err) {
-        alert("모임 등록에 실패하였습니다");
-      }
-    } else {
-      try {
-        await meetsApi.editMeetPost(thunderPostId, newMeet);
-      } catch (err) {
-        console.log(err);
-        alert("모임 수정에 실패하였습니다");
-      }
-    }
-  };
-
-  const { mutate: onAdd } = useMutation(onSubmitMeet, {
-    onSuccess: () => {
-      queryClient.invalidateQueries([queryKeys.meets]);
-      queryClient.invalidateQueries([queryKeys.allMeets]);
-      navigate(`/meets`);
-    },
-    onError: (err) => {
-      console.log(err.respose);
-      alert("모임 등록에 실패하였습니다");
-    },
-  });
-
   const onSubmit = async (formData) => {
     let getThumbnailUrl;
 
@@ -107,15 +79,16 @@ const MeetAdd = () => {
     } else if (thunderPostId) {
       getThumbnailUrl = imgSrc;
     } else {
-      getThumbnailUrl = "";
+      getThumbnailUrl = '';
     }
 
     const newMeet = {
       ...formData,
-      thumbnailUrl: getThumbnailUrl,
+      thumbnailUrl: getThumbnailUrl
     };
 
-    onAdd(newMeet);
+    console.log(newMeet, 'newMeet');
+    onAdd({ newMeet, thunderPostId });
   };
 
   return (
@@ -128,8 +101,8 @@ const MeetAdd = () => {
             name="title"
             autoComplete="off"
             placeholder="제목을 입력해주세요"
-            {...register("title", {
-              required: "제목을 입력해주세요",
+            {...register('title', {
+              required: '제목을 입력해주세요'
             })}
           />
         </div>
@@ -150,8 +123,8 @@ const MeetAdd = () => {
                 type="file"
                 accept="image/*"
                 name="thumbnailUrl"
-                {...register("thumbnailUrl", {
-                  onChange: (e) => previewImage(e),
+                {...register('thumbnailUrl', {
+                  onChange: (e) => previewImage(e)
                 })}
                 id="img_input"
               />
@@ -166,8 +139,8 @@ const MeetAdd = () => {
           <select
             name="area"
             id="area"
-            {...register("area", {
-              required: "지역을 입력해주세요",
+            {...register('area', {
+              required: '지역을 입력해주세요'
             })}
           >
             <option value="서울·경기·인천">서울·경기·인천</option>
@@ -186,8 +159,8 @@ const MeetAdd = () => {
           <input
             type="text"
             name="address"
-            {...register("address", {
-              required: "주소를 입력해주세요",
+            {...register('address', {
+              required: '주소를 입력해주세요'
             })}
           />
         </div>
@@ -196,8 +169,8 @@ const MeetAdd = () => {
           <input
             type="number"
             name="goalMember"
-            {...register("goalMember", {
-              required: "모집 인원을 입력해주세요",
+            {...register('goalMember', {
+              required: '모집 인원을 입력해주세요'
             })}
           />
         </div>
@@ -206,9 +179,9 @@ const MeetAdd = () => {
           <input
             type="date"
             name="endDate"
-            min={new Date().toISOString().split("T")[0]}
-            {...register("endDate", {
-              required: "종료일을 입력해주세요",
+            min={new Date().toISOString().split('T')[0]}
+            {...register('endDate', {
+              required: '종료일을 입력해주세요'
             })}
           />
         </div>
@@ -218,9 +191,9 @@ const MeetAdd = () => {
           <input
             type="date"
             name="meetDate"
-            min={new Date().toISOString().split("T")[0]}
-            {...register("meetDate", {
-              required: "모임일을 입력해주세요",
+            min={new Date().toISOString().split('T')[0]}
+            {...register('meetDate', {
+              required: '모임일을 입력해주세요'
             })}
           />
         </div>
@@ -232,13 +205,13 @@ const MeetAdd = () => {
             id=""
             cols="30"
             rows="10"
-            {...register("content", {
-              required: "상세 내용을 입력해주세요",
+            {...register('content', {
+              required: '상세 내용을 입력해주세요'
             })}
           />
         </div>
         <button type="submit" disabled={!isValid}>
-          모임 {thunderPostId ? "수정" : "등록"} 하기
+          모임 {thunderPostId ? '수정' : '등록'} 하기
         </button>
       </form>
     </Container>
