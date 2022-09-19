@@ -1,6 +1,6 @@
 import './App.css';
 import { ThemeProvider } from 'styled-components';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import theme from './styles/theme';
 import GlobalStyle from './styles/global';
 import Meets from './pages/Meets/Meets';
@@ -93,6 +93,8 @@ function App() {
     '/myposts'
   ];
 
+  console.log(location.pathname, 'pathname');
+
   return (
     <>
       <ThemeProvider theme={theme}>
@@ -113,9 +115,9 @@ function App() {
             <Route path="/meetsAll" element={<MeetsAll />} />
             <Route path="/meets/:thunderPostId" element={<MeetDetail />} />
             <Route path="/posts/:postId" element={<PostDetail />} />
-            {accessToken && getCookies && (
+            {accessToken && getCookies ? (
               <>
-                <Route path="/posts/upload" element={<PostAdd />} />
+                <Route path="/postAdd" element={<PostAdd />} />
                 <Route path="/posts/:postId/edit" element={<PostAdd />} />
                 <Route
                   path="/meetAdd/:thunderPostId/edit"
@@ -126,9 +128,14 @@ function App() {
                 <Route path="/mymeets" element={<MyMeets />} />
                 <Route path="/myposts" element={<MyPosts />} />
               </>
+            ) : (
+              <>
+                <Route element={<Navigate to="/login" replace />} />
+              </>
             )}
           </Route>
-          {accessToken && getCookies && (
+
+          {accessToken && getCookies ? (
             <>
               <Route path="/chat/:nickname" element={<Chat />} />
               <Route path="/room" element={<ChatRoom />} />
@@ -136,6 +143,10 @@ function App() {
                 path="/notifications"
                 element={<Notification setNotifications={setNotifications} />}
               />
+            </>
+          ) : (
+            <>
+              <Route element={<Navigate to="/login" replace />} />
             </>
           )}
           <Route path="/*" element={<NotFound />} />

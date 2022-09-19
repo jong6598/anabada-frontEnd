@@ -1,12 +1,16 @@
-import styled from "styled-components";
+import styled from 'styled-components';
+import Header from '../../layout/Header';
 
 const NotFound = () => {
   return (
     <>
+      <Header />
       <NotFoundDiv>
-        <span>::: 404 :::</span>
-        <br />
-        <span className="joke">이곳에서는 서핑을 할 수 없습니다!</span>
+        <div>
+          <span>::: 404 :::</span>
+          <br />
+          <span className="joke">이곳에서는 서핑을 할 수 없습니다!</span>
+        </div>
       </NotFoundDiv>
     </>
   );
@@ -14,9 +18,10 @@ const NotFound = () => {
 export default NotFound;
 
 const NotFoundDiv = styled.div`
-  margin-top: 12rem;
+  width: 100vw;
+  padding-top: 20rem;
   display: flex;
-  flex-direction: column;
+
   justify-content: center;
   align-items: center;
   font-size: 2rem;
@@ -25,5 +30,10 @@ const NotFoundDiv = styled.div`
   .joke {
     font-size: 1.5rem;
     font-weight: 500;
+  }
+  div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 `;
