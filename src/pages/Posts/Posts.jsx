@@ -1,18 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-
 import { useInfiniteQuery } from '@tanstack/react-query';
-import Post from '../../components/Posts/Post';
+import PostContainer from '../../components/Posts/PostContainer';
 import { postApi } from '../../shared/api';
 import { useInView } from 'react-intersection-observer';
 import { queryKeys } from '../../react-query/constants';
-
 import Loading from '../../layout/Loading';
 import NoData from '../../layout/NoData';
-
 import Masonry from 'react-masonry-css';
-import SkeletonItem from '../../layout/SkeletonItem';
 import { TbPencil } from 'react-icons/tb';
 
 // export function usePreFetch() {
@@ -127,10 +123,12 @@ const Posts = () => {
           >
             {data.pages.map((page) => {
               return page.data.map((post) => (
-                <PostContainer key={post.postId} style={{ cursor: 'pointer' }}>
-                  {isFetching && <SkeletonItem />}
-                  {!isLoading && <Post data={post} />}
-                </PostContainer>
+                <PostContainer
+                  key={post.postId}
+                  post={post}
+                  isFetching={isFetching}
+                  isLoading={isLoading}
+                />
               ));
             })}
           </Masonry>
@@ -182,6 +180,7 @@ const PostDiv = styled.div`
 
 const CategoryContainer = styled.div`
   display: flex;
+
   flex-direction: row;
   align-items: center;
   padding: 0.875rem 0;
@@ -203,8 +202,6 @@ const CategoryContainer = styled.div`
     border-radius: 0.75rem;
   }
 `;
-
-const PostContainer = styled.div``;
 
 const PostBtn = styled.div`
   position: fixed;

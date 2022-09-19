@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { memo, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
-const Post = ({ data }) => {
+const Image = ({ thumbnailUrl }) => (
+  <LazyLoadImage alt="thumbnail" effect="blur" src={thumbnailUrl} />
+);
+
+const Post = memo(({ data }) => {
   const navigate = useNavigate();
 
   return (
@@ -12,7 +18,7 @@ const Post = ({ data }) => {
       }}
     >
       <ImageBox>
-        <img src={data.thumbnailUrl} alt="thumbnailimage" />
+        <Image thumbnailUrl={data.thumbnailUrl} />
         <div className="infoBox">
           {data.liked === true ? (
             <>
@@ -70,7 +76,7 @@ const Post = ({ data }) => {
       </PostInfo>
     </PostInfoBox>
   );
-};
+});
 
 export default Post;
 
@@ -125,7 +131,7 @@ const ImageBox = styled.div`
     width: 100%;
 
     /* FIXME: 스켈레톤으로 바꿔야함 */
-    min-height: 50px;
+    min-height: 8rem;
   }
 `;
 

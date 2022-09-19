@@ -93,8 +93,6 @@ function App() {
     '/myposts'
   ];
 
-  console.log(location.pathname, 'pathname');
-
   return (
     <>
       <ThemeProvider theme={theme}>
