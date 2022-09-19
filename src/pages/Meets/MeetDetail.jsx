@@ -5,11 +5,11 @@ import { FiMoreHorizontal } from 'react-icons/fi';
 import { BsFillChatDotsFill } from 'react-icons/bs';
 import { FiEdit2 } from 'react-icons/fi';
 import { RiDeleteBin5Line } from 'react-icons/ri';
-import { useDetailMeet } from '../../react-query/hooks/useDetailMeet';
+import { useDetailMeet } from '../../react-query/hooks/meets/useDetailMeet';
 import { useSelector } from 'react-redux';
-import { useAddMeet } from '../../react-query/hooks/useDeleteMeet';
-import { useLike } from '../../react-query/hooks/useLike';
-import { useJoin } from '../../react-query/hooks/useJoin';
+import { useDeleteMeet } from '../../react-query/hooks/meets/useDeleteMeet';
+import { useLike } from '../../react-query/hooks/meets/useLike';
+import { useJoin } from '../../react-query/hooks/meets/useJoin';
 import Navigate from '../../layout/Navigate';
 
 const MeetDetail = () => {
@@ -22,7 +22,7 @@ const MeetDetail = () => {
   const { meet, isLiked, setIsLiked, isJoined, setIsJoined } = useDetailMeet(
     params.thunderPostId
   );
-  const onDelete = useAddMeet();
+  const onDelete = useDeleteMeet();
   const onLike = useLike();
   const onJoin = useJoin();
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import PostContainer from '../../components/Posts/PostContainer';
 import { postApi } from '../../shared/api';
 import { useInView } from 'react-intersection-observer';
@@ -10,56 +10,23 @@ import Loading from '../../layout/Loading';
 import NoData from '../../layout/NoData';
 import Masonry from 'react-masonry-css';
 import { TbPencil } from 'react-icons/tb';
-
-// export function usePreFetch() {
-//   const queryClient = useQueryClient();
-//   queryClient.prefetchQuery(queryKeys.posts);
-// }
+import { usePosts } from '../../react-query/hooks/posts/usePosts';
 
 const Posts = () => {
   const { ref, inView } = useInView();
   const searchRef = useRef();
   const accesstoken = localStorage.getItem('accessToken');
 
-  const [areaSelected, setAreaSelected] = useState('ALL');
-  const [search, setSearch] = useState(null);
-
-  const fetchPosts = async (pageParam, areaSelected, search) => {
-    if (search) {
-      try {
-        const res = await postApi.getSearchPosts(
-          pageParam,
-          areaSelected,
-          search
-        );
-        const data = res.data.content;
-        const last = res.data.last;
-        return { data, nextPage: pageParam + 1, last };
-      } catch (err) {
-        console.log(err);
-      }
-    } else {
-      try {
-        const res = await postApi.getPosts(pageParam, areaSelected);
-        const data = res.data.content;
-        const last = res.data.last;
-        return { data, nextPage: pageParam + 1, last };
-      } catch (err) {
-        console.log(err);
-        alert(err);
-      }
-    }
-  };
-
-  const { data, fetchNextPage, isFetchingNextPage, isFetching, isLoading } =
-    useInfiniteQuery(
-      [queryKeys.posts, areaSelected, search],
-      ({ pageParam = 0 }) => fetchPosts(pageParam, areaSelected, search),
-      {
-        getNextPageParam: (lastPage) =>
-          !lastPage.last ? lastPage.nextPage : undefined
-      }
-    );
+  const {
+    data,
+    fetchNextPage,
+    isFetchingNextPage,
+    isFetching,
+    isLoading,
+    areaSelected,
+    setSearch,
+    setAreaSelected
+  } = usePosts();
 
   useEffect(() => {
     if (inView) {

@@ -3,8 +3,11 @@ import axios from 'axios';
 import { useState } from 'react';
 import KakaoMap from '../../components/Map/Map';
 import MapSearch from '../../components/Map/MapSearch';
+import { usePreFetchPosts } from '../../react-query/hooks/posts/usePosts';
 
 const Home = () => {
+  usePreFetchPosts();
+
   const [picker, setPicker] = useState({
     beachId: -1,
     beachName: '',

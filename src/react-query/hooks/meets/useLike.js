@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "../constants";
-import { meetsApi } from "../../shared/api";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { meetsApi } from '../../../shared/api';
+import { queryKeys } from '../../constants';
 
 const postLike = async ({ setIsLiked, isLiked, thunderPostId }) => {
   if (isLiked) {
@@ -16,7 +16,7 @@ const postLike = async ({ setIsLiked, isLiked, thunderPostId }) => {
       setIsLiked((prev) => !prev);
     } catch (error) {
       console.log(error);
-      alert("북마크 저장에 실패하였습니다");
+      alert('북마크 저장에 실패하였습니다');
     }
   }
 };
@@ -28,12 +28,12 @@ export function useLike() {
     onSuccess: () => {
       queryClient.invalidateQueries([queryKeys.detailMeet]);
       queryClient.invalidateQueries([queryKeys.myMeetsList], {
-        refetchType: "all",
+        refetchType: 'all'
       });
     },
     onError: (error) => {
       console.log(error);
-    },
+    }
   });
 
   return onLike;
