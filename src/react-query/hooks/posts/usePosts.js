@@ -17,7 +17,6 @@ const fetchPosts = async (pageParam, areaSelected, search) => {
   } else {
     try {
       const res = await postApi.getPosts(pageParam, areaSelected);
-
       const data = res.data.content;
       const last = res.data.last;
       return { data, nextPage: pageParam + 1, last };
@@ -38,14 +37,16 @@ export function usePosts() {
       ({ pageParam = 0 }) => fetchPosts(pageParam, areaSelected, search),
       {
         getNextPageParam: (lastPage) =>
-          !lastPage.last ? lastPage.nextPage : undefined
+          !lastPage.last ? lastPage.nextPage : undefined,
+        refetchOnWindowFocus: false,
+        staleTime: 600000
       }
     );
 
   return {
     data,
-    fetchNextPage,
     isFetchingNextPage,
+    fetchNextPage,
     isFetching,
     isLoading,
     setSearch,
@@ -61,8 +62,12 @@ export function usePreFetchPosts() {
   const [areaSelected, setAreaSelected] = useState('ALL');
   // eslint-disable-next-line no-unused-vars
   const [search, setSearch] = useState(null);
+
   queryClient.prefetchInfiniteQuery(
     [queryKeys.posts, areaSelected, search],
-    ({ pageParam = 0 }) => fetchPosts(pageParam, areaSelected, search)
+    ({ pageParam = 0 }) => fetchPosts(pageParam, areaSelected, search),
+    {
+      staleTime: 600000
+    }
   );
 }
