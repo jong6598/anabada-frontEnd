@@ -258,6 +258,20 @@
 - return문과 async await을 사용해서 invalidte 작업을 하게했으나, 일부에선 작동하지 않는 문제 발생.
 - invalidteQueries의 refetchType 옵션의 값을 'all'로 수정하여 같은 쿼리키를 모두 invalidate 시켜서 해결.
 
+---
+
+### 6) Prefetching시 캐시 데이터 사용 문제
+
+- 캐시 데이터를 사용하지 않고 네트워크 요청을 하게 됨
+
+### ❓문제 상황
+
+- react query에서 prefetch로 미리 데이터를 받아와 캐시에 저장을 하였는데 기존에 캐시에 있는 데이터를 사용하지 않고 네트워크 요청을 하게 됨.
+
+### ✏️문제 해결
+
+- useQuery로 받아오는 staleTime이 default가 0으로 되어있어서 기존의 캐시에 있는 데이터를 사용하지 않고 새로운 데이터를 받아오는 요청을 하게 된것이다.
+
 ## **기타**
 
 [노션 링크](https://www.notion.so/503e00648f9d4e148496fb244b05be26)
