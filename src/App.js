@@ -80,24 +80,13 @@ function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getCookies]);
 
-  const test = [
-    '/home',
-    '/login',
-    '/signup',
-    '/posts',
-    '/meets',
-    '/meetsAll',
-    '/meetAdd',
-    '/mypage',
-    '/mymeets',
-    '/myposts'
-  ];
+  const test = ['/room', '/notifications', '/chat'];
 
   return (
     <>
       <ThemeProvider theme={theme}>
         <GlobalStyle />
-        {test.filter((el) => location.pathname.startsWith(el)).length === 0 || (
+        {test.filter((el) => location.pathname.startsWith(el)).length !== 0 || (
           <Header notifications={notifications} />
         )}
 
