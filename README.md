@@ -1,6 +1,6 @@
 # 아나바다
 
-<img src="https://s3.us-west-2.amazonaws.com/secure.notion-static.com/f1b18afe-b4c6-47bb-806e-d2064cedca1c/Untitled.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220915%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220915T094305Z&X-Amz-Expires=86400&X-Amz-Signature=0d9969b61e305356a536970fc77ea3a2f01b36a48fba703bf9a3d82639993f87&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22Untitled.png%22&x-id=GetObject" ></img>
+<img width="1027" alt="스크린샷 2022-11-14 오후 9 39 20" src="https://user-images.githubusercontent.com/108744804/201662552-d6339c6a-7f1b-437d-aabf-4c84a3a86ef7.png">
 
 <br/>
 <br/>
